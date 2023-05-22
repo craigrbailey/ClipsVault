@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clips Vault</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/stream.css">
+</head>
+<body>
+    <section id="menu">
+        <h1>Clips Vault</h1>
+
+        <div class="items">
+            <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
+            <li><i class="fa-solid fa-tv"></i><a href="#">Streams</a></li>
+            <li><i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a></li>
+            <li><i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a></li>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-container-details">
+                <span id="percent"></span>
+                <span id="storage"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="confirmation-window">
+        <h2>CONFIRM</h2>
+        <span>Are you sure</span>
+        <div>
+            <button id="cancel-btn">Confirm</button>
+            <button id="confirm-btn">Cancel</button>
+          </div>
+    </div>
+
+    <div id="interface">
+        <div class="navigation">
+            <div class="notification-container">
+                <div class="notification-bell">
+                  <i class="fa fa-bell"></i>
+                  <span class="notification-count"></span>
+                </div>
+                <div class="notification-dropdown">
+                  <ul class="notification-list">
+                  </ul>
+                </div>
+              </div>              
+            <div class="profile-settings">
+              <% if (userData) { %>
+                <img src="<%= userData.profile_image_url %>" alt="">
+              <% } else { %>
+                <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg">
+              <% } %>
+                <div class="submenu">
+                    <a href="#">Sign Out</a>
+                    <a href="/settings">Settings</a>
+                  </div>
+            </div>
+        </div>
+
+          <div class="stream-container">
+            <img src="https://static-cdn.jtvnw.net/ttv-boxart/21779-272x380.jpg" alt="">
+            <div>
+              <div class="stream-info">
+                <h2 id="stream-date">May 18 2023</h2>
+                <h2 id="stream-category">League Of Legends</h2>
+                <span id="stream-duration"><i class="fa-regular fa-clock"></i>4h 26m 3s</span>
+              </div>
+              <div>
+                <div id="video-tags">
+                  <div id="tag-list">
+                    <span>Tags<i class="fa-solid fa-circle-xmark"></i></span>
+                    <span>24 Hour Stream<i class="fa-solid fa-circle-xmark"></i></span>
+                    <span>Tags<i class="fa-solid fa-circle-xmark"></i></span>
+                  </div>
+                  <form id="tag-form">
+                    <input type="text" id="tag-input" placeholder="Add a tag">
+                  </form>
+                </div>
+              </div>
+              <div class="action-buttons">
+                <button>
+                  <i class="fa-solid fa-download"></i>
+                </button>
+                <button>
+                  <i class="fa-sharp fa-solid fa-trash"></i>
+                </button>
+                <button>
+                  <i class="fa-solid fa-cloud"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="clips-interface">
+            <div class="clip-card">
+              <div class="video-container">
+                <h2 class="clip-category">League Of Legends</h2>
+                <img class="category-img" src="https://static-cdn.jtvnw.net/ttv-boxart/21779-272x380.jpg" alt="">
+                <video class="video" src="../views/2022-12-05 04-26-31.mp4"></video>
+              </div>
+              <div class="background"></div>
+              <div class="clip-tags-container">
+                <div class="clips-tags">
+                  <span class="clip-tag">Tag<i class="fa-solid fa-circle-xmark"></i></span>
+                  <span class="clip-tag">Tag<i class="fa-solid fa-circle-xmark"></i></span>
+                </div>
+                <input class="clip-tag-input" type="text">
+              </div>
+              <div class="buttons">
+                <button><i class="fa-solid fa-download"></i></button>
+                <button><i class="fa-sharp fa-solid fa-cloud-arrow-up"></i></button>
+                <button><i class="fa-regular fa-heart"></i></button>
+                <button><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+          </div>
+
+    <script src="/js/base.js"></script>
+    <script src="/js/stream.js"></script>
+</body>
+</html>

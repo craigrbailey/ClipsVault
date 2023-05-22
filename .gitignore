@@ -1,0 +1,12 @@
+# Ignore specific file
+file.txt
+
+# Ignore files with a specific extension
+*.env
+.vscode
+
+# Ignore a directory and its contents
+clips
+trash
+uploads
+node_modules

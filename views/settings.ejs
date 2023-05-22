@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/settings.css">
+</head>
+<body>
+    <section id="menu">
+        <div class="logo">
+            <h1>Clips Vault</h1>
+        </div>
+
+        <div class="items">
+            <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
+            <li><i class="fa-solid fa-tv"></i><a href="#">Streams</a></li>
+            <li><i class="fa-solid fa-clapperboard"></i><a href="#">Clips</a></li>
+            <li><i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification">15</span></a></li>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-container-details">
+                <span id="percent"></span>
+                <span id="storage"></span>
+            </div>
+        </div>
+    </section>
+
+    <div id="interface">
+        <div class="navigation">
+            <h2 id="welcome">Settings</h2>
+            <div class="notification-container">
+                <div class="notification-bell">
+                  <i class="fa fa-bell"></i>
+                  <span class="notification-count">15</span>
+                </div>
+                <div class="notification-dropdown">
+                  <ul class="notification-list">
+                    <li class="notification-item">Notification 1</li>
+                    <li class="notification-item">Notification 2</li>
+                    <li class="notification-item">Notification 3</li>
+                    <li class="notification-item">Notification 4</li>
+                    <li class="notification-item">Notification 5</li>
+                    <li class="notification-item">Notification 6</li>
+                    <li class="notification-item">Notification 7</li>
+                    <li class="notification-item">Notification 8</li>
+                    <li class="notification-item">Notification 9</li>
+                    <li class="notification-item">Notification 10</li>
+                    <li class="notification-item">Notification 11</li>
+                    <li class="notification-item">Notification 12</li>
+                    <li class="notification-item">Notification 13</li>
+                    <li class="notification-item">Notification 14</li>
+                    <li class="notification-item">Notification 15</li>
+                  </ul>
+                </div>
+              </div>              
+            <div class="settings-button">
+                <a href="/settings">
+                  <span>Settings</span>
+                </a>
+            </div>
+        </div>
+        <div class="main-interface">
+            <h1>Settings</h1>
+            <div class="settings-container">
+                <div class="settings">
+                    <h2>General</h2>
+                </div>
+                <div class="settings">
+                    <h2>OBS Connection</h2>
+                    <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
+                    <form>
+                        <label for="host">Host:</label>
+                        <input class="settings-input" type="text" id="host" name="host"><br><br>
+                        <label for="port">Port:</label>
+                        <input class="settings-input" type="text" id="port" name="port"><br><br>
+                        <label for="password">Password:</label>
+                        <input class="settings-input" type="password" id="password" name="password"><br><br>
+                        <button id="obs-button" type="submit"></button>
+                    </form>
+                </div>
+                <div class="settings">
+                    <h2>Notifications</h2>
+                    <span>Configure Notification Settings</span>
+                    <div class="notification-toggle">
+                        <div>
+                            <h3 class="notification-app">Discord</h3>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <form>
+                                <label for="webhook">Discord Webhook:</label>
+                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
+                                <button id="submit-button" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="notification-toggle">
+                        <div>
+                            <h3 class="notification-app">GMAIL</h3>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div>
+                            <form>
+                                <label for="webhook">Port:</label>
+                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
+                                <label for="webhook">Discord Webhook:</label>
+                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
+                                <button id="submit-button" type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="settings">
+                    <h2>Connections</h2>
+                    <div id="connection-links">
+                        <a id="connect-with-twitch" href="/authorize">Authorize with Twitch</a>
+                        <a id="connect-to-youtube">Connect to YouTube</a>
+                    </div>
+                </div>
+                <div class="settings">
+                    <h2>Support The Project</h2>
+                    <span>If you've enjoyed using the app consider checking out my socials</span>
+                    <div>
+                        <div class="discord-join">
+                            <h3>Join Our Discord Server!</h3>
+                            <p>Click the button below to join our Discord server and chat with other members.</p>
+                            <a href="https://discord.gg/yourserverinvite" target="_blank" class="discord-button">Join Server</a>
+                        </div>
+                        <div class="twitch-follow">
+                            <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png" alt="Profile Picture" class="profile-image">
+                            <h3>Follow Me on Twitch!</h3>
+                            <p>Click the button below to follow me on Twitch and stay up-to-date with my streams.</p>
+                            <a href="https://www.twitch.tv/dadthegam3r" target="_blank" class="twitch-button">Follow</a>
+                        </div>
+                        <div class="twitter-follow">
+                            <h3>Follow Me on Twitter!</h3>
+                            <p>Click the button below to follow me on Twitter and stay up-to-date with my tweets.</p>
+                            <a href="https://twitter.com/yourusername" target="_blank" class="twitter-button">Follow</a>
+                        </div>
+                        <div class="buy-me-a-coffee">
+                            <h3>Buy Me a Coffee</h3>
+                            <p>Click the button below to support me on Buy Me a Coffee.</p>
+                            <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="coffee-button">Buy Me a Coffee</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/base.js"></script>
+    <script src="/js/settings.js"></script>
+</body>
+</html>

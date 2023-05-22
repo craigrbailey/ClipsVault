@@ -1,0 +1,122 @@
+import express from 'express';
+import session from 'express-session';
+import MongoDBStore from 'connect-mongodb-session';
+import fs from 'fs';
+import { config } from 'dotenv';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import { initdb, addNotification } from './db.js';
+import { connectToOBS, obsConnection  } from './utilities/obs.js';
+import bodyParser from 'body-parser';
+import multer from 'multer';
+import { main }from './utilities/gmail.js';
+import { validateAccessToken } from './utilities/twitch.js';
+
+// Configure the app
+const app = express();
+const port = process.env.PORT || 3000;
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+const MongoDBStoreSession = MongoDBStore(session);
+const store = new MongoDBStoreSession({
+  uri: 'mongodb://192.168.1.31:27017/data', // Replace with your MongoDB connection URI
+  collection: 'sessions',
+});
+
+store.on('error', (error) => {
+  console.error('Session store error:', error);
+});
+app.use(
+  session({
+    secret: 'your-secret-key', // Replace with your desired secret key
+    resave: false,
+    saveUninitialized: false,
+    store: store,
+  })
+);
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+export { __dirname };
+app.use(express.static(path.join(__dirname, './public')));
+app.set('views', path.join(__dirname, './views'));
+app.set('view engine', 'ejs');
+
+initdb();
+
+// Storage Configuration
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+// Create Folders
+const upload = multer({ storage: storage });
+const uploadsDir = './uploads';
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+const clipsDir = './clips';
+if (!fs.existsSync(clipsDir)) {
+  fs.mkdirSync(clipsDir);
+}
+const trashDir = './trash';
+if (!fs.existsSync(trashDir)) {
+  fs.mkdirSync(trashDir);
+}
+
+// Import Routes
+import twitchCallBackRouter from './routes/twitchCallBack.js';
+import authorizeRouter  from './routes/authorize.js';
+import dashboardRouter from './routes/dashboard.js';
+import settingsRouter from './routes/settings.js';
+import setupRouter from './routes/setup.js';
+import memoryUsageRouter from './routes/memory-usage.js';
+import statusRouter from './routes/status.js';
+import getQueueRouter from './routes/queue.js';
+import notificationsRouter from './routes/notifications.js';
+import obsConnectionRouter from './routes/obs-connection.js';
+import obsConnectionSettings from './routes/obs-settings.js';
+import streamConnectionRouter from './routes/stream.js';
+import googleCallbackRouter from './routes/google-callback.js';
+import googleAuthRouter from './routes/googleauth.js';
+import categorySearchRouter from './routes/categorysearch.js';
+import addStreamRouter from './routes/addstream.js';
+import getStreamsRouter from './routes/getstreams.js';
+
+// Register routes
+app.use('/auth/twitch/callback', twitchCallBackRouter);
+app.use('/authorize', authorizeRouter);
+app.use('/', dashboardRouter);
+app.use('/settings', settingsRouter);
+app.use('/setup', setupRouter);
+app.use('/memory-usage', memoryUsageRouter);
+app.use('/status', statusRouter);
+app.use('/get-queue', getQueueRouter);
+app.use('/notifications', notificationsRouter); 
+app.use('/obs-connection', obsConnectionRouter);
+app.use('/obs-settings', obsConnectionSettings); 
+app.use('/stream', streamConnectionRouter); 
+app.use('/googlecallback', googleCallbackRouter);
+app.use('/googleauth', googleAuthRouter);
+app.use('/api/categorysearch', categorySearchRouter);
+app.use('/api/addstream', addStreamRouter);
+app.use('/api/getstreams', getStreamsRouter);
+
+let uploadStatus = null;
+
+// Connect to OBS
+const obs = await connectToOBS();
+const obsConnectionStatus = obsConnection.status;
+
+config();
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Visit http://localhost:${port}/authorize to start the authentication process.`);
+});
