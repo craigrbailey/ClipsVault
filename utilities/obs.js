@@ -12,7 +12,6 @@ async function connectToOBS() {
   const connect = async () => {
     try {
       const obsSettings = await getOBSSettings();
-      console.log(obsSettings);
 
       if (obsSettings && obsSettings.ip !== 'none') {
         const { ip, password, port } = obsSettings;
@@ -37,7 +36,6 @@ async function connectToOBS() {
         return; // Break the connect function if the URL is invalid
       }
 
-      console.error('OBS Connection Failed:', error);
       obsConnection.status = false;
       setTimeout(connect, 10000);
     }
