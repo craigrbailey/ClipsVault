@@ -4,6 +4,7 @@ file.txt
 # Ignore files with a specific extension
 *.env
 .vscode
+.pbmm
 
 # Ignore a directory and its contents
 clips
