@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, storeTwitchAuthToken, retrieveRefreshToken } from '../db.js';
+import { getAccessToken, storeTwitchAuthToken, retrieveRefreshToken, retrieveUserData } from '../db.js';
 
 async function getGameBoxArt(gameName) {
   const width = 272;
@@ -139,4 +139,43 @@ async function refreshAccessToken() {
 }
 
 
-export { getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken }
+async function getUserCategory() {
+  const clientId = process.env.TWITCH_CLIENT_ID;
+  const userData = await retrieveUserData();
+  const userId = userData.id;
+  try {
+    const accessToken = await getAccessToken();
+
+    // Get user's current stream
+    const streamResponse = await axios.get(`https://api.twitch.tv/helix/streams?user_id=${userId}`, {
+      headers: {
+        'Client-ID': clientId,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+    if (streamResponse.data.data.length === 0) {
+      return null;
+    }
+
+    const stream = streamResponse.data.data[0];
+    const gameId = stream.game_id;
+
+    // Get category information
+    const gameResponse = await axios.get(`https://api.twitch.tv/helix/games?id=${gameId}`, {
+      headers: {
+        'Client-ID': clientId,
+        'Authorization': `Bearer ${accessToken}`
+      }
+    });
+
+    const game = gameResponse.data.data[0];
+    const category = game.name;
+    return category;
+  } catch (error) {
+    console.log('Error retrieving user category:', error.response.data);
+    throw new Error('Failed to retrieve user category.');
+  }
+}
+
+
+export { getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory }

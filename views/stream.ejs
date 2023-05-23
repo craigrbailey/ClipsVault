@@ -40,6 +40,12 @@
           </div>
     </div>
 
+    <div class="top-notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span id="top-notification"></span>
+    </div>
+
+
     <div id="interface">
         <div class="navigation">
             <div class="notification-container">
@@ -66,19 +72,19 @@
         </div>
 
           <div class="stream-container">
-            <img src="https://static-cdn.jtvnw.net/ttv-boxart/21779-272x380.jpg" alt="">
+            <img src="<%= streamData.background_img %>" alt="">
             <div>
               <div class="stream-info">
-                <h2 id="stream-date">May 18 2023</h2>
-                <h2 id="stream-category">League Of Legends</h2>
+                <h2 id="stream-date"><%= date %></h2>
+                <h2 id="stream-category"><%= streamData.category %></h2>
                 <span id="stream-duration"><i class="fa-regular fa-clock"></i>4h 26m 3s</span>
               </div>
               <div>
                 <div id="video-tags">
                   <div id="tag-list">
-                    <span>Tags<i class="fa-solid fa-circle-xmark"></i></span>
-                    <span>24 Hour Stream<i class="fa-solid fa-circle-xmark"></i></span>
-                    <span>Tags<i class="fa-solid fa-circle-xmark"></i></span>
+                    <% streamData.tags.forEach(function(tag) { %>
+                            <span><%= tag %><i class="fa-solid fa-circle-xmark"></i></span>
+                          <% }); %>
                   </div>
                   <form id="tag-form">
                     <input type="text" id="tag-input" placeholder="Add a tag">
@@ -86,14 +92,17 @@
                 </div>
               </div>
               <div class="action-buttons">
-                <button>
+                <button title="Download">
                   <i class="fa-solid fa-download"></i>
                 </button>
-                <button>
+                <button id="delete-stream" title="Detete The Stream">
                   <i class="fa-sharp fa-solid fa-trash"></i>
                 </button>
-                <button>
+                <button id="save-stream-to-cloud" title="Save Stream To Cloud">
                   <i class="fa-solid fa-cloud"></i>
+                </button>
+                <button id="add-clip" title="Add A Clip">
+                  <i class="fa-sharp fa-solid fa-plus"></i>
                 </button>
               </div>
             </div>
@@ -103,7 +112,7 @@
               <div class="video-container">
                 <h2 class="clip-category">League Of Legends</h2>
                 <img class="category-img" src="https://static-cdn.jtvnw.net/ttv-boxart/21779-272x380.jpg" alt="">
-                <video class="video" src="../views/2022-12-05 04-26-31.mp4"></video>
+                <video class="video" src=""></video>
               </div>
               <div class="background"></div>
               <div class="clip-tags-container">

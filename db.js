@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 async function connectToMongoDB() {
   const uri = 'mongodb://192.168.1.31:27017'; // Replace with your MongoDB connection string
@@ -117,14 +117,29 @@ async function storeTwitchUserData(userData) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("userdata");
-    const userDataWithDate = { ...userData };
-    await collection.insertOne(userDataWithDate);
-    console.log("User data stored successfully.");
+    const query = { type: "twitch" };
+    const update = {
+      $set: {
+        ...userData,
+        type: "twitch" // Set the 'type' field explicitly to 'twitch'
+      }
+    };
+    const options = { upsert: true };
+
+    const result = await collection.findOneAndUpdate(query, update, options);
+
+    if (result.lastErrorObject.updatedExisting) {
+      console.log("User data updated successfully.");
+    } else {
+      console.log("User data stored successfully.");
+    }
   } catch (error) {
     console.error("Error storing user data:", error);
     throw error;
   }
 }
+
+
 
 async function getAccessToken() {
   const db = await connectToMongoDB();
@@ -299,13 +314,13 @@ async function addVideoToStream(streamId, videoId) {
 
     // Update the document: push videoId to the videos array and increment video_count by 1
     const result = await collection.updateOne(
-      { _id: streamId }, 
-      { 
+      { _id: streamId },
+      {
         $push: { videos: videoId },
-        $inc: { video_count: 1 } 
+        $inc: { video_count: 1 }
       }
     );
-  } catch(err) {
+  } catch (err) {
     console.log(err.stack);
   }
 }
@@ -325,12 +340,45 @@ async function addTagToVideo(videoId, newTag) {
   }
 }
 
+async function addTagToStream(streamId, newTag) {
+  const db = await connectToMongoDB();
+  try {
+    const objectId = new ObjectId(streamId);
+    const collection = db.collection("streams");
+    const result = await collection.updateOne(
+      { _id: objectId },
+      { $push: { tags: newTag } }
+    );
+    return result.modifiedCount > 0;
+  } catch (error) {
+    console.error("Error adding tag to stream document:", error);
+    throw error;
+  }
+}
+
+
 async function removeTagFromVideo(videoId, tagToRemove) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("videos");
     const result = await collection.updateOne(
       { _id: videoId },
+      { $pull: { tags: tagToRemove } }
+    );
+    return result.modifiedCount > 0;
+  } catch (error) {
+    console.error("Error removing tag from video document:", error);
+    throw error;
+  }
+}
+
+async function removeTagFromStream(streamId, tagToRemove) {
+  const db = await connectToMongoDB();
+  try {
+    const objectId = new ObjectId(streamId);
+    const collection = db.collection("streams");
+    const result = await collection.updateOne(
+      { _id: objectId },
       { $pull: { tags: tagToRemove } }
     );
     return result.modifiedCount > 0;
@@ -454,11 +502,11 @@ async function getOBSSettings() {
 }
 
 // Function to get the google access token from the database
-async function getGoogleAccessToken () {
+async function getGoogleAccessToken() {
   try {
     const db = await connectToMongoDB();
     const tokenDocument = await db.collection('tokens').findOne({ type: 'google' });
-    
+
     if (tokenDocument) {
       return tokenDocument.tokens.access_token;
     } else {
@@ -475,11 +523,24 @@ async function getAllStreams() {
   try {
     const collection = db.collection('streams');
     return await collection.find({}).toArray();
-  } catch(err) {
+  } catch (err) {
     console.error(err.stack);
     return [];
   }
 }
+
+async function getStreamById(streamId) {
+  const db = await connectToMongoDB();
+  try {
+    const objectId = new ObjectId(streamId);
+    const collection = db.collection('streams');
+    return await collection.findOne({ _id: objectId });
+  } catch (err) {
+    console.error(err.stack);
+    return null;
+  }
+}
+
 
 async function getLatestStreams(count) {
   const db = await connectToMongoDB();
@@ -495,10 +556,106 @@ async function getLatestStreams(count) {
   }
 }
 
+//Get All Videos By Stream Id
+async function getVideosByStreamId(streamId) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos');
+    const objectId = new ObjectId(streamId);
+    const query = { stream_id: objectId };
+    const videos = await collection.find(query).toArray();
+
+    return videos;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function removeStreamById(streamId) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const streamsCollection = db.collection('streams');
+    const trashCollection = db.collection('trash');
+
+    // Get the stream document
+    const stream = await streamsCollection.findOne({ _id: streamId });
+
+    if (!stream) {
+      console.log(`Stream with ID ${streamId} not found.`);
+      return;
+    }
+
+    const videoIds = stream.videos;
+
+    // Iterate through the videos
+    for (const videoId of videoIds) {
+      // Remove video document from videos collection
+      const video = await videosCollection.findOne({ _id: videoId });
+      if (video) {
+        // Move the file to the trash directory
+        const filePath = video.file;
+        const trashFilePath = moveFileToTrash(filePath);
+
+        // Insert a document in the trash collection
+        const trashDocument = {
+          stream_id: stream._id,
+          video_id: video._id,
+          file: trashFilePath,
+          date: video.date,
+          category: video.category,
+          size: video.size,
+          length: video.length,
+          favorite: video.favorite,
+          tags: video.tags,
+          captions: video.captions,
+          trashDate: new Date().toISOString()
+        };
+        await trashCollection.insertOne(trashDocument);
+
+        // Remove video document from videos collection
+        await videosCollection.deleteOne({ _id: videoId });
+        console.log(`Removed video with _id: ${videoId}`);
+      }
+    }
+
+    // Remove the stream document from streams collection
+    await streamsCollection.deleteOne({ _id: streamId });
+    console.log(`Removed stream with _id: ${streamId}`);
+
+    console.log('Processing complete.');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+async function retrieveUserData() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("userdata");
+    const query = { type: "twitch" }; // Assuming type is used to identify Twitch documents
+
+    const userData = await collection.findOne(query);
+
+    if (userData) {
+      console.log("User data retrieved successfully.");
+      return userData;
+    } else {
+      console.log("User data not found.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error retrieving user data:", error);
+    throw error;
+  }
+}
 
 
 // Export the functions
-export { connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getAccessToken, 
-  getAllQueueItems, getAllNotifications, removeNotificationById, addNotification,getVideoData, updateOBSSettings, 
-  removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings, 
-  completeSetup, getGoogleAccessToken, retrieveRefreshToken, addVideoToStream, getAllStreams, getLatestStreams }; 
+export {
+  connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getAccessToken,
+  getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
+  removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
+  completeSetup, getGoogleAccessToken, retrieveRefreshToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData
+}; 

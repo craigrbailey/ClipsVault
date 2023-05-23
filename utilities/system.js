@@ -53,6 +53,13 @@ async function createFolder(dateString) {
   return dayFolder;
 }
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const options = { month: 'long', day: 'numeric', year: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
+}
+
+
 function generateDateFolderStructure() {
   const now = new Date();
   const year = now.getFullYear();
@@ -118,4 +125,25 @@ function checkSetup(req, res, next) {
   }
 }
 
-export { getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup };
+function moveFileToTrash(filePath) {
+  const trashDir = './trash';
+  const fileName = filePath.split('/').pop();
+  const trashFilePath = `${trashDir}/${fileName}`;
+
+  // Create the trash directory if it doesn't exist
+  if (!fs.existsSync(trashDir)) {
+    fs.mkdirSync(trashDir);
+  }
+
+  // Move the file to the trash directory
+  fs.renameSync(filePath, trashFilePath);
+  console.log(`Moved file to trash: ${trashFilePath}`);
+
+  return trashFilePath;
+}
+
+
+export {
+  getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup,
+  formatDate, moveFileToTrash
+};

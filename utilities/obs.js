@@ -3,15 +3,16 @@ import { getOBSSettings } from '../db.js';
 
 let obs;
 const obsConnection = { status: false };
+let live;
 
 async function connectToOBS() {
   obs = new OBSWebSocket();
-  
+
   const connect = async () => {
     try {
       const obsSettings = await getOBSSettings();
       console.log(obsSettings);
-      
+
       if (obsSettings && obsSettings.ip !== 'none') {
         const { ip, password, port } = obsSettings;
         await obs.connect(`ws://${ip}:${port}`, password);
@@ -40,7 +41,7 @@ async function connectToOBS() {
       setTimeout(connect, 10000);
     }
   };
-  
+
   await connect();
   return obs;
 }
@@ -56,11 +57,24 @@ function registerEventListeners() {
   obs.on('RecordStateChanged', (event) => {
     console.log('Recording state changed');
     console.log(event);
+    if (event.outputActive == true) {
+      console.log('Recroding Started')
+    }
   });
 
   obs.on('ReplayBufferSaved', (event) => {
     console.log('Replay Saved');
     console.log(event);
+  });
+
+  obs.on('StreamStateChanged', (event) => {
+    console.log('Stream Started');
+    console.log(event);
+    if (event.outputActive == true) {
+      live = true;
+    } else {
+      live = false;
+    }
   });
 }
 

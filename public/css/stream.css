@@ -3,12 +3,15 @@
     flex-direction: row;
     align-items: left;
     padding: 10px;
-    height: 25em;
+    height: 50vh;
     width: 100%;
     justify-content: center;
-    position: relative;
+    position: fixed;
     top: 5em;
+    left: 20vh;
     margin-left: -1em;
+    z-index: 2;
+    background-color: black;
 }
 
 .stream-info {
@@ -31,7 +34,7 @@
 #stream-duration {
     color: #737373;
     font-size: 14px;
-    background-color:  #5cff3c;
+    background-color: #5cff3c;
     border-radius: 5px;
     color: black;
     padding: 5px;
@@ -49,7 +52,7 @@
     font-size: 48px;
 }
 
-.stream-container > div {
+.stream-container>div {
     margin-left: 1em;
     display: flex;
     flex-direction: column;
@@ -90,22 +93,27 @@
 }
 
 #tag-list::-webkit-scrollbar {
-    width: 10px; /* width of the entire scrollbar */
+    width: 10px;
+    /* width of the entire scrollbar */
 }
 
 #tag-list::-webkit-scrollbar-track {
-    background: transparent;/* color of the tracking area */
+    background: transparent;
+    /* color of the tracking area */
 }
 
 #tag-list::-webkit-scrollbar-thumb {
-    background: #888; /* color of the scroll thumb */
-    border-radius: 20px; /* roundness of the scroll thumb */
+    background: #888;
+    /* color of the scroll thumb */
+    border-radius: 20px;
+    /* roundness of the scroll thumb */
 }
 
 #tag-list::-webkit-scrollbar-thumb:hover {
-    background: #555; /* color of the scroll thumb when hovering */
+    background: #555;
+    /* color of the scroll thumb when hovering */
 }
-  
+
 #tag-list span {
     display: inline-block;
     background-color: #3c5cff;
@@ -135,7 +143,7 @@
 #tag-form {
     width: 100%;
 }
-  
+
 #tag-form input[type="text"] {
     width: 100%;
     padding: 5px;
@@ -157,7 +165,7 @@
 }
 
 .action-buttons button {
-    background-color:  #343434;
+    background-color: #343434;
     color: #ffffff;
     border: none;
     padding: 5px 10px;
@@ -170,26 +178,25 @@
 }
 
 .action-buttons button:hover {
-    background-color:  #ff3c5c;
+    background-color: #ff3c5c;
 }
-
 
 .clips-interface {
     display: flex;
     flex-direction: column;
     align-items: left;
     width: 100%;
-    margin-top: 10em;
+    margin-top: 34em;
     padding: 10px;
     border-radius: 5px;
     gap: 10px;
+    position: relative;
 }
 
 .clip-card {
     position: relative;
     display: inline-block;
     width: 400px;
-    min-height: 500px;
     overflow: hidden;
     background-color: #151515;
     border-radius: 5px;
@@ -201,7 +208,7 @@
     height: 100%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
-  
+
 .video {
     width: 100%;
     height: 100%;
@@ -211,13 +218,13 @@
 .video:hover {
     cursor: pointer;
 }
-  
+
 .video-controls {
     display: none;
     transition: transform 0.3s ease;
     transform: translateY(100%);
 }
-  
+
 .video:hover .video-controls {
     display: block;
     position: absolute;
@@ -228,7 +235,7 @@
     text-align: center;
     transform: translateY(0%);
 }
-  
+
 .category-img {
     position: absolute;
     top: 10px;
@@ -262,11 +269,11 @@
 .clip-card:hover .category-img {
     transform: translateX(0%);
 }
-  
+
 .clip-card:hover .buttons {
     transform: translateY(0%);
 }
-  
+
 .clip-tags-container {
     padding: 10px;
     width: 100%;
@@ -307,7 +314,7 @@
     font-size: 14px;
     border: transparent;
 }
-  
+
 .buttons {
     display: block;
     position: absolute;
@@ -319,8 +326,8 @@
     background-color: rgba(0, 0, 0, 0.7);
     transform: translateY(100%);
     transition: transform 0.3s ease;
-  }
-  
+}
+
 .buttons button {
     margin-right: 5px;
     color: #fff;

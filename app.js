@@ -7,11 +7,38 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { initdb, addNotification } from './db.js';
-import { connectToOBS, obsConnection  } from './utilities/obs.js';
+import { connectToOBS, obsConnection } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import multer from 'multer';
-import { main }from './utilities/gmail.js';
-import { validateAccessToken } from './utilities/twitch.js';
+import { main } from './utilities/gmail.js';
+import { validateAccessToken, getUserCategory } from './utilities/twitch.js';
+import { watcher } from './utilities/watcher.js'
+import { removeDocumentsWithMissingFiles } from './utilities/maintenance.js'
+
+config();
+
+let initialFilename = '';
+watcher.on('add', (filePath) => {
+  initialFilename = filePath;
+});
+
+watcher.on('change', (filePath) => {
+  if (filePath !== initialFilename) {
+    console.log(`File ${initialFilename} has been renamed to ${filePath}.`);
+    // Perform actions you want when the file is renamed
+  }
+  initialFilename = '';
+});
+
+watcher.on('unlink', (filePath) => {
+  console.log(`File ${filePath} has been removed.`);
+  // Perform actions you want when a file is removed
+});
+
+watcher.on('error', (error) => {
+  console.error(`Watcher error: ${error}`);
+});
+
 
 // Configure the app
 const app = express();
@@ -71,7 +98,7 @@ if (!fs.existsSync(trashDir)) {
 
 // Import Routes
 import twitchCallBackRouter from './routes/twitchCallBack.js';
-import authorizeRouter  from './routes/authorize.js';
+import authorizeRouter from './routes/authorize.js';
 import dashboardRouter from './routes/dashboard.js';
 import settingsRouter from './routes/settings.js';
 import setupRouter from './routes/setup.js';
@@ -87,6 +114,7 @@ import googleAuthRouter from './routes/googleauth.js';
 import categorySearchRouter from './routes/categorysearch.js';
 import addStreamRouter from './routes/addstream.js';
 import getStreamsRouter from './routes/getstreams.js';
+import TagRouter from './routes/tags.js';
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -97,15 +125,18 @@ app.use('/setup', setupRouter);
 app.use('/memory-usage', memoryUsageRouter);
 app.use('/status', statusRouter);
 app.use('/get-queue', getQueueRouter);
-app.use('/notifications', notificationsRouter); 
+app.use('/notifications', notificationsRouter);
 app.use('/obs-connection', obsConnectionRouter);
-app.use('/obs-settings', obsConnectionSettings); 
-app.use('/stream', streamConnectionRouter); 
+app.use('/obs-settings', obsConnectionSettings);
+app.use('/stream/:streamId', streamConnectionRouter);
+app.use('/stream', streamConnectionRouter);
 app.use('/googlecallback', googleCallbackRouter);
 app.use('/googleauth', googleAuthRouter);
 app.use('/api/categorysearch', categorySearchRouter);
-app.use('/api/addstream', addStreamRouter);
+app.use('/api/stream', addStreamRouter);
 app.use('/api/getstreams', getStreamsRouter);
+app.use('/api/tags', TagRouter);
+
 
 let uploadStatus = null;
 
@@ -113,7 +144,6 @@ let uploadStatus = null;
 const obs = await connectToOBS();
 const obsConnectionStatus = obsConnection.status;
 
-config();
 
 // Start the server
 app.listen(port, () => {

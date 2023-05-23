@@ -1,8 +1,8 @@
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { Router } from 'express';
-import { getMemoryUsage} from '../utilities/system.js';
-import { checkSetup } from '../db.js';
+import { getMemoryUsage } from '../utilities/system.js';
+import { checkSetup, getVideosByStreamId } from '../db.js';
 
 const router = Router();
 const __filename = fileURLToPath(import.meta.url);

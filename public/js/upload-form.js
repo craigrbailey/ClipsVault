@@ -19,7 +19,7 @@ function displayFiles(input) {
                 closeIcon.classList.add('fas', 'fa-times-circle');
 
                 // Add an event listener to the close icon
-                closeIcon.addEventListener('click', function(e) {
+                closeIcon.addEventListener('click', function (e) {
                     const fileName = e.target.parentNode.textContent;
                     selectedFiles = selectedFiles.filter(file => file.name !== fileName);
                     e.target.parentNode.remove(); // remove the parent span of the close icon
@@ -37,35 +37,35 @@ function displayFiles(input) {
     }
 }
 
-document.querySelector('.upload-area').addEventListener('click', function() {
+document.querySelector('.upload-area').addEventListener('click', function () {
     document.getElementById('fileUpload').value = ""; // Reset the file input value
 }, false);
 
-document.querySelector('.upload-area').addEventListener('drop', function(e) {
+document.querySelector('.upload-area').addEventListener('drop', function (e) {
     e.preventDefault(); // prevent the browser's default file open behavior
     Array.from(e.dataTransfer.files).forEach(file => {
         if (selectedFiles.findIndex(selectedFile => selectedFile.name === file.name) === -1) {
             selectedFiles.push(file); // add to the array
         }
     });
-    displayFiles({files: selectedFiles}); // update the file list
+    displayFiles({ files: selectedFiles }); // update the file list
 }, false);
 
-document.getElementById('fileUpload').addEventListener('change', function(e) {
+document.getElementById('fileUpload').addEventListener('change', function (e) {
     e.preventDefault();
     Array.from(e.target.files).forEach(file => {
         if (selectedFiles.findIndex(selectedFile => selectedFile.name === file.name) === -1) {
             selectedFiles.push(file); // add to the array
         }
     });
-    displayFiles({files: selectedFiles}); // update the file list
+    displayFiles({ files: selectedFiles }); // update the file list
 }, false);
 
 // Allow files to be selected from the file dialog
 var timeoutId;
-document.getElementById('streamCategory').addEventListener('input', function(e) {
+document.getElementById('streamCategory').addEventListener('input', function (e) {
     clearTimeout(timeoutId); // clear the timeout if it exists
-    timeoutId = setTimeout(function() { // set a new timeout
+    timeoutId = setTimeout(function () { // set a new timeout
         fetch('/api/categorysearch', {
             method: 'POST',
             headers: {
@@ -75,41 +75,41 @@ document.getElementById('streamCategory').addEventListener('input', function(e) 
                 category: e.target.value
             })
         })
-        .then(response => response.json())
-        .then(data => {
-            var suggestions = document.getElementById('suggestions');
-            suggestions.innerHTML = ''; // clear the current suggestions
-            data.forEach(game => {
-                var suggestion = document.createElement('div');
-                suggestion.className = "suggestion-item"; // Add class to suggestion div
-                var gameArt = document.createElement('img');
-                gameArt.src = game.art;
-                gameArt.className = "game-art"; // Add class to game art img
-                var gameName = document.createElement('span');
-                gameName.textContent = game.name;
-                gameName.className = "game-name"; // Add class to game name span
-                suggestion.appendChild(gameArt);
-                suggestion.appendChild(gameName);
-                suggestions.appendChild(suggestion);
+            .then(response => response.json())
+            .then(data => {
+                var suggestions = document.getElementById('suggestions');
+                suggestions.innerHTML = ''; // clear the current suggestions
+                data.forEach(game => {
+                    var suggestion = document.createElement('div');
+                    suggestion.className = "suggestion-item"; // Add class to suggestion div
+                    var gameArt = document.createElement('img');
+                    gameArt.src = game.art;
+                    gameArt.className = "game-art"; // Add class to game art img
+                    var gameName = document.createElement('span');
+                    gameName.textContent = game.name;
+                    gameName.className = "game-name"; // Add class to game name span
+                    suggestion.appendChild(gameArt);
+                    suggestion.appendChild(gameName);
+                    suggestions.appendChild(suggestion);
 
-                // Add event listener for click on suggestion
-                suggestion.addEventListener('click', function() {
-                    document.getElementById('streamCategory').value = game.name; // Set the value of the input field
-                    suggestions.style.display = 'none'; // Hide the suggestions
+                    // Add event listener for click on suggestion
+                    suggestion.addEventListener('click', function () {
+                        document.getElementById('streamCategory').value = game.name; // Set the value of the input field
+                        suggestions.style.display = 'none'; // Hide the suggestions
+                    });
                 });
-            });
 
-            // Show the suggestions
-            if (data.length > 0) {
-                suggestions.style.display = 'block';
-            }
-        })
-        .catch(error => console.error('Error:', error));
+                // Show the suggestions
+                if (data.length > 0) {
+                    suggestions.style.display = 'block';
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }, 500);
 });
 
 // Add event listener for click outside of suggestions
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
     var suggestions = document.getElementById('suggestions');
     var streamCategory = document.getElementById('streamCategory');
 
@@ -137,7 +137,7 @@ function hideNotification() {
     notification.innerHTML = '';
 }
 
-document.querySelector('form').addEventListener('submit', function(e) {
+document.querySelector('form').addEventListener('submit', function (e) {
     e.preventDefault(); // prevent the form's default submission behavior
     showNotification('Uploading Files. Do not exit...', '#007bff'); // clear the current notifications
     document.querySelector('.upload-container').style.display = 'none';
@@ -157,36 +157,36 @@ document.querySelector('form').addEventListener('submit', function(e) {
     });
 
     // send the POST request
-    fetch('/api/addstream', {
+    fetch('/api/stream', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Success:', data);
-        if (data.message === 'Upload successful') {
-            // Clear the file list
-            selectedFiles = [];
-            document.getElementById('fileList').innerHTML = '';
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            if (data.message === 'Upload successful') {
+                // Clear the file list
+                selectedFiles = [];
+                document.getElementById('fileList').innerHTML = '';
 
-            // Reset the stream category
-            document.getElementById('streamCategory').value = '';
+                // Reset the stream category
+                document.getElementById('streamCategory').value = '';
 
-            hideNotification();
-            setTimeout(function() {
-                showNotification('Upload successful', '#28a745');
-            }, 1000);
-            setTimeout(function() {
                 hideNotification();
-            }, 5000);
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+                setTimeout(function () {
+                    showNotification('Upload successful', '#28a745');
+                }, 1000);
+                setTimeout(function () {
+                    hideNotification();
+                }, 5000);
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 });
 
-document.getElementById('cancelButton').addEventListener('click', function() {
+document.getElementById('cancelButton').addEventListener('click', function () {
     document.querySelector('.upload-container').style.display = 'none';
     // Clear the file list
     selectedFiles = [];
@@ -198,7 +198,7 @@ document.getElementById('cancelButton').addEventListener('click', function() {
 
 
 
-window.onload = function() {
+window.onload = function () {
     console.log('Page loaded');
     var dateInput = document.getElementById('streamDate');
     var date = new Date(); // get the current date
