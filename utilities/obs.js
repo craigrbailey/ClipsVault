@@ -1,5 +1,6 @@
 import OBSWebSocket from 'obs-websocket-js';
 import { getOBSSettings } from '../db.js';
+import path from 'path';
 
 let obs;
 const obsConnection = { status: false };
@@ -59,6 +60,12 @@ function registerEventListeners() {
     console.log(event);
     if (event.outputActive == true) {
       console.log('Recroding Started')
+      const fileName = path.basename(event.outputPath);
+      console.log(fileName);
+    } else if (event.outputState == 'OBS_WEBSOCKET_OUTPUT_STOPPED') {
+      console.log('Recording Stopped');
+      const fileName = path.basename(event.outputPath);
+      setTimeout(console.log('Handling File'), 5000);
     }
   });
 

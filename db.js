@@ -472,8 +472,6 @@ async function InitializeSetup() {
       await collection.insertOne({ type: 'obs_settings', ip: 'none', port: 4444, password: 'password' });
       return result.insertedCount > 0;
     } else {
-      // If a document already exists, do nothing
-      console.log("Setup already completed.");
       return false;
     }
   } catch (error) {

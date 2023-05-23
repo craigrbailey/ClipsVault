@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, appendFile, readdir, stat, unlink } from 'fs';
 import { join } from 'path';
 import { CronJob } from 'cron';
+import { __dirname } from '../app.js'
 
 const logsDirectory = join(__dirname, 'logs');
 
@@ -68,3 +69,5 @@ new CronJob('0 0 * * *', () => {
     writeToLogFile('info', 'New log file created');
     removeOldLogFiles();
 }, null, true);
+
+// export { writeToLogFile };
