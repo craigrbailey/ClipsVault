@@ -1,5 +1,5 @@
 # Ignore specific file
-file.txt
+deepspeech-0.9.3-models.pbmm
 
 # Ignore files with a specific extension
 *.env
