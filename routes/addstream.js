@@ -3,7 +3,7 @@ import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { insertStream, insertVideo, addVideoToStream } from '../db.js';
+import { insertStream, insertVideo, addVideoToStream, removeStream } from '../db.js';
 import { getGameBoxArt } from '../utilities/twitch.js';
 import { createFolder } from '../utilities/system.js';
 
@@ -75,9 +75,7 @@ router.delete('/:streamId', async (req, res) => {
   try {
     const streamId = req.params.streamId;
     console.log(streamId);
-    // Call the function to remove the stream by its ID
-    // await removeStreamById(streamId);
-    // You can optionally send a success response back
+    removeStream(streamId);
     res.json({ success: true, message: 'Stream removed successfully' });
   } catch (error) {
     console.error('Error removing stream:', error);

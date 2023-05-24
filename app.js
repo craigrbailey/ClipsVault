@@ -81,19 +81,15 @@ const storage = multer.diskStorage({
   },
 });
 
-// Create Folders
 const upload = multer({ storage: storage });
-const uploadsDir = './uploads';
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);
-}
-const clipsDir = './clips';
-if (!fs.existsSync(clipsDir)) {
-  fs.mkdirSync(clipsDir);
-}
-const trashDir = './trash';
-if (!fs.existsSync(trashDir)) {
-  fs.mkdirSync(trashDir);
+
+// Create directories if they don't exist
+const folders = ['./uploads', './clips', './trash', './logs', './recordings'];
+for (const folder of folders) {
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder);
+    console.log(`Created directory: ${folder}`);
+  }
 }
 
 // Import Routes

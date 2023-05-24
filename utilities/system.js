@@ -4,12 +4,12 @@ import path from 'path';
 import moment from 'moment';
 import os from 'os';
 
-function getFileSize(filename) {
+async function getFileSize(filename) {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
   const fileSizeInKilobytes = fileSizeInBytes / 1024;
   const fileSizeInMegabytes = fileSizeInKilobytes / 1024;
-  return fileSizeInMegabytes;
+  return fileSizeInBytes;
 }
 
 function getVideoLength(filePath, callback) {
@@ -142,8 +142,15 @@ function moveFileToTrash(filePath) {
   return trashFilePath;
 }
 
+function getCurrentDate() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export {
   getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup,
-  formatDate, moveFileToTrash
+  formatDate, moveFileToTrash, getCurrentDate
 };

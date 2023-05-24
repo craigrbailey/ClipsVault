@@ -90,18 +90,25 @@ async function validateAccessToken() {
       'Client-Secret': process.env.TWITCH_CLIENT_SECRET
     }
   });
-
-  if (response.status === 401) {
+  if (response.message === 'undefined') {
+    console.log('Access token not found, reauthenticate with Twitch.');
+    return
+  }
+  if (response.ok) {
+    const data = await response.json();
+    console.log(`Access token validated, data: ${data}`)
+    storeTwitchAuthToken(data.access_token, data.refresh_token, data.expires_in)
+    return data;
+  } else if (response.status === 400) {
+    console.log('Access token not found, reauthenticate with Twitch.');
+    return
+  } else if (response.status === 401) {
     const refreshToken = await retrieveRefreshToken(); // Replace with your function to retrieve the refresh token
-    await refreshAccessToken(refreshToken); // Replace with your function to refresh the access token
+    await refreshAccessToken(); // Replace with your function to refresh the access token
 
     // Retry the function
     return validateAccessToken();
   }
-
-  const data = await response.json();
-  storeTwitchAuthToken(data.access_token, data.refresh_token, data.expires_in)
-  return data;
 }
 
 async function refreshAccessToken() {
@@ -122,7 +129,12 @@ async function refreshAccessToken() {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to refresh access token, status: ${response.status}`);
+      if (response.status === 400) {
+        // Refresh token expired, clear the refresh token from the database
+        await storeTwitchAuthToken(null, null, null);
+        console.log('Refresh token expired.');
+        throw new Error('Refresh token expired.');
+      }
     }
 
     const data = await response.json();
@@ -156,7 +168,7 @@ async function getUserCategory() {
     if (streamResponse.data.data.length === 0) {
       return null;
     }
-
+    console.log(streamResponse.data.data[0]);
     const stream = streamResponse.data.data[0];
     const gameId = stream.game_id;
 
@@ -177,5 +189,22 @@ async function getUserCategory() {
   }
 }
 
+async function twitchLive() {
+  let data = {
+    category: '',
+    img: '',
+  }
+  const category = await getUserCategory();
+  if (category === null) { 
+    data.category = 'Just Chatting';
+    data.img = './images/just-chatting.jpg';
+    return data;
+  } else {
+    data.category = category;
+    data.img = await getGameBoxArt(category);
+    return data;
+  }
+}
 
-export { getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory }
+export { getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory,
+  twitchLive }

@@ -3,7 +3,7 @@ import { join } from 'path';
 import { CronJob } from 'cron';
 import { __dirname } from '../app.js'
 
-const logsDirectory = join(__dirname, 'logs');
+const logsDirectory = './logs'
 
 // Create logs directory if it doesn't exist
 if (!existsSync(logsDirectory)) {
@@ -70,4 +70,4 @@ new CronJob('0 0 * * *', () => {
     removeOldLogFiles();
 }, null, true);
 
-// export { writeToLogFile };
+export { writeToLogFile };

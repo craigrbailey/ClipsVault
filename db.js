@@ -1,5 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
 
+let dbConnection;
+
 async function connectToMongoDB() {
   const uri = 'mongodb://192.168.1.31:27017'; // Replace with your MongoDB connection string
   const client = new MongoClient(uri);
@@ -10,6 +12,7 @@ async function connectToMongoDB() {
     const databaseName = 'data'; // Replace with your desired database name
     const db = client.db(databaseName);
 
+    dbConnection = db;
     return db;
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
@@ -285,9 +288,8 @@ async function getAllQueueItems() {
 }
 
 async function insertStream(date, category, backgroundImg, captions) {
-  const db = await connectToMongoDB();
   try {
-    const collection = db.collection("streams");
+    const collection = dbConnection.collection("streams");
     const document = {
       date: date,
       videos: [],
@@ -308,9 +310,8 @@ async function insertStream(date, category, backgroundImg, captions) {
 }
 
 async function addVideoToStream(streamId, videoId) {
-  const db = await connectToMongoDB();
   try {
-    const collection = db.collection('streams');
+    const collection = dbConnection.collection('streams');
 
     // Update the document: push videoId to the videos array and increment video_count by 1
     const result = await collection.updateOne(
@@ -323,6 +324,23 @@ async function addVideoToStream(streamId, videoId) {
   } catch (err) {
     console.log(err.stack);
   }
+}
+
+async function updateStreamData(streamId, newLength) {
+  const db = await connectToMongoDB();
+  try {
+    const streamsCollection = db.collection('streams');
+    const result = await streamsCollection.updateOne(
+      { _id: streamId },
+      { $set: { length: newLength } }
+    );
+
+    if (result.modifiedCount === 0) {
+      console.log('No matching document found');
+    }
+  } catch (error) {
+    console.error('Error updating stream data:', error);
+  } 
 }
 
 async function addTagToVideo(videoId, newTag) {
@@ -648,6 +666,42 @@ async function retrieveUserData() {
   }
 }
 
+async function removeStream(streamId) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('streams');
+    const objectId = new ObjectId(streamId);
+    const result = await collection.deleteMany({ _id: { $in: objectId } });
+    console.log(`Removed ${result.deletedCount} streams.`);
+    deleteFilesByStreamId(streamId);
+  } catch (error) {
+    console.error('Error removing documents:', error);
+  }
+}
+
+async function deleteFilesByStreamId(streamId) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos');
+
+    const videos = await collection.find({ stream_id: streamId }).toArray();
+
+    for (const video of videos) {
+      const filePath = video.file;
+      await collection.deleteOne({ _id: ObjectId(video._id) });
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        console.log(`Deleted file: ${filePath}`);
+      }
+    }
+
+    client.close();
+  } catch (error) {
+    console.error('Error deleting files:', error);
+  }
+}
+
+
 
 // Export the functions
 export {
@@ -655,5 +709,5 @@ export {
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, retrieveRefreshToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
-  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream
 }; 

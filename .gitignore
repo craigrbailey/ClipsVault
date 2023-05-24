@@ -5,9 +5,11 @@ deepspeech-0.9.3-models.pbmm
 *.env
 .vscode
 .pbmm
+.mp4
 
 # Ignore a directory and its contents
 clips
 trash
 uploads
 node_modules
+logs
