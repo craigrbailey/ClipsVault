@@ -117,7 +117,10 @@ function handleConfirm() {
   })
     .then(response => response.json())
     .then(data => {
-      console.log(data);
+      console.log(data.success);
+      if (data.success === true) {
+        window.location.href = '/'; // Redirect to '/'
+      }
       // Process the response as needed
     })
     .catch(error => {

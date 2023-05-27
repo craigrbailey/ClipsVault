@@ -14,6 +14,7 @@ import { main } from './utilities/gmail.js';
 import { validateAccessToken, getUserCategory } from './utilities/twitch.js';
 import { watcher } from './utilities/watcher.js'
 import { removeDocumentsWithMissingFiles } from './utilities/maintenance.js'
+import { getRefreshToken } from './db.js';
 
 config();
 

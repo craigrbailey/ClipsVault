@@ -1,4 +1,7 @@
 import { MongoClient, ObjectId } from 'mongodb';
+import fs from 'fs';
+import { promisify } from 'util';
+import { dirname } from 'path';
 
 let dbConnection;
 
@@ -157,21 +160,15 @@ async function getAccessToken() {
 }
 
 // Get Twitch refresh token
-async function retrieveRefreshToken() {
+async function getRefreshToken() {
   const db = await connectToMongoDB();
   try {
-    const collection = db.collection('tokens'); // Replace with your collection name
-    const query = { type: 'twitch' };
-    const projection = { refreshToken: 1 };
+    const collection = db.collection('tokens');
 
-    const tokenDocument = await collection.findOne(query, projection);
-    if (tokenDocument) {
-      const refreshToken = tokenDocument.refreshToken;
-      return refreshToken;
-    } else {
-      console.log('Refresh token not found.');
-      return null;
-    }
+    const document = await collection.findOne({ type: 'twitch' });
+    const refreshToken = document.refreshToken;
+
+    return refreshToken;
   } catch (error) {
     console.error('Error retrieving refresh token:', error);
     return null;
@@ -587,64 +584,6 @@ async function getVideosByStreamId(streamId) {
   }
 }
 
-async function removeStreamById(streamId) {
-  const db = await connectToMongoDB();
-  try {
-    const videosCollection = db.collection('videos');
-    const streamsCollection = db.collection('streams');
-    const trashCollection = db.collection('trash');
-
-    // Get the stream document
-    const stream = await streamsCollection.findOne({ _id: streamId });
-
-    if (!stream) {
-      console.log(`Stream with ID ${streamId} not found.`);
-      return;
-    }
-
-    const videoIds = stream.videos;
-
-    // Iterate through the videos
-    for (const videoId of videoIds) {
-      // Remove video document from videos collection
-      const video = await videosCollection.findOne({ _id: videoId });
-      if (video) {
-        // Move the file to the trash directory
-        const filePath = video.file;
-        const trashFilePath = moveFileToTrash(filePath);
-
-        // Insert a document in the trash collection
-        const trashDocument = {
-          stream_id: stream._id,
-          video_id: video._id,
-          file: trashFilePath,
-          date: video.date,
-          category: video.category,
-          size: video.size,
-          length: video.length,
-          favorite: video.favorite,
-          tags: video.tags,
-          captions: video.captions,
-          trashDate: new Date().toISOString()
-        };
-        await trashCollection.insertOne(trashDocument);
-
-        // Remove video document from videos collection
-        await videosCollection.deleteOne({ _id: videoId });
-        console.log(`Removed video with _id: ${videoId}`);
-      }
-    }
-
-    // Remove the stream document from streams collection
-    await streamsCollection.deleteOne({ _id: streamId });
-    console.log(`Removed stream with _id: ${streamId}`);
-
-    console.log('Processing complete.');
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
 async function retrieveUserData() {
   const db = await connectToMongoDB();
   try {
@@ -671,7 +610,7 @@ async function removeStream(streamId) {
   try {
     const collection = db.collection('streams');
     const objectId = new ObjectId(streamId);
-    const result = await collection.deleteMany({ _id: { $in: objectId } });
+    const result = await collection.deleteMany({ _id: { $in: [objectId] } });
     console.log(`Removed ${result.deletedCount} streams.`);
     deleteFilesByStreamId(streamId);
   } catch (error) {
@@ -681,25 +620,34 @@ async function removeStream(streamId) {
 
 async function deleteFilesByStreamId(streamId) {
   const db = await connectToMongoDB();
+  const deleteFile = promisify(fs.unlink);
+  const removeDirectory = promisify(fs.rmdir);
   try {
     const collection = db.collection('videos');
-
-    const videos = await collection.find({ stream_id: streamId }).toArray();
+    const objectId = new ObjectId(streamId);
+    const videos = await collection.find({ stream_id: objectId }).toArray();
 
     for (const video of videos) {
       const filePath = video.file;
-      await collection.deleteOne({ _id: ObjectId(video._id) });
+      const videoObjectId = new ObjectId(video._id);
+      await collection.deleteOne({ _id: videoObjectId });
       if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
+        await deleteFile(filePath);
         console.log(`Deleted file: ${filePath}`);
+        
+        const directoryPath = dirname(filePath);
+        const filesInDirectory = fs.readdirSync(directoryPath);
+        if (filesInDirectory.length === 0) {
+          await removeDirectory(directoryPath);
+          console.log(`Removed empty directory: ${directoryPath}`);
+        }
       }
     }
-
-    client.close();
   } catch (error) {
     console.error('Error deleting files:', error);
   }
 }
+
 
 
 
@@ -708,6 +656,6 @@ export {
   connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getAccessToken,
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
-  completeSetup, getGoogleAccessToken, retrieveRefreshToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
-  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream
+  completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken
 }; 

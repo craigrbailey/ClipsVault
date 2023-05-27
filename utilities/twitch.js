@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAccessToken, storeTwitchAuthToken, retrieveRefreshToken, retrieveUserData } from '../db.js';
+import { getAccessToken, storeTwitchAuthToken, getRefreshToken, retrieveUserData } from '../db.js';
 
 async function getGameBoxArt(gameName) {
   const width = 272;
@@ -59,14 +59,6 @@ async function searchGameCategories(query) {
       headers: config.headers
     });
 
-    if (response.status === 401) {
-      // Token expired or invalid, request a new refresh token
-      await refreshAccessToken(); // Replace with your function to refresh the access token
-
-      // Retry the function
-      return searchGameCategories(query);
-    }
-
     const data = response.data;
     const categories = data.data.map(category => {
       return {
@@ -77,6 +69,15 @@ async function searchGameCategories(query) {
     return categories;
   } catch (error) {
     console.error('Error searching game categories:', error);
+
+    if (error.response && error.response.status === 401) {
+      // Token expired or invalid, refresh the access token
+      await refreshAccessToken(); // Replace with your function to refresh the access token
+
+      // Retry the function with the updated access token
+      return searchGameCategories(query);
+    }
+
     throw error; // Rethrow the error to handle it at a higher level
   }
 }
@@ -103,7 +104,7 @@ async function validateAccessToken() {
     console.log('Access token not found, reauthenticate with Twitch.');
     return
   } else if (response.status === 401) {
-    const refreshToken = await retrieveRefreshToken(); // Replace with your function to retrieve the refresh token
+    const refreshToken = await getRefreshToken(); // Replace with your function to retrieve the refresh token
     await refreshAccessToken(); // Replace with your function to refresh the access token
 
     // Retry the function
@@ -113,7 +114,8 @@ async function validateAccessToken() {
 
 async function refreshAccessToken() {
   try {
-    const refreshToken = await retrieveRefreshToken();
+    const refreshToken = await getRefreshToken();
+    console.log(`Refresh token: ${refreshToken}`);
     const TWITCH_API_URL = 'https://id.twitch.tv/oauth2';
     const response = await fetch(`${TWITCH_API_URL}/token`, {
       method: 'POST',

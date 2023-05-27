@@ -3,10 +3,9 @@ import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { insertStream, insertVideo, addVideoToStream, removeStream } from '../db.js';
-import { getGameBoxArt } from '../utilities/twitch.js';
+import { insertStream, insertVideo, addVideoToStream, removeStream, getRefreshToken } from '../db.js';
+import { getGameBoxArt, refreshAccessToken } from '../utilities/twitch.js';
 import { createFolder } from '../utilities/system.js';
-
 
 const router = Router();
 
