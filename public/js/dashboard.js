@@ -104,68 +104,6 @@ function removeNotification(notificationId) {
   }
 }
 
-async function getAndDisplayStreams() {
-  const container = document.getElementById("latest-streams-container");
-  const response = await fetch("/api/getstreams", {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ count: 5 }) // you want to retrieve 5 streams
-  });
-
-  if (!response.ok) {
-    console.log("Error fetching streams: ", response.status);
-    return;
-  }
-
-  const streams = await response.json();
-
-  // Select the add-stream div
-  const addStreamDiv = document.getElementById('add-stream');
-  let count = 0;
-  // Iterate over streams and create HTML elements
-  for (const stream of streams) {
-    const streamElement = document.createElement("div");
-    streamElement.className = "stream";
-    streamElement.onclick = function () { window.location=`/stream?streamId=${stream._id}` };
-
-    const imgInfoContainer = document.createElement("div");
-    imgInfoContainer.className = "img-info-container";
-
-    const image = document.createElement("img");
-    image.src = stream.background_img;
-    image.alt = `${stream.category} thumbnail`;
-
-    const streamInfoContainer = document.createElement("div");
-    streamInfoContainer.className = "stream-info-container";
-
-    const dateSpan = document.createElement("span");
-    dateSpan.textContent = stream.date;
-
-    const lengthSpan = document.createElement("span");
-    lengthSpan.textContent = convertSecondsToHMS(stream.length);
-
-    streamInfoContainer.appendChild(dateSpan);
-    streamInfoContainer.appendChild(lengthSpan);
-
-    imgInfoContainer.appendChild(image);
-    imgInfoContainer.appendChild(streamInfoContainer);
-
-    const clipsNumber = document.createElement("span");
-    clipsNumber.className = "clips-number";
-    clipsNumber.textContent = stream.video_count.toString();
-  
-    streamElement.style.animationDelay = `0.2s`;
-    streamElement.appendChild(imgInfoContainer);
-    streamElement.appendChild(clipsNumber);
-
-    // Insert the stream element after the addStream div
-    addStreamDiv.parentNode.insertBefore(streamElement, addStreamDiv.nextSibling);
-    count++;
-  }
-}
-
 deleteNotificationButtons.forEach((button) => {
   console.log('Clicked');
   button.addEventListener('click', (event) => {
@@ -182,7 +120,6 @@ function convertSecondsToHMS(seconds) {
 }
 
 window.addEventListener('load', () => {
-  getAndDisplayStreams();
   console.log('Loaded');
 });
 

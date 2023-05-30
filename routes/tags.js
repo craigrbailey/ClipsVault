@@ -1,27 +1,37 @@
 import { Router } from 'express';
-import cors from 'cors';
 import { addTagToStream, addTagToVideo, removeTagFromStream } from '../db.js';
+import { serverKey } from '../utilities/api-key.js';
 
 const router = Router();
-
-const corsOptions = {
-    origin: 'http://localhost',
-};
-
-router.use(cors(corsOptions));
+let clipTags = [];
+export { clipTags };
 
 router.post('/', async (req, res) => {
-    console.log(req.body)
+    const requestApiKey = req.headers['x-api-key'];
+
+    if (requestApiKey !== serverKey) {
+        console.log('Unauthorized');
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
     try {
         const { tagType, id, newTag } = req.body;
+        console.log(`Tag type: ${tagType}, ID: ${id}, new tag: ${newTag}`)
 
         if (!tagType || !id || !newTag) {
             return res.status(400).json({ error: 'Invalid request body' });
         }
 
         if (tagType === 'video') {
-            addTagToVideo(id, newTag);
-            return res.json({ success: true, message: 'Tag added successfully' });
+            if (id === null) {
+                clipTags = newTag;
+                return res.status(200).json({ success: true });
+            } else if (!tagType || !id || !newTag) {
+                return res.status(400).json({ error: 'Invalid request body' });
+            } else {
+                addTagToVideo(id, newTag);
+                return res.json({ success: true, message: 'Tag added successfully' });
+            }
         } else if (tagType === 'stream') {
             addTagToStream(id, newTag);
             return res.status(200).json({ success: true });
@@ -55,4 +65,4 @@ router.delete('/', async (req, res) => {
     }
 });
 
-export default router;
+export { router as TagRouter };

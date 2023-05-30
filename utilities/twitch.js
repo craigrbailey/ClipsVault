@@ -72,7 +72,7 @@ async function searchGameCategories(query) {
 
     if (error.response && error.response.status === 401) {
       // Token expired or invalid, refresh the access token
-      await refreshAccessToken(); // Replace with your function to refresh the access token
+      await refreshAccessToken();
 
       // Retry the function with the updated access token
       return searchGameCategories(query);
@@ -186,8 +186,13 @@ async function getUserCategory() {
     const category = game.name;
     return category;
   } catch (error) {
-    console.log('Error retrieving user category:', error.response.data);
-    throw new Error('Failed to retrieve user category.');
+    if (error.response && error.response.status === 401) {
+      // Token expired or invalid, refresh the access token
+      await refreshAccessToken();
+
+      // Retry the function with the updated access token
+      return getUserCategory();
+    }
   }
 }
 

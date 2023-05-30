@@ -50,6 +50,7 @@ async function initdb() {
   createCollection('userdata');
   createCollection('queue');
   createCollection('notifications');
+  createCollection('clips');
   // createCollection('settings');
   createCollection('trash');
   InitializeSetup();
@@ -531,17 +532,6 @@ async function getGoogleAccessToken() {
   }
 };
 
-async function getAllStreams() {
-  const db = await connectToMongoDB();
-  try {
-    const collection = db.collection('streams');
-    return await collection.find({}).toArray();
-  } catch (err) {
-    console.error(err.stack);
-    return [];
-  }
-}
-
 async function getStreamById(streamId) {
   const db = await connectToMongoDB();
   try {
@@ -564,6 +554,18 @@ async function getLatestStreams(count) {
     // Return the streams in reversed order
     return streams.reverse();
   } catch (err) {
+    console.error(err.stack);
+    return [];
+  }
+}
+
+async function getAllStreams() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('streams');
+    const documents = await collection.find().sort({ _id: -1 }).toArray();
+    return documents;
+  } catch (err) { 
     console.error(err.stack);
     return [];
   }
@@ -648,6 +650,23 @@ async function deleteFilesByStreamId(streamId) {
   }
 }
 
+async function insertClip(length, start, tags, category, categoryImg) {
+  const db = await connectToMongoDB();
+  try {
+    const clipsCollection = db.collection('clips');
+    const clipDocument = {
+      length: length,
+      start: start,
+      tags: tags,
+      category: category,
+      categoryImg: categoryImg,
+    };
+    const result = await clipsCollection.insertOne(clipDocument);
+  } catch (error) {
+    console.log('Error inserting document:', error);
+  }
+}
+
 
 
 
@@ -657,5 +676,5 @@ export {
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
-  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip
 }; 

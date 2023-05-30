@@ -5,6 +5,7 @@ import { getCurrentDate, createFolder, getFileSize } from './system.js';
 import { twitchLive } from './twitch.js';
 import { writeToLogFile } from './logging.js';
 import fs from 'fs';
+import { createClips } from './clip-creator.js';
 
 let obs;
 const obsConnection = { status: false };
@@ -15,6 +16,7 @@ let videos = [];
 let length = 0;
 let streamFolder;
 let entireStream;
+let clipFile;
 
 async function connectToOBS() {
   obs = new OBSWebSocket();
@@ -69,7 +71,8 @@ function registerEventListeners() {
       startRecording(fileName);
     } else if (event.outputState == 'OBS_WEBSOCKET_OUTPUT_STOPPED') {
       const fileName = path.basename(event.outputPath);
-      setTimeout(console.log(stopRecording()), 5000);
+      setTimeout(stopRecording(),
+      5000);
     }
   });
 
@@ -78,7 +81,7 @@ function registerEventListeners() {
     console.log(event);
     const fileName = path.basename(event.savedReplayPath);
     const size = await getFileSize(`${process.cwd()}/recordings/${fileName}`);
-    insertVideo(streamId, `${streamFolder}\\${event.name}`, livedata.date, livedata.category, size, event.duration, '' )
+    insertVideo(streamId, `${streamFolder}\\${fileName}`, livedata.date, livedata.category, size, event.duration, '')
   });
 
   obs.on('StreamStateChanged', async (event) => {
@@ -97,6 +100,7 @@ async function startRecording(filename, count = 0) {
   }
 
   if (live !== false) {
+    console.log(`Recording Started: ${await filename}`)
     streamFolder = await createFolder(livedata.date);
     entireStream = filename;
     return
@@ -107,43 +111,41 @@ async function startRecording(filename, count = 0) {
   }, 1000);
 }
 
-async function stopRecording () {
-  console.log('Recording Stopped');
-  videos.push(`${streamFolder}\\${entireStream}`);
-  const size = await getFileSize(`${process.cwd()}/recordings/${entireStream}`);
-  insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, size, length, '' )
-  const oldPath = path.join(process.cwd(), 'recordings', entireStream);
-  const newPath = path.join(streamFolder, entireStream);
-  fs.rename(oldPath, newPath, (err) => {
-    if (err) {
-      console.error(err);
-    }
-  });
+async function stopRecording() {
+  const size = await getFileSize(`${process.cwd()}\\recordings\\${entireStream}`);
+  await createClips(`${process.cwd()}\\recordings\\${entireStream}`);
+  // insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, size, length, '')
+  // const oldPath = path.join('recordings', entireStream);
+  // const newPath = path.join(streamFolder, entireStream);
+  // fs.rename(oldPath, newPath, (err) => {
+  //   if (err) {
+  //     console.error(err);
+  //   }
+  // });
   entireStream = '';
   streamFolder = '';
 }
 
-async function endStream () {
-  console.log('Stream Stopped');
+async function endStream() {
+  writeToLogFile('info', 'Stream Ended');
   live = false;
   await updateStreamData(streamId, length);
 }
 
 async function startStream() {
-  writeToLogFile('info', 'Stream Started');
-  const twitchdata = await twitchLive();
-  console.log(`Stream Started: ${twitchdata}`);
   live = true;
+  writeToLogFile('info', 'Stream Started');
+  startTimer();
+  const twitchdata = await twitchLive();
   livedata = {
     date: getCurrentDate(),
     category: twitchdata.category,
     backgroundimg: twitchdata.img,
     captions: 'none'
   }
-  streamId = await insertStream(livedata. date, livedata.category, livedata.backgroundimg, livedata.captions);
+  streamId = await insertStream(livedata.date, livedata.category, livedata.backgroundimg, livedata.captions);
   videos = [];
   length = 0;
-  startTimer();
 }
 
 function startTimer() {
@@ -156,4 +158,4 @@ function startTimer() {
   }, 1000); // Check every second
 }
 
-export { connectToOBS, obsConnection };
+export { connectToOBS, obsConnection, entireStream, clipFile, length };

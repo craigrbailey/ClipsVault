@@ -2,14 +2,16 @@ var video = document.querySelector('.video');
 const urlParams = new URLSearchParams(window.location.search);
 const streamId = urlParams.get('streamId');
 const deleteStreamButton = document.getElementById('delete-stream');
+const apiKey = '<%= apiKey %>';
+console.log(`API Key: ${apiKey}`);
 
-video.addEventListener('mouseenter', function () {
-  this.setAttribute('controls', 'controls');
-});
+// video.addEventListener('mouseenter', function () {
+//   this.setAttribute('controls', 'controls');
+// });
 
-video.addEventListener('mouseleave', function () {
-  this.removeAttribute('controls');
-});
+// video.addEventListener('mouseleave', function () {
+//   this.removeAttribute('controls');
+// });
 
 function addTagToStream(event) {
   event.preventDefault();
@@ -26,7 +28,8 @@ function addTagToStream(event) {
     fetch('/api/tags', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
       },
       body: JSON.stringify({
         tagType: tagType,

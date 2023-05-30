@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     res.redirect('/');
   } catch (error) {
     console.error(error.message);
-    res.status(500).send('Error retrieving access token from Twitch.');
+    res.status(500).send('Error retrieving access token from Twitch.' + error.message);
   }
   return router;
 });

@@ -13,3 +13,5 @@ trash
 uploads
 node_modules
 logs
+ffmpeg
+recordings

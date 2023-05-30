@@ -67,6 +67,8 @@ app.use(
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export { __dirname };
 app.use(express.static(path.join(__dirname, './public')));
+app.use('/clips', express.static(path.join(__dirname, 'clips')));
+app.use('/recordings', express.static(path.join(__dirname, 'recordings')));
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
@@ -111,7 +113,8 @@ import googleAuthRouter from './routes/googleauth.js';
 import categorySearchRouter from './routes/categorysearch.js';
 import addStreamRouter from './routes/addstream.js';
 import getStreamsRouter from './routes/getstreams.js';
-import TagRouter from './routes/tags.js';
+import { TagRouter } from './routes/tags.js';
+import { ClipRouter } from './routes/clip.js';
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -133,9 +136,8 @@ app.use('/api/categorysearch', categorySearchRouter);
 app.use('/api/stream', addStreamRouter);
 app.use('/api/getstreams', getStreamsRouter);
 app.use('/api/tags', TagRouter);
+app.use('/api/clip', ClipRouter);
 
-
-let uploadStatus = null;
 
 // Connect to OBS
 const obs = await connectToOBS();

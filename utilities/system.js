@@ -34,7 +34,7 @@ async function createFolder(dateString) {
   const dayOfWeek = momentObj.format('dddd');
 
   // Create the directories if they don't exist
-  const yearFolder = path.join(process.cwd(), 'clips', year.toString());
+  const yearFolder = path.join('clips', year.toString());
   const monthFolder = path.join(yearFolder, month);
   const dayFolder = path.join(monthFolder, `${day} - ${dayOfWeek}`);
 
