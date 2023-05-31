@@ -11,6 +11,7 @@ async function createClips(stream) {
     try {
         // Iterate through the clips collection
         const cursor = clipsCollection.find();
+        const count = 0;
         while (await cursor.hasNext()) {
             const clip = await cursor.next();
 
@@ -29,7 +30,7 @@ async function createClips(stream) {
             // const duration = length; // Change as desired
 
             // Create the clip using ffmpeg
-            const timestamp = moment().format('YYYY-MM-DD HH-mm-ss');
+            const timestamp = moment().format('YYYY-MM-DD HH-mm-ss-SSS');
             const outputFilePath = `./recordings/Clip-${timestamp}.mp4`; // Replace with the desired output file path and name
 
             ffmpeg(inputFilePath)

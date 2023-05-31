@@ -3,18 +3,14 @@ import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
 import fs from 'fs';
 import { config } from 'dotenv';
-import { join, dirname } from 'path';
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { initdb, addNotification } from './db.js';
 import { connectToOBS, obsConnection } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import multer from 'multer';
-import { main } from './utilities/gmail.js';
-import { validateAccessToken, getUserCategory } from './utilities/twitch.js';
 import { watcher } from './utilities/watcher.js'
-import { removeDocumentsWithMissingFiles } from './utilities/maintenance.js'
-import { getRefreshToken } from './db.js';
 
 config();
 
@@ -48,7 +44,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-  uri: 'mongodb://192.168.1.31:27017/data', // Replace with your MongoDB connection URI
+  uri: 'mongodb://192.168.1.31:27017/data',
   collection: 'sessions',
 });
 
@@ -57,7 +53,7 @@ store.on('error', (error) => {
 });
 app.use(
   session({
-    secret: 'your-secret-key', // Replace with your desired secret key
+    secret: 'your-secret-key', 
     resave: false,
     saveUninitialized: false,
     store: store,

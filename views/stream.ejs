@@ -16,7 +16,6 @@
 
         <div class="items">
             <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
-            <li><i class="fa-solid fa-tv"></i><a href="#">Streams</a></li>
             <li><i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a></li>
             <li><i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a></li>
         </div>
@@ -71,48 +70,36 @@
             </div>
         </div>
 
-          <div class="stream-container">
-            <img src="<%= streamData.background_img %>" alt="">
-            <div>
-              <div class="stream-info">
-                <h2 id="stream-date"><%= date %></h2>
-                <h2 id="stream-category"><%= streamData.category %></h2>
-                <span id="stream-duration"><i class="fa-regular fa-clock"></i>4h 26m 3s</span>
-              </div>
-              <div>
-                <div id="video-tags">
-                  <div id="tag-list">
-                    <% streamData.tags.forEach(function(tag) { %>
-                            <span><%= tag %><i class="fa-solid fa-circle-xmark"></i></span>
-                          <% }); %>
-                  </div>
-                  <form id="tag-form">
-                    <input type="text" id="tag-input" placeholder="Add a tag">
-                  </form>
+          <div class="stream-info-container" style="background-image: url(<%= streamData.background_img %>);">
+            <div class="stream-info">
+              <span>Date:</span>
+              <input class="my-input" type="text" disabled placeholder="<%= streamData.date %>">
+              <span>Category:</span>
+              <h1><%= streamData.category %></h1>
+              <span>Duration:</span>
+              <h1><%= streamData.length %></h1>
+              <div class="stream-tags">
+                <h3>Tags</h3>
+                <div class="tag-list" id="tag-list">
+                  <% for (let i = 0; i < streamData.tags.length; i++) { %>
+                    <span><%= streamData.tags[i] %><i class="fa-solid fa-circle-xmark"></i></span>
+                  <% } %>
                 </div>
+                <form class="tag-form">
+                  <input type="text" id="tag-input" placeholder="Add a tag">
+                  <button type="submit" id="tag-submit">Add</button>
+                </form>
               </div>
-              <div class="action-buttons">
-                <button title="Download">
-                  <i class="fa-solid fa-download"></i>
-                </button>
-                <button id="delete-stream" title="Detete The Stream">
-                  <i class="fa-sharp fa-solid fa-trash"></i>
-                </button>
-                <button id="save-stream-to-cloud" title="Save Stream To Cloud">
-                  <i class="fa-solid fa-cloud"></i>
-                </button>
-                <button id="add-clip" title="Add A Clip">
-                  <i class="fa-sharp fa-solid fa-plus"></i>
-                </button>
+              <div class="stream-actions">
+                <button id="delete-stream">Delete Stream</button>
               </div>
-            </div>
           </div>     
           <div class="clips-interface">
-            <div class="clip-card">
+            <!-- <div class="clip-card">
               <% for (let i = 0; i < videoData.length; i++) { %>
                 <video src="<%= videoData[i].file %>" controls></video>
               <% } %>        
-            </div>
+            </div> -->
           </div>       
 
     <script src="/js/base.js"></script>

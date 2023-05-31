@@ -1,135 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Clips Vault</title>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="/css/base.css">
-    <link rel="stylesheet" href="/css/dashboard.css">
-    <link rel="stylesheet" href="/css/upload.css">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.10.1/css/all.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/upload.css" />
+  </head>
+  <body>
     <section id="menu">
-        <h1>Clips Vault</h1>
+      <h1>Clips Vault</h1>
 
-        <div class="items">
-            <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
-            <li><i class="fa-solid fa-tv"></i><a href="/streams">Streams</a></li>
-            <li><i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a></li>
-            <li><i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a></li>
+      <div class="items">
+        <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
+        <li>
+          <i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a>
+        </li>
+        <li>
+          <i class="fa-solid fa-list-ol"></i
+          ><a href="#">Queue<span class="queue-notification"></span></a>
+        </li>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar-container">
+          <div class="progress-bar"></div>
         </div>
-        <div class="progress-container">
-            <div class="progress-bar-container">
-                <div class="progress-bar"></div>
-            </div>
-            <div class="progress-container-details">
-                <span id="percent"></span>
-                <span id="storage"></span>
-            </div>
+        <div class="progress-container-details">
+          <span id="percent"></span>
+          <span id="storage"></span>
         </div>
+      </div>
     </section>
 
     <div class="confirmation-window">
-        <h2>CONFIRM</h2>
-        <span>Are you sure</span>
-        <div>
-            <button id="cancel-btn">Confirm</button>
-            <button id="confirm-btn">Cancel</button>
-        </div>
+      <h2>CONFIRM</h2>
+      <span>Are you sure</span>
+      <div>
+        <button id="cancel-btn">Confirm</button>
+        <button id="confirm-btn">Cancel</button>
+      </div>
     </div>
 
     <div class="upload-container" id="new-stream-form">
-        <div class="card mt-5">
-            <div class="card-body">
-                <h2 class="text-center">Add A Stream</h2>
-                <form>
-                    <div class="form-group">
-                        <label for="streamDate">Stream Date</label>
-                        <input type="date" id="streamDate" class="form-control" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="streamCategory">Stream Category</label>
-                        <input type="text" id="streamCategory" class="form-control" required>
-                        <div id="suggestions"></div>
-                    </div>
-
-                    <div class="form-group upload-area" onclick="document.getElementById('fileUpload').click()">
-                        <label>Upload Files (Click or Drag and Drop)</label>
-                        <input type="file" id="fileUpload" name="fileUpload" multiple required style="display: none" onchange="displayFiles(this)">
-                    </div>
-
-                    <button type="reset" id="cancelButton" class="btn btn-danger">Cancel</button>
-                    <button type="submit" class="btn btn-success">Submit</button>
-                    <div id="fileList" class="mt-3">
-                        <p>Files</p>
-                    </div>
-                </form>
+      <div class="card mt-5">
+        <div class="card-body">
+          <h2 class="text-center">Add A Stream</h2>
+          <form>
+            <div class="form-group">
+              <label for="streamDate">Stream Date</label>
+              <input
+                type="date"
+                id="streamDate"
+                class="form-control"
+                required
+              />
             </div>
+
+            <div class="form-group">
+              <label for="streamCategory">Stream Category</label>
+              <input
+                type="text"
+                id="streamCategory"
+                class="form-control"
+                required
+              />
+              <div id="suggestions"></div>
+            </div>
+
+            <div
+              class="form-group upload-area"
+              onclick="document.getElementById('fileUpload').click()"
+            >
+              <label>Upload Files (Click or Drag and Drop)</label>
+              <input
+                type="file"
+                id="fileUpload"
+                name="fileUpload"
+                multiple
+                required
+                style="display: none"
+                onchange="displayFiles(this)"
+              />
+            </div>
+
+            <button type="reset" id="cancelButton" class="btn btn-danger">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-success">Submit</button>
+            <div id="fileList" class="mt-3">
+              <p>Files</p>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
 
     <div class="top-notifications">
-        <i class="fa-solid fa-bell"></i>
-        <span id="top-notification"></span>
+      <i class="fa-solid fa-bell"></i>
+      <span id="top-notification"></span>
     </div>
 
     <div id="interface">
-        <div class="navigation">
-            <div class="notification-container">
-                <div class="notification-bell">
-                  <i class="fa fa-bell"></i>
-                  <span class="notification-count"></span>
-                </div>
-                <div class="notification-dropdown">
-                  <ul class="notification-list">
-                  </ul>
-                </div>
-              </div>              
-            <div class="profile-settings">
-              <% if (userData) { %>
-                <img src="<%= userData.profile_image_url %>" alt="">
-              <% } else { %>
-                <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg">
-              <% } %>
-                <div class="submenu">
-                    <a href="#">Sign Out</a>
-                    <a href="/settings">Settings</a>
-                </div>
-            </div>
+      <div class="navigation">
+        <div class="notification-container">
+          <div class="notification-bell">
+            <i class="fa fa-bell"></i>
+            <span class="notification-count"></span>
+          </div>
+          <div class="notification-dropdown">
+            <ul class="notification-list"></ul>
+          </div>
         </div>
-
-
-        <div class="main-interface">
-
-            <div class="latest-container">
-                <h3>Latest Streams</h3>
-                <div class="latest-streams-container">
-                    <div class="stream" id="add-stream">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Add A Stream</span>
-                    </div>
-                    <% for (let i = 0; i < streams.length; i++) { %>
-                        <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
-                          <div class="stream-img-container">
-                            <img src="<%= streams[i].background_img %>" alt="">
-                            <span id="clips-amount"><%= streams[i].video_count %></span>
-                            <span id="stream-duration"><%= streams[i].length %></span>
-                          </div>
-                          <span id="game-title"><%= streams[i].category %></span>
-                          <span id="stream-date"><%= streams[i].date %></span>
-                        </a>
-                      <% } %>                      
-                </div>
-            </div>
+        <div class="profile-settings">
+          <% if (userData) { %>
+          <img src="<%= userData.profile_image_url %>" alt="" />
+          <% } else { %>
+          <img
+            src="/images/blank_logo.jpg"
+            alt="../public/images/blank_logo.jpg"
+          />
+          <% } %>
+          <div class="submenu">
+            <a href="#">Sign Out</a>
+            <a href="/settings">Settings</a>
+          </div>
         </div>
+      </div>
+
+      <div class="main-interface">
+        <div class="latest-container">
+          <h3>Latest Streams</h3>
+          <div class="latest-streams-container">
+            <div class="stream" id="add-stream">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add A Stream</span>
+            </div>
+            <% for (let i = 0; i < streams.length; i++) { %>
+            <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
+              <div class="stream-img-container">
+                <img src="<%= streams[i].background_img %>" alt="" />
+                <span id="clips-amount"><%= streams[i].video_count %></span>
+                <span id="stream-duration"><%= streams[i].length %></span>
+              </div>
+              <span id="game-title"><%= streams[i].category %></span>
+              <span id="stream-date"><%= streams[i].date %></span>
+            </a>
+            <% } %>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="/js/base.js"></script>
     <script src="/js/dashboard.js"></script>
     <script src="/js/upload-form.js"></script>
-</body>
+  </body>
 </html>

@@ -1,271 +1,116 @@
-.stream-container {
-    display: flex;
-    flex-direction: row;
-    align-items: left;
-    padding: 10px;
-    height: 50vh;
-    width: 100%;
-    justify-content: center;
+.stream-info-container {
     position: fixed;
-    top: 5em;
-    left: 20vh;
-    margin-left: -1em;
-    z-index: 2;
-    background-color: black;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 80vh;
+    height: 40vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 75px;
+}
+
+.stream-info-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://static-cdn.jtvnw.net/ttv-boxart/512710-1360x1900.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(2px);
+}
+
+.stream-info-container::before {
+    backdrop-filter: blur(2px);
 }
 
 .stream-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0;
-}
-
-.stream-info h2 {
-    margin: -0.15em 0;
-    padding: 0;
-}
-
-#stream-date {
-    color: #e3e3e3;
-    font-size: 64px;
-}
-
-#stream-duration {
-    color: #737373;
-    font-size: 14px;
-    background-color: #5cff3c;
-    border-radius: 5px;
-    color: black;
-    padding: 5px;
-    margin-bottom: 2px;
-}
-
-#stream-duration i {
-    font-size: 14px;
-    margin-right: 5px;
-    margin-top: 2px;
-}
-
-#stream-category {
-    color: #737373;
-    font-size: 48px;
-}
-
-.stream-container > div {
-    margin-left: 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: space-between;
-}
-
-.stream-container img {
-    border-radius: 5px;
-}
-
-#video-tags {
-    width: 100%;
-    font-family: Arial, sans-serif;
-}
-
-#tagdescription {
-    color: #737373;
-    font-size: 14px;
-}
-
-#video-tags h2 {
-    margin: auto;
-}
-
-#tag-list {
-    width: 100%;
-    max-width: 50vh;
-    min-width: 50vh;
-    max-height: 6vh;
-    min-height: 6vh;
-    overflow-y: scroll;
-    height: 6em;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 5px;
-}
-
-#tag-list::-webkit-scrollbar {
-    width: 10px;
-}
-
-#tag-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-#tag-list::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 20px;
-}
-
-#tag-list::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-#tag-list span {
-    display: inline-block;
-    background-color: #3c5cff;
-    color: #ffffff;
-    padding: 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border-radius: 3px;
-    font-size: 14px;
-}
-
-#tag-list span i {
-    margin-left: 5px;
-    margin-top: 2px;
-    cursor: pointer;
-    color: #fff;
-}
-
-#tag-list span i:hover {
-    color: #000000;
-}
-
-#tag-list span:hover {
-    background-color: #2247ff;
-}
-
-#tag-form {
-    width: 100%;
-}
-
-#tag-form input[type="text"] {
-    width: 100%;
-    padding: 5px;
-    border: none;
-    border-bottom: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 14px;
-    background-color: transparent;
-    color: #e2e2e2;
-}
-
-.action-buttons {
-    width: 100%;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.action-buttons button {
-    background-color: #343434;
-    color: #ffffff;
-    border: none;
-    padding: 5px 10px;
-    margin-right: 5px;
-    margin-bottom: 5px;
-    border-radius: 3px;
-    font-size: 26px;
-    cursor: pointer;
-    width: 100px;
-}
-
-.action-buttons button:hover {
-    background-color: #ff3c5c;
-}
-
-
-
-.clips-interface {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    width: 100%;
-    margin-top: 34em;
-    padding: 10px;
-    border-radius: 5px;
-    gap: 10px;
-    position: relative;
-}
-
-.clip-card {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    /* background-color: #343434; */
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-}
-
-.clip-card video {
-    width: 250px;
-    max-width: 50vh;
-    min-width: 50vh;
-    max-height: 60vh;
-    min-height: 6vh;
-    overflow-y: scroll;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    padding: 5px;
-}
-
-
-.card {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    perspective: 1000px;
-  }
-  
-  .front, .back {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    backface-visibility: hidden;
-    transition: transform 0.6s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
-  
-  .front {
-    z-index: 2;
-  }
-  
-  .back {
-    transform: rotateY(180deg);
-    background-color: #000000;
-  }
-  
-  .card:hover .front {
-    transform: rotateY(180deg);
-  }
-  
-  .card:hover .back {
-    transform: rotateY(0);
-  }
-  
-  .info-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-  
-  .button-group {
-    position: absolute;
-    right: 10px;
     display: flex;
     flex-direction: column;
-  }
-  
-  .download-button, .favorite-button, .delete-button {
+    justify-content: left;
+    align-items: left;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    z-index: 1;
+}
+
+.my-input {
+    color: white;
+    height: 30px;
     margin-bottom: 10px;
-  }
-  
+    border-radius: 5px;
+    border: none;
+    font-size: 24px;
+    outline: none;
+    background-color: transparent;
+}
+
+/* Additional styles for the other elements within stream-info-container */
+.stream-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.stream-info .stream-details {
+    margin-bottom: 10px;
+}
+
+.stream-info .stream-tags {
+    margin-bottom: 10px;
+}
+
+.stream-info .stream-actions {
+    margin-top: 20px;
+}
+
+.stream-info .stream-tags h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.stream-info .tag-list span {
+    display: inline-block;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    background-color: #3755ff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.stream-info .tag-list span i {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.stream-info .tag-form {
+    margin-top: 10px;
+}
+
+.stream-info .tag-form input[type="text"],
+.stream-info .tag-form button {
+    height: 30px;
+    margin-right: 5px;
+}
+
+.stream-info #delete-stream {
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+}

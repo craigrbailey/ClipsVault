@@ -1,24 +1,27 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import fs from 'fs';
+import fs, { write } from 'fs';
 import { promisify } from 'util';
 import { dirname } from 'path';
+import { writeToLogFile } from './utilities/logging.js';
+import { generateApiKey } from './utilities/api-key.js';
 
-let dbConnection;
+
+const uri = 'mongodb://192.168.1.31:27017';
+const client = new MongoClient(uri);
+let dbConnection = null;
 
 async function connectToMongoDB() {
-  const uri = 'mongodb://192.168.1.31:27017'; // Replace with your MongoDB connection string
-  const client = new MongoClient(uri);
-
   try {
-    await client.connect();
+    if (!dbConnection) {
+      await client.connect();
+      const databaseName = 'data';
+      const db = client.db(databaseName);
+      dbConnection = db;
+    }
 
-    const databaseName = 'data'; // Replace with your desired database name
-    const db = client.db(databaseName);
-
-    dbConnection = db;
-    return db;
+    return dbConnection;
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    writeToLogFile('error', `Error connecting to MongoDB: ${error}`);
     throw error;
   }
 }
@@ -33,10 +36,10 @@ async function createCollection(collectionName) {
     );
     if (!existingCollection) {
       await db.createCollection(collectionName);
-      console.log(`Created collection: ${collectionName}`);
+      writeToLogFile(`Created collection: ${collectionName}`);
     }
   } catch (error) {
-    console.error('Error creating collection:', error);
+    writeToLogFile('Error creating collection:', error);
     throw error;
   }
 }
@@ -55,6 +58,7 @@ async function initdb() {
   createCollection('trash');
   InitializeSetup();
   InitializeTokens();
+  storeAPIKeyIfNotExists();
 }
 
 async function InitializeTokens() {
@@ -85,10 +89,8 @@ async function InitializeTokens() {
     // Insert the document into the collection
     await collection.insertOne(twitch);
     await collection.insertOne(google);
-
-    console.log('Document inserted successfully.');
   } catch (error) {
-    console.error('Error inserting document:', error);
+    writeToLogFile('Error inserting document:', error);
     throw error;
   }
 }
@@ -110,12 +112,12 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
     const result = await collection.updateOne(filter, update, options);
 
     if (result.upsertedCount === 1) {
-      console.log("New Twitch auth token data stored successfully.");
+      writeToLogFile("New Twitch auth token data stored successfully.");
     } else {
-      console.log("Existing Twitch auth token data updated successfully.");
+      writeToLogFile("Existing Twitch auth token data updated successfully.");
     }
   } catch (error) {
-    console.error("Error storing Twitch auth token data:", error);
+    writeToLogFile("Error storing Twitch auth token data:", error);
     throw error;
   }
 }
@@ -136,12 +138,12 @@ async function storeTwitchUserData(userData) {
     const result = await collection.findOneAndUpdate(query, update, options);
 
     if (result.lastErrorObject.updatedExisting) {
-      console.log("User data updated successfully.");
+      writeToLogFile("User data updated successfully.");
     } else {
-      console.log("User data stored successfully.");
+      writeToLogFile("User data stored successfully.");
     }
   } catch (error) {
-    console.error("Error storing user data:", error);
+    writeToLogFile("Error storing user data:", error);
     throw error;
   }
 }
@@ -176,7 +178,7 @@ async function getRefreshToken() {
   }
 }
 
-async function insertVideo(streamId, file, date, category, size, length, captions) {
+async function insertVideo(streamId, file, date, category, img, size, length, captions) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("videos");
@@ -185,6 +187,7 @@ async function insertVideo(streamId, file, date, category, size, length, caption
       file: file,
       date: date,
       category: category,
+      categoryImg: Image,
       size: size,
       length: length,
       favorite: false,
@@ -650,6 +653,7 @@ async function deleteFilesByStreamId(streamId) {
   }
 }
 
+// Function to insert a clip into the database
 async function insertClip(length, start, tags, category, categoryImg) {
   const db = await connectToMongoDB();
   try {
@@ -663,11 +667,63 @@ async function insertClip(length, start, tags, category, categoryImg) {
     };
     const result = await clipsCollection.insertOne(clipDocument);
   } catch (error) {
-    console.log('Error inserting document:', error);
+    writeToLogFile('Error inserting clip:', error);
   }
 }
 
+// Function to check if an API key exists in the database
+async function storeAPIKeyIfNotExists() {
+  const db = await connectToMongoDB();
+  try {
+    const settingsCollection = db.collection('settings');
+    const existingAPIKey = await settingsCollection.findOne({ _id: 'api_key' });
 
+    if (existingAPIKey && existingAPIKey.value) {
+      console.log('API key already exists:', existingAPIKey.value);
+    } else {
+      storeAPIKey();
+      console.log('API key stored successfully:', apiKey);
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error storing API key: ${error}`)
+  }
+}
+
+// Function to store the API key in the database
+async function storeAPIKey() {
+  const db = await connectToMongoDB();
+  try {
+    const apiKey = generateApiKey();
+    const settingsCollection = db.collection('settings');
+    const hexedAPIKey = Buffer.from(apiKey).toString('hex');
+    await settingsCollection.updateOne(
+      { _id: 'api_key' },
+      { $set: { value: hexedAPIKey } },
+      { upsert: true }
+    );
+  } catch (error) {
+    writeToLogFile('Error storing API key:', error);
+  }
+}
+
+// Function to get the API key from the database
+async function getAPIKey() {
+  const db = await connectToMongoDB();
+  try {
+    const settingsCollection = db.collection('settings');
+    const result = await settingsCollection.findOne({ _id: 'api_key' });
+    if (result && result.value) {
+      const apiKey = Buffer.from(result.value, 'hex').toString('utf-8');
+      return apiKey;
+    } else {
+      writeToLogFile('API key not found.');
+      return null;
+    }
+  } catch (error) {
+    writeToLogFile('Error retrieving API key:', error);
+    return null;
+  }
+}
 
 
 // Export the functions
@@ -676,5 +732,6 @@ export {
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
-  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
+  getAPIKey
 }; 

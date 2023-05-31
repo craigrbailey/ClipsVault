@@ -114,14 +114,14 @@ async function startRecording(filename, count = 0) {
 async function stopRecording() {
   const size = await getFileSize(`${process.cwd()}\\recordings\\${entireStream}`);
   await createClips(`${process.cwd()}\\recordings\\${entireStream}`);
-  // insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, size, length, '')
-  // const oldPath = path.join('recordings', entireStream);
-  // const newPath = path.join(streamFolder, entireStream);
-  // fs.rename(oldPath, newPath, (err) => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
+  insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, size, length, '')
+  const oldPath = path.join('recordings', entireStream);
+  const newPath = path.join(streamFolder, entireStream);
+  fs.rename(oldPath, newPath, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
   entireStream = '';
   streamFolder = '';
 }

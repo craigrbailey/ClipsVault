@@ -2,8 +2,8 @@ import axios from 'axios';
 import { getAccessToken, storeTwitchAuthToken, getRefreshToken, retrieveUserData } from '../db.js';
 
 async function getGameBoxArt(gameName) {
-  const width = 272;
-  const height = 380;
+  const width = 272 * 5;
+  const height = 380 * 5;
   const access_token = await getAccessToken();
   const headers = {
     'Authorization': `Bearer ${access_token}`,
