@@ -148,9 +148,8 @@ async function storeTwitchUserData(userData) {
   }
 }
 
-
-
-async function getAccessToken() {
+// Function to retrieve twitch access token from the database
+async function getTwitchAccessToken() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("tokens");
@@ -407,6 +406,7 @@ async function removeTagFromStream(streamId, tagToRemove) {
   }
 }
 
+// Function to update OBS settings in the database
 async function updateOBSSettings(ip, port, password) {
   const db = await connectToMongoDB();
   try {
@@ -414,15 +414,13 @@ async function updateOBSSettings(ip, port, password) {
     const existingSettings = await collection.findOne({ type: "obs_settings" });
 
     if (existingSettings) {
-      // Update the existing settings
       const result = await collection.updateOne(
         { _id: existingSettings._id },
         { $set: { ip: ip, port: port, password: password } }
       );
       return result.modifiedCount > 0;
     } else {
-      // Insert new settings
-      const result = await collection.insertOne({ type: "obs_settings", ip: ip, port: port, password: password });
+      const result = await collection.insertOne({ _id: "obs_settings", ip: ip, port: port, password: password });
       return result.insertedId;
     }
   } catch (error) {
@@ -438,30 +436,24 @@ async function getVideoData(videoId) {
     const document = await collection.findOne({ _id: documentId });
     return document;
   } catch (error) {
-    console.error("Error retrieving document by ID:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving video data: ${error}`);
   }
 }
 
-
+// Function to check rather the setup is complete
 async function checkSetup(req, res, next) {
   try {
-    // Retrieve the setup_complete value from the settings collection
     const db = await connectToMongoDB();
     const collection = db.collection("settings");
     const settings = await collection.findOne({});
     const isSetupComplete = settings && settings.setup_complete;
-
-    // Check if the setup is complete
     if (isSetupComplete) {
-      // If setup is complete, continue to the next middleware or route
       next();
     } else {
-      // If setup is not complete, redirect to the setup page
       res.redirect('/setup');
     }
   } catch (error) {
-    console.error("Error checking setup:", error);
+    writeToLogFile('error', `Error checking setup: ${error}`);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
@@ -471,9 +463,9 @@ async function completeSetup() {
   try {
     const collection = db.collection("settings");
     const result = await collection.updateOne({}, { $set: { setup_complete: true } }, { upsert: true });
-    return result.upsertedCount > 0;
+    writeToLogFile('info', 'Setup completed successfully.');
   } catch (error) {
-    console.error("Error completing setup:", error);
+    writeToLogFile('error', `Error completing setup: ${error}`);
     throw error;
   }
 }
@@ -486,16 +478,18 @@ async function InitializeSetup() {
     const count = await collection.countDocuments();
 
     if (count === 0) {
-      // If no document exists, insert a new document with setup_complete set to false
-      const result = await collection.insertOne({ setup_complete: false });
-      await collection.insertOne({ type: 'obs_settings', ip: 'none', port: 4444, password: 'password' });
-      return result.insertedCount > 0;
-    } else {
-      return false;
+      const settings = {
+        _id: 'settings',
+        setup_complete: false,
+        live_required: false,
+        streamer: null
+      }
+      await collection.insertOne(settings);
+      await collection.insertOne({ _id: 'obs_settings', ip: 'none', port: 4444, password: 'password' });
+      writeToLogFile('info', 'Setup initialized successfully.');
     }
   } catch (error) {
-    console.error("Error completing setup:", error);
-    throw error;
+    writeToLogFile('error', `Error initializing setup: ${error}`);
   }
 }
 
@@ -728,7 +722,7 @@ async function getAPIKey() {
 
 // Export the functions
 export {
-  connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getAccessToken,
+  connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getTwitchAccessToken,
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,

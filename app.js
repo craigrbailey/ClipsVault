@@ -6,13 +6,20 @@ import { config } from 'dotenv';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { initdb, addNotification } from './db.js';
+import { initdb } from './db.js';
 import { connectToOBS, obsConnection } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import { watcher } from './utilities/watcher.js'
+import { validateAccessToken } from './utilities/twitch.js';
+import cron from 'node-cron';
 
 config();
+
+// Validates access token every 4 hours
+cron.schedule('0 */4 * * *', () => {
+  validateAccessToken();
+});
 
 let initialFilename = '';
 watcher.on('add', (filePath) => {
