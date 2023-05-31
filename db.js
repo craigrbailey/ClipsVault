@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from 'mongodb';
-import fs, { write } from 'fs';
+import fs from 'fs';
 import { promisify } from 'util';
 import { dirname } from 'path';
 import { writeToLogFile } from './utilities/logging.js';
@@ -10,6 +10,7 @@ const uri = 'mongodb://192.168.1.31:27017';
 const client = new MongoClient(uri);
 let dbConnection = null;
 
+// Function to connect to the database
 async function connectToMongoDB() {
   try {
     if (!dbConnection) {
@@ -26,7 +27,7 @@ async function connectToMongoDB() {
   }
 }
 
-// Create a collection
+// Function to create a collection if it doesn't exist
 async function createCollection(collectionName) {
   const db = await connectToMongoDB();
   try {
@@ -61,41 +62,35 @@ async function initdb() {
   storeAPIKeyIfNotExists();
 }
 
+// Function to initialize the tokens collection
 async function InitializeTokens() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("tokens");
-
-    // Check if a document with type 'twitch' already exists
     const existingDocument = await collection.findOne({ type: 'twitch' });
     if (existingDocument) {
       return;
     }
-
-    // Create the document
     const twitch = {
       type: 'twitch',
-      token: 'none',
-      refreshToken: 'none',
-      expiresIn: 'none'
+      token: null,
+      refreshToken: null,
+      expiresIn: null
     };
-
     const google = {
       type: 'google',
-      token: 'none',
-      refreshToken: 'none',
-      expiresIn: 'none'
+      token: null,
+      refreshToken: null,
+      expiresIn: null
     };
-    // Insert the document into the collection
     await collection.insertOne(twitch);
     await collection.insertOne(google);
   } catch (error) {
-    writeToLogFile('Error inserting document:', error);
-    throw error;
+    writeToLogFile('Error initializing tokens collection:', error);
   }
 }
 
-// Store the Twitch auth token data
+// Function to store the Twitch auth token data
 async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
   const db = await connectToMongoDB();
   try {
@@ -110,7 +105,6 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
     };
     const options = { upsert: true };
     const result = await collection.updateOne(filter, update, options);
-
     if (result.upsertedCount === 1) {
       writeToLogFile("New Twitch auth token data stored successfully.");
     } else {
@@ -122,6 +116,7 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
   }
 }
 
+// Function to store twitch user data
 async function storeTwitchUserData(userData) {
   const db = await connectToMongoDB();
   try {
@@ -130,13 +125,11 @@ async function storeTwitchUserData(userData) {
     const update = {
       $set: {
         ...userData,
-        type: "twitch" // Set the 'type' field explicitly to 'twitch'
+        type: "twitch"
       }
     };
     const options = { upsert: true };
-
     const result = await collection.findOneAndUpdate(query, update, options);
-
     if (result.lastErrorObject.updatedExisting) {
       writeToLogFile("User data updated successfully.");
     } else {
@@ -156,6 +149,7 @@ async function getTwitchAccessToken() {
     const tokenData = await collection.findOne({ type: "twitch" }, { projection: { token: 1 } });
     return tokenData ? tokenData.token : null;
   } catch (error) {
+    writeToLogFile("Error retrieving Twitch access token:", error);
     console.error("Error retrieving access token:", error);
     throw error;
   }
@@ -166,17 +160,17 @@ async function getRefreshToken() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection('tokens');
-
     const document = await collection.findOne({ type: 'twitch' });
     const refreshToken = document.refreshToken;
-
     return refreshToken;
   } catch (error) {
+    writeToLogFile('error', `Error retrieving refresh token: ${error}`);
     console.error('Error retrieving refresh token:', error);
     return null;
   }
 }
 
+// Function to insert a video into the database
 async function insertVideo(streamId, file, date, category, img, size, length, captions) {
   const db = await connectToMongoDB();
   try {
@@ -194,13 +188,16 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
       captions: captions
     };
     const result = await collection.insertOne(document);
+    writeToLogFile('info', `Video document created successfully. ID: ${result.insertedId}`)
     return result.insertedId;
   } catch (error) {
+    writeToLogFile('error', `Error inserting video document: ${error}`);
     console.error("Error inserting video document:", error);
     throw error;
   }
 }
 
+// Function to add a queue item to the database
 async function insertQueue(streamId, file, date, category, size, length, favorite, tags, captions) {
   const db = await connectToMongoDB();
   try {
@@ -219,11 +216,13 @@ async function insertQueue(streamId, file, date, category, size, length, favorit
     const result = await collection.insertOne(document);
     return result.insertedId;
   } catch (error) {
+    writeToLogFile('error', `Error inserting queue item: ${error}`);
     console.error("Error inserting video document:", error);
     throw error;
   }
 }
 
+// Function to remove a queue item by ID
 async function removeQueueItemById(itemId) {
   const db = await connectToMongoDB();
   try {
@@ -231,11 +230,13 @@ async function removeQueueItemById(itemId) {
     const result = await collection.deleteOne({ _id: itemId });
     return result.deletedCount > 0;
   } catch (error) {
+    writeToLogFile('error', `Error removing queue item by ID: ${error}`);
     console.error("Error removing queue item by ID:", error);
     throw error;
   }
 }
 
+// Function to add a notification to the database
 async function addNotification(notification) {
   const db = await connectToMongoDB();
   try {
@@ -246,11 +247,13 @@ async function addNotification(notification) {
     const result = await collection.insertOne(document);
     return result.insertedId;
   } catch (error) {
+    writeToLogFile('error', `Error creating notification document: ${error}`);
     console.error("Error creating notification document:", error);
     throw error;
   }
 }
 
+// Function to remove a notification by ID
 async function removeNotificationById(notificationId) {
   const db = await connectToMongoDB();
   try {
@@ -258,11 +261,13 @@ async function removeNotificationById(notificationId) {
     const result = await collection.deleteOne({ _id: notificationId });
     return result.deletedCount > 0;
   } catch (error) {
+    writeToLogFile('error', `Error removing notification by ID: ${error}`);
     console.error("Error removing notification by ID:", error);
     throw error;
   }
 }
 
+// Function to retrieve all notifications from the database
 async function getAllNotifications() {
   const db = await connectToMongoDB();
   try {
@@ -270,11 +275,11 @@ async function getAllNotifications() {
     const notifications = await collection.find().toArray();
     return notifications;
   } catch (error) {
-    console.error("Error retrieving notifications:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving notifications: ${error}`);
   }
 }
 
+// Function to get all queue items
 async function getAllQueueItems() {
   const db = await connectToMongoDB();
   try {
@@ -282,11 +287,11 @@ async function getAllQueueItems() {
     const items = await collection.find().toArray();
     return items;
   } catch (error) {
-    console.error("Error retrieving queue items:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving queue items: ${error}`);
   }
 }
 
+// Functiont to create a new stream document
 async function insertStream(date, category, backgroundImg, captions) {
   try {
     const collection = dbConnection.collection("streams");
@@ -302,18 +307,17 @@ async function insertStream(date, category, backgroundImg, captions) {
       entire_stream: 'none',
     };
     const result = await collection.insertOne(document);
+    writeToLogFile('info', `Stream document created successfully. ID: ${result.insertedId}`);
     return result.insertedId;
   } catch (error) {
-    console.error("Error inserting stream document:", error);
-    throw error;
+    writeToLogFile('error', `Error creating stream in database: ${error}`);
   }
 }
 
+// Function to add videos to a stream
 async function addVideoToStream(streamId, videoId) {
   try {
     const collection = dbConnection.collection('streams');
-
-    // Update the document: push videoId to the videos array and increment video_count by 1
     const result = await collection.updateOne(
       { _id: streamId },
       {
@@ -322,10 +326,11 @@ async function addVideoToStream(streamId, videoId) {
       }
     );
   } catch (err) {
-    console.log(err.stack);
+    writeToLogFile('error', `Error adding video to stream: ${err}`);
   }
 }
 
+// Function to update the stream length
 async function updateStreamData(streamId, newLength) {
   const db = await connectToMongoDB();
   try {
@@ -339,10 +344,81 @@ async function updateStreamData(streamId, newLength) {
       console.log('No matching document found');
     }
   } catch (error) {
-    console.error('Error updating stream data:', error);
+    writeToLogFile('error', `Error updating stream length: ${error}`);
   } 
 }
 
+// Function to update the live required setting
+async function updateLiveRequired(liveRequired) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const result = await collection.updateOne(
+      { _id: "settings" },
+      { $set: { live_required: liveRequired } }
+    );
+    return result.modifiedCount > 0;
+  } catch (error) {
+    writeToLogFile('error', `Error updating live required: ${error}`);
+  }
+}
+
+// Function to update the streamer
+async function updateStreamer(streamer, status) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    if (streamer === 'twitch') {
+      await collection.updateOne(
+        { _id: "settings" },
+        { $set: { twitch: status } }
+      )
+      } else if (streamer === 'youtube') {
+        await collection.updateOne(
+          { _id: "settings" },
+          { $set: { youtube: status } }
+          );
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating streamer: ${error}`);
+  }
+}
+
+// Function to update the streamer
+async function setStreamingPlatform(platform) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    if (platform === 'twitch') {
+      await collection.updateOne(
+        { _id: "settings" },
+        { $set: { platform: 'twitch' } }
+      )
+      } else if (platform === 'youtube') {
+        await collection.updateOne(
+          { _id: "settings" },
+          { $set: { platform: 'youtube' } }
+          );
+    }
+    writeToLogFile('info', `Platform set to: ${platform}`);
+  } catch (error) {
+    writeToLogFile('error', `Error updating platform: ${error}`);
+  }
+}
+
+// Function to retrieve all settings from the database
+async function getSettings() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "settings" });
+    return settings;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving settings: ${error}`);
+  }
+}
+
+// Function to add a tag to a video
 async function addTagToVideo(videoId, newTag) {
   const db = await connectToMongoDB();
   try {
@@ -351,13 +427,14 @@ async function addTagToVideo(videoId, newTag) {
       { _id: videoId },
       { $push: { tags: newTag } }
     );
+    writeToLogFile('info', `Tag added to video document: ${newTag}`);
     return result.modifiedCount > 0;
   } catch (error) {
-    console.error("Error adding tag to stream document:", error);
-    throw error;
+    writeToLogFile('error', `Error adding tag to video document: ${error}`);
   }
 }
 
+// Function to add a tag to a stream
 async function addTagToStream(streamId, newTag) {
   const db = await connectToMongoDB();
   try {
@@ -367,14 +444,14 @@ async function addTagToStream(streamId, newTag) {
       { _id: objectId },
       { $push: { tags: newTag } }
     );
+    writeToLogFile('info', `Tag added to stream document: ${newTag}`);
     return result.modifiedCount > 0;
   } catch (error) {
-    console.error("Error adding tag to stream document:", error);
-    throw error;
+    writeToLogFile('error', `Error adding tag to stream document: ${error}`);
   }
 }
 
-
+// Function to remove a tag from a video
 async function removeTagFromVideo(videoId, tagToRemove) {
   const db = await connectToMongoDB();
   try {
@@ -383,13 +460,14 @@ async function removeTagFromVideo(videoId, tagToRemove) {
       { _id: videoId },
       { $pull: { tags: tagToRemove } }
     );
+    writeToLogFile('info', `Tag removed from video document: ${tagToRemove}`);
     return result.modifiedCount > 0;
   } catch (error) {
-    console.error("Error removing tag from video document:", error);
-    throw error;
+    writeToLogFile('error', `Error removing tag from video document: ${error}`);
   }
 }
 
+// Function to remove a tag from a stream
 async function removeTagFromStream(streamId, tagToRemove) {
   const db = await connectToMongoDB();
   try {
@@ -399,10 +477,10 @@ async function removeTagFromStream(streamId, tagToRemove) {
       { _id: objectId },
       { $pull: { tags: tagToRemove } }
     );
+    writeToLogFile('info', `Tag removed from stream document: ${tagToRemove}`);
     return result.modifiedCount > 0;
   } catch (error) {
-    console.error("Error removing tag from video document:", error);
-    throw error;
+    writeToLogFile('error', `Error removing tag from stream document: ${error}`);
   }
 }
 
@@ -418,17 +496,18 @@ async function updateOBSSettings(ip, port, password) {
         { _id: existingSettings._id },
         { $set: { ip: ip, port: port, password: password } }
       );
+      writeToLogFile('info', 'OBS settings updated successfully. IP: ' + ip + ' Port: ' + port + ' Password: ' + password)
       return result.modifiedCount > 0;
     } else {
       const result = await collection.insertOne({ _id: "obs_settings", ip: ip, port: port, password: password });
       return result.insertedId;
     }
   } catch (error) {
-    console.error("Error updating OBS settings:", error);
-    throw error;
+    writeToLogFile('error', `Error updating OBS settings: ${error}`);
   }
 }
 
+// Function to retrieve video data by id
 async function getVideoData(videoId) {
   const db = await connectToMongoDB();
   try {
@@ -458,19 +537,19 @@ async function checkSetup(req, res, next) {
   }
 }
 
+// Function to complete the setup
 async function completeSetup() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    const result = await collection.updateOne({}, { $set: { setup_complete: true } }, { upsert: true });
+    await collection.updateOne({}, { $set: { setup_complete: true } }, { upsert: true });
     writeToLogFile('info', 'Setup completed successfully.');
   } catch (error) {
     writeToLogFile('error', `Error completing setup: ${error}`);
-    throw error;
   }
 }
 
-//
+// Function to initialize the setup
 async function InitializeSetup() {
   const db = await connectToMongoDB();
   try {
@@ -482,10 +561,12 @@ async function InitializeSetup() {
         _id: 'settings',
         setup_complete: false,
         live_required: false,
-        streamer: null
+        platform: null,
+        twitch: null,
+        youtube: null
       }
       await collection.insertOne(settings);
-      await collection.insertOne({ _id: 'obs_settings', ip: 'none', port: 4444, password: 'password' });
+      await collection.insertOne({ _id: 'obs_settings', ip: null, port: null, password: null });
       writeToLogFile('info', 'Setup initialized successfully.');
     }
   } catch (error) {
@@ -493,22 +574,21 @@ async function InitializeSetup() {
   }
 }
 
+// Function to get OBS settings from the database
 async function getOBSSettings() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    const settings = await collection.findOne({ type: "obs_settings" });
+    const settings = await collection.findOne({ _id: "obs_settings" });
 
     if (settings) {
       const { ip, password, port } = settings;
       return { ip, password, port };
     } else {
-      // Handle the case when no settings document exists
       return null;
     }
   } catch (error) {
-    console.error("Error retrieving OBS settings:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving OBS settings: ${error}`);
   }
 }
 
@@ -517,18 +597,17 @@ async function getGoogleAccessToken() {
   try {
     const db = await connectToMongoDB();
     const tokenDocument = await db.collection('tokens').findOne({ type: 'google' });
-
     if (tokenDocument) {
       return tokenDocument.tokens.access_token;
     } else {
-      return null; // Return null or handle the case when the token is not found
+      return null;
     }
   } catch (error) {
-    console.error('Error:', error.message);
-    throw new Error('Failed to retrieve access token from the database.');
+    writeToLogFile('error', `Error retrieving Google access token: ${error}`);
   }
 };
 
+// Function to get stream data by id
 async function getStreamById(streamId) {
   const db = await connectToMongoDB();
   try {
@@ -536,26 +615,25 @@ async function getStreamById(streamId) {
     const collection = db.collection('streams');
     return await collection.findOne({ _id: objectId });
   } catch (err) {
-    console.error(err.stack);
+    writeToLogFile('error', `Error retrieving stream by ID: ${err}`);
     return null;
   }
 }
 
-
+// Function to get the latest streams by count
 async function getLatestStreams(count) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection('streams');
-    // Sort by the _id field in descending order (-1)
     const streams = await collection.find({}).sort({ _id: -1 }).limit(count).toArray();
-    // Return the streams in reversed order
     return streams.reverse();
   } catch (err) {
-    console.error(err.stack);
+    writeToLogFile('error', `Error retrieving latest streams: ${err}`);
     return [];
   }
 }
 
+// Function to get all streams
 async function getAllStreams() {
   const db = await connectToMongoDB();
   try {
@@ -563,7 +641,7 @@ async function getAllStreams() {
     const documents = await collection.find().sort({ _id: -1 }).toArray();
     return documents;
   } catch (err) { 
-    console.error(err.stack);
+    writeToLogFile('error', `Error retrieving all streams: ${err}`);
     return [];
   }
 }
@@ -579,15 +657,16 @@ async function getVideosByStreamId(streamId) {
 
     return videos;
   } catch (err) {
-    console.log(err);
+    writeToLogFile('error', `Error retrieving videos by stream ID: ${err}`);
   }
 }
 
+// Function to retrieve user data from the database
 async function retrieveUserData() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("userdata");
-    const query = { type: "twitch" }; // Assuming type is used to identify Twitch documents
+    const query = { type: "twitch" };
 
     const userData = await collection.findOne(query);
 
@@ -604,6 +683,7 @@ async function retrieveUserData() {
   }
 }
 
+// Function to remove a stream
 async function removeStream(streamId) {
   const db = await connectToMongoDB();
   try {
@@ -611,12 +691,15 @@ async function removeStream(streamId) {
     const objectId = new ObjectId(streamId);
     const result = await collection.deleteMany({ _id: { $in: [objectId] } });
     console.log(`Removed ${result.deletedCount} streams.`);
-    deleteFilesByStreamId(streamId);
+    await deleteFilesByStreamId(streamId);
+    writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
   } catch (error) {
+    writeToLogFile('error', `Error removing stream: ${error}`);
     console.error('Error removing documents:', error);
   }
 }
 
+// Function to delete all files associated with a stream
 async function deleteFilesByStreamId(streamId) {
   const db = await connectToMongoDB();
   const deleteFile = promisify(fs.unlink);
@@ -632,16 +715,16 @@ async function deleteFilesByStreamId(streamId) {
       await collection.deleteOne({ _id: videoObjectId });
       if (fs.existsSync(filePath)) {
         await deleteFile(filePath);
-        console.log(`Deleted file: ${filePath}`);
-        
+        writeToLogFile('info', `Deleted file: ${filePath}`);
         const directoryPath = dirname(filePath);
         const filesInDirectory = fs.readdirSync(directoryPath);
         if (filesInDirectory.length === 0) {
           await removeDirectory(directoryPath);
-          console.log(`Removed empty directory: ${directoryPath}`);
+          writeToLogFile('info', `Removed empty directory: ${directoryPath}`);
         }
       }
     }
+    writeToLogFile('info', `Removed ${videos.length} files.`);
   } catch (error) {
     console.error('Error deleting files:', error);
   }
@@ -673,7 +756,7 @@ async function storeAPIKeyIfNotExists() {
     const existingAPIKey = await settingsCollection.findOne({ _id: 'api_key' });
 
     if (existingAPIKey && existingAPIKey.value) {
-      console.log('API key already exists:', existingAPIKey.value);
+      return;
     } else {
       storeAPIKey();
       console.log('API key stored successfully:', apiKey);
@@ -727,5 +810,5 @@ export {
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
-  getAPIKey
+  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform
 }; 
