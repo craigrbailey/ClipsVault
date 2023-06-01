@@ -90,7 +90,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Create directories if they don't exist
-const folders = ['./uploads', './clips', './trash', './logs', './recordings'];
+const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models'];
 for (const folder of folders) {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);
@@ -118,6 +118,7 @@ import addStreamRouter from './routes/addstream.js';
 import getStreamsRouter from './routes/getstreams.js';
 import { TagRouter } from './routes/tags.js';
 import { ClipRouter } from './routes/clip.js';
+import {}
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -143,8 +144,8 @@ app.use('/api/clip', ClipRouter);
 
 
 // Connect to OBS
-const obs = await connectToOBS();
-const obsConnectionStatus = obsConnection.status;
+await connectToOBS();
+// const obsConnectionStatus = obsConnection.status;
 
 
 // Start the server
