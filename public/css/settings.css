@@ -15,9 +15,7 @@
 }
 
 .settings {
-    background: rgba( 255, 255, 255, 0.1 );
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    background-color: #0d0d0d;
     padding: 20px;
     border-radius: 5px;
 }
@@ -38,9 +36,9 @@
 }
 
 .settings-container div:nth-child(2) form button {
-    background: rgba( 255, 255, 255, 0.1 );
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     border-radius: 5px;
     border: 0;
     padding: 10px;
@@ -49,7 +47,7 @@
     cursor: pointer;
     position: relative;
     left: 50%;
-    transform: translateX( -50% );
+    transform: translateX(-50%);
 }
 
 .settings form input {
@@ -62,7 +60,6 @@
     font-size: 18px;
     color: #fff;
 }
-
 
 #connection-links {
     display: flex;
@@ -94,7 +91,7 @@
 #connect-to-youtube {
     background-color: #ff0000;
 }
-  
+
 #connect-to-youtube:hover {
     background-color: #cc0000;
 }
@@ -106,18 +103,18 @@
     border-radius: 10px;
     text-align: center;
     max-height: 200px;
-  }
-  
+}
+
 .discord-join h3 {
     font-size: 24px;
     margin-bottom: 10px;
 }
-  
+
 .discord-join p {
     font-size: 16px;
     margin-bottom: 20px;
 }
-  
+
 .discord-button {
     display: inline-block;
     padding: 10px 20px;
@@ -129,7 +126,7 @@
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
 }
-  
+
 .discord-button:hover {
     background-color: #f5f5f5;
 }
@@ -144,24 +141,24 @@
     display: flex;
     flex-direction: row;
 }
-  
+
 .twitch-follow .profile-image {
     width: 100px;
     height: 100px;
     border-radius: 50%;
     margin-bottom: 20px;
 }
-  
+
 .twitch-follow h3 {
     font-size: 24px;
     margin-bottom: 10px;
 }
-  
+
 .twitch-follow p {
     font-size: 16px;
     margin-bottom: 20px;
 }
-  
+
 .twitch-button {
     display: inline-block;
     padding: 10px 20px;
@@ -173,7 +170,7 @@
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
 }
-  
+
 .twitch-button:hover {
     background-color: #f5f5f5;
 }
@@ -185,17 +182,17 @@
     border-radius: 10px;
     text-align: center;
 }
-  
+
 .twitter-follow h3 {
     font-size: 24px;
     margin-bottom: 10px;
 }
-  
+
 .twitter-follow p {
     font-size: 16px;
     margin-bottom: 20px;
 }
-  
+
 .twitter-button {
     display: inline-block;
     padding: 10px 20px;
@@ -207,7 +204,7 @@
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
 }
-  
+
 .twitter-button:hover {
     background-color: #f5f5f5;
 }
@@ -218,18 +215,18 @@
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-  }
-  
-  .buy-me-a-coffee h3 {
+}
+
+.buy-me-a-coffee h3 {
     font-size: 24px;
     margin-bottom: 10px;
-  }
-  
-  .buy-me-a-coffee p {
+}
+
+.buy-me-a-coffee p {
     font-size: 16px;
     margin-bottom: 20px;
-  }
-  
+}
+
 .coffee-button {
     display: inline-block;
     padding: 10px 20px;
@@ -241,7 +238,7 @@
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
 }
-  
+
 .coffee-button:hover {
     background-color: #333333;
 }
@@ -253,17 +250,17 @@
     border-radius: 10px;
     text-align: center;
 }
-  
+
 .youtube-subscribe h3 {
     font-size: 24px;
     margin-bottom: 10px;
 }
-  
+
 .youtube-subscribe p {
     font-size: 16px;
     margin-bottom: 20px;
 }
-  
+
 .youtube-button {
     display: inline-block;
     padding: 10px 20px;
@@ -275,7 +272,7 @@
     font-weight: bold;
     transition: background-color 0.2s ease-in-out;
 }
-  
+
 .youtube-button:hover {
     background-color: #f5f5f5;
 }
@@ -289,7 +286,7 @@
     flex-direction: column;
     justify-content: space-between;
     margin: 10px 0;
-    border-bottom: 1px solid rgba( 255, 255, 255, 0.1 );
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 
@@ -309,9 +306,9 @@
 }
 
 .notification-toggle form button {
-    background: rgba( 255, 255, 255, 0.1 );
-    backdrop-filter: blur( 3px );
-    -webkit-backdrop-filter: blur( 3px );
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     border-radius: 5px;
     border: 0;
     padding: 10px;
@@ -320,7 +317,7 @@
     cursor: pointer;
     position: relative;
     left: 50%;
-    transform: translateX( -50% );
+    transform: translateX(-50%);
     max-width: 150px;
 }
 
@@ -328,11 +325,11 @@
     display: flex;
     flex-direction: row;
 }
-  
+
 .toggle-label {
     margin-right: 10px;
 }
-  
+
 .switch {
     position: relative;
     display: inline-block;
@@ -340,11 +337,11 @@
     height: 34px;
     cursor: pointer;
 }
-  
+
 .switch input {
     display: none;
 }
-  
+
 .slider {
     position: absolute;
     top: 0;
@@ -355,7 +352,7 @@
     border-radius: 34px;
     transition: .4s;
 }
-  
+
 .slider:before {
     position: absolute;
     content: "";
@@ -367,22 +364,21 @@
     border-radius: 50%;
     transition: .4s;
 }
-  
-input:checked + .slider {
+
+input:checked+.slider {
     background-color: #2196F3;
 }
-  
-input:checked + .slider:before {
+
+input:checked+.slider:before {
     transform: translateX(26px);
 }
-  
+
 .notification-form {
     margin-top: 10px;
 }
-  
+
 .notification-form label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
 }
-  

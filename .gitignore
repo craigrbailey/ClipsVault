@@ -1,5 +1,6 @@
 # Ignore specific file
 deepspeech-0.9.3-models.pbmm
+deepspeech-0.9.3-models.scorer
 
 # Ignore files with a specific extension
 *.env

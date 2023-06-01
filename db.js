@@ -556,10 +556,17 @@ async function InitializeSetup() {
         _id: 'settings',
         setup_complete: false,
         live_required: false,
+        cleanup_time: "0500",
         platform: null,
         twitch: null,
         youtube: null
       }
+      const notifications = {
+        _id: 'notifications',
+        discord: false,
+        gmail: false,
+      }
+      await collection.insertOne(notifications);
       await collection.insertOne(settings);
       await collection.insertOne({ _id: 'obs_settings', ip: null, port: null, password: null });
       writeToLogFile('info', 'Setup initialized successfully.');

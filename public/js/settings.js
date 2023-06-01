@@ -3,6 +3,7 @@ function updateButtonStatus(status) {
     const hostInput = document.getElementById('host');
     const portInput = document.getElementById('port');
     const passwordInput = document.getElementById('password');
+    const liveRequiredSwitch = document.getElementById('liveRequired');
   
     if (status) {
       // OBS connection is active
@@ -49,4 +50,36 @@ getOBSConnectionStatus();
 
 // Periodic updates to button status (every 5 seconds)
 setInterval(getOBSConnectionStatus, 5000);
+
+// Add event listener to the switch toggle event
+liveRequiredSwitch.addEventListener('change', () => {
+  console.log('Live Required switch changed.')
+  // Get the current value of the switch
+  const isChecked = liveRequiredSwitch.checked;
+
+  // Prepare the data to send in the POST request
+  const data = {
+    setting: 'liveRequired',
+    value: isChecked.toString()
+  };
+
+  // Send the POST request
+  fetch('/settings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if (response.ok) {
+      console.log('Live Required setting updated successfully.');
+    } else {
+      console.log('Failed to update Live Required setting.');
+    }
+  })
+  .catch(error => {
+    console.error('An error occurred while updating the Live Required setting:', error);
+  });
+});
   
