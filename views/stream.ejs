@@ -77,18 +77,20 @@
       <div class="stream-info-container">
         <img src="<%= streamData.background_img %>" alt="">
         <div class="stream-info">
-          <span>Date:</span>
-          <input class="my-input" type="text" disabled placeholder="<%= streamData.date %>">
-          <span>Category:</span>
-          <h1>
+          <span class="label">Date:</span>
+          <h3>
+            <%= streamData.date %>
+          </h3>
+          <span class="label">Category:</span>
+          <h3>
             <%= streamData.category %>
-          </h1>
-          <span>Duration:</span>
-          <h1>
+          </h3>
+          <span class="label">Duration:</span>
+          <h3>
             <%= streamData.length %>
-          </h1>
+          </h3>
           <div class="stream-tags">
-            <h3>Tags</h3>
+            <span class="label">Tags</span>
             <div class="tag-list" id="tag-list">
               <% for (let i=0; i < streamData.tags.length; i++) { %>
                 <span>
@@ -98,11 +100,18 @@
             </div>
             <form class="tag-form">
               <input type="text" id="tag-input" placeholder="Add a tag">
-              <button type="submit" id="tag-submit">Add</button>
             </form>
           </div>
           <div class="stream-actions">
-            <button id="delete-stream">Delete Stream</button>
+            <button class="action-button" id="delete-stream">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+            <button class="action-button" id="download-stream">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <button class="action-button" id="add-video">
+              <i class="fa-solid fa-plus"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -111,7 +120,9 @@
           <div class="clip" data-id="<%= videoData[i]._id %>">
             <div class="video-container">
               <video src="<%= videoData[i].file %>"></video>
-              <span class="clip-duration"><%= videoData[i].length %></span>
+              <span class="clip-duration">
+                <%= videoData[i].length %>
+              </span>
             </div>
           </div>
           <% } %>
@@ -119,7 +130,6 @@
     </div>
 
     <script src="/js/base.js"></script>
-    <!-- <script src="/js/stream.js"></script> -->
     <script>
       const videos = document.querySelectorAll('.clip video');
       const urlParams = new URLSearchParams(window.location.search);
@@ -131,10 +141,12 @@
       videos.forEach(video => {
         video.addEventListener('mouseenter', () => {
           video.setAttribute('controls', 'controls');
+          video.play();
         });
 
         video.addEventListener('mouseleave', () => {
           video.removeAttribute('controls');
+          video.pause();
         });
       });
 
@@ -146,10 +158,8 @@
         const newTag = tagInput.value.trim();
 
         if (newTag !== '') {
-          const tagType = 'stream'; // Assuming the tag type is 'stream'
-          const id = streamId; // Replace with the actual stream ID
+          const tagType = 'stream';
 
-          // Make an API request to add the tag
           fetch('/api/tags', {
             method: 'POST',
             headers: {
@@ -158,7 +168,7 @@
             },
             body: JSON.stringify({
               tagType: tagType,
-              id: id,
+              id: streamId,
               newTag: newTag
             })
           })
@@ -231,15 +241,22 @@
         }
       });
 
+      function confirmDeleteStream() {
+        deleteStreamButton.style.backgroundColor = 'red';
+        deleteStreamButton.style.fontSize = '1rem';
+        deleteStreamButton.innerHTML = 'Confirm';
+        deleteStreamButton.addEventListener('click', handleConfirm);
+        deleteStreamButton.classList.add('confirm-mode');
 
-      function showConfirmationWindow() {
-        const confirmationWindow = document.querySelector('.confirmation-window');
-        confirmationWindow.style.display = 'block';
+        confirmationTimer = setTimeout(() => {
+          deleteStreamButton.style.backgroundColor = '#3f63ff';
+          deleteStreamButton.innerHTML = '';
+          deleteStreamButton.classList.remove('confirm-mode');
+        }, 3000);
       }
 
       function handleConfirm() {
         console.log('Sending Form');
-        // Send request to remove the stream
         fetch(`/api/stream/${streamId}`, {
           method: 'DELETE'
         })
@@ -247,29 +264,16 @@
           .then(data => {
             console.log(data.success);
             if (data.success === true) {
-              window.location.href = '/'; // Redirect to '/'
+              window.location.href = '/'; 
             }
-            // Process the response as needed
           })
           .catch(error => {
             console.error('Error removing stream:', error);
           });
-
         const confirmationWindow = document.querySelector('.confirmation-window');
         confirmationWindow.style.display = 'none';
       }
-
-      function handleCancel() {
-        const confirmationWindow = document.querySelector('.confirmation-window');
-        confirmationWindow.style.display = 'none';
-      }
-
-      deleteStreamButton.addEventListener('click', showConfirmationWindow);
-
-      const confirmButton = document.getElementById('confirm-btn');
-      const cancelButton = document.getElementById('cancel-btn');
-      confirmButton.addEventListener('click', handleConfirm);
-      cancelButton.addEventListener('click', handleCancel);
+      deleteStreamButton.addEventListener('click', confirmDeleteStream);
     </script>
 </body>
 

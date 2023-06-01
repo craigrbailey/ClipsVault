@@ -1,4 +1,4 @@
-import { dirname, join } from 'path'; 
+import { dirname } from 'path'; 
 import { fileURLToPath } from 'url';
 import { Router } from 'express';
 import { checkSetup, getVideosByStreamId, getStreamById } from '../db.js';
