@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
       body: JSON.stringify({ success: true }),
     })
       .then((response) => {
+        console.log('Response:', response);
         if (response.ok) {
           window.location.href = '/';
         } else {

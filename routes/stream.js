@@ -13,11 +13,9 @@ router.get('/', checkSetup, async (req, res) => {
     const streamId = req.query.streamId;
     const streamData = await getStreamById(streamId);
     let videoData = await getVideosByStreamId(streamId);
-    console.log(videoData);
     const date = streamData ? formatDate(streamData.date) : null;
     const userData = req.session.userData;
     const apiKey = serverKey;
-    console.log(apiKey)
     res.render('stream', { userData, streamData, date, videoData, __dirname, apiKey });
 });
 

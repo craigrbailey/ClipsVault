@@ -4,7 +4,7 @@ import multer from 'multer';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { insertStream, insertVideo, addVideoToStream, removeStream, getRefreshToken } from '../db.js';
-import { getGameBoxArt, refreshAccessToken } from '../utilities/twitch.js';
+import { getGameBoxArt } from '../utilities/twitch.js';
 import { createFolder } from '../utilities/system.js';
 
 const router = Router();
@@ -30,7 +30,6 @@ const upload = multer({ storage: storage })
 
 // POST /newstream endpoint
 router.post('/', upload.array('fileUpload'), async (req, res) => {
-  // Get the stream category and stream date from the request body
   const streamCategory = req.body.streamCategory;
   const streamDate = req.body.streamDate;
   const folder = await createFolder(streamDate);
@@ -40,21 +39,15 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamId = await insertStream(streamDate, streamCategory, gameArt, '');
   try {
     for (const file of req.files) {
-      const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, file.size, '');
+      const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, '');
       addVideoToStream(streamId, videoId);
       const { size } = await fs.stat(file.path);
-
-      // Check if this file is larger than double the current largest file size
       if (size > largestSize * 2) {
         largestFile = file;
         largestSize = size;
       }
-
-      // Move the file
       await fs.rename(file.path, `${folder}/${file.originalname}`);
     }
-
-    // If there is a largest file, send its info in the response
     if (largestFile) {
       res.json({
         message: 'Upload successful',

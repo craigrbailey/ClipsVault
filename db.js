@@ -54,8 +54,7 @@ async function initdb() {
   createCollection('userdata');
   createCollection('queue');
   createCollection('notifications');
-  createCollection('clips');
-  // createCollection('settings');
+  createCollection('clips');;
   createCollection('trash');
   InitializeSetup();
   InitializeTokens();
@@ -180,7 +179,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
       file: file,
       date: date,
       category: category,
-      categoryImg: Image,
+      categoryImg: img,
       size: size,
       length: length,
       favorite: false,
@@ -489,19 +488,11 @@ async function updateOBSSettings(ip, port, password) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    const existingSettings = await collection.findOne({ type: "obs_settings" });
-
-    if (existingSettings) {
-      const result = await collection.updateOne(
-        { _id: existingSettings._id },
-        { $set: { ip: ip, port: port, password: password } }
-      );
-      writeToLogFile('info', 'OBS settings updated successfully. IP: ' + ip + ' Port: ' + port + ' Password: ' + password)
-      return result.modifiedCount > 0;
-    } else {
-      const result = await collection.insertOne({ _id: "obs_settings", ip: ip, port: port, password: password });
-      return result.insertedId;
-    }
+    await collection.updateOne(
+      { _id: "obs_settings" },
+      { $set: { ip: ip, port: port, password: password } }
+    );
+    writeToLogFile('info', 'OBS settings updated successfully. IP: ' + ip + ' Port: ' + port + ' Password: ' + password);
   } catch (error) {
     writeToLogFile('error', `Error updating OBS settings: ${error}`);
   }
@@ -542,7 +533,11 @@ async function completeSetup() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    await collection.updateOne({}, { $set: { setup_complete: true } }, { upsert: true });
+    await collection.updateOne(
+      {},
+      { $set: { setup_complete: true } },
+      { upsert: true }
+    );
     writeToLogFile('info', 'Setup completed successfully.');
   } catch (error) {
     writeToLogFile('error', `Error completing setup: ${error}`);

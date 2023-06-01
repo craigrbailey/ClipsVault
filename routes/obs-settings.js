@@ -10,11 +10,9 @@ const __dirname = dirname(__filename);
 
 router.post('/', async (req, res) => {
     console.log('OBS Settings:', req.body);
-    // Extract the form data from the request
     const { host, port, password } = req.body;
 
     try {
-        // Call the updateOBSSettings function with the form data
         await updateOBSSettings(host, port, password);
         await connectToOBS();
         res.status(200).send('OBS settings updated successfully.');

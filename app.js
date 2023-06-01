@@ -17,7 +17,7 @@ import cron from 'node-cron';
 config();
 
 // Validates access token every 4 hours
-cron.schedule('0 */4 * * *', () => {
+cron.schedule('0 */1 * * *', () => {
   validateAccessToken();
 });
 
