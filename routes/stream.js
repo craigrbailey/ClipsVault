@@ -1,4 +1,4 @@
-import { dirname } from 'path'; 
+import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { Router } from 'express';
 import { checkSetup, getVideosByStreamId, getStreamById } from '../db.js';
@@ -12,7 +12,7 @@ const __dirname = dirname(__filename);
 router.get('/', checkSetup, async (req, res) => {
     const streamId = req.query.streamId;
     const streamData = await getStreamById(streamId);
-    let videoData = await getVideosByStreamId(streamId);
+    const videoData = await getVideosByStreamId(streamId);
     const date = streamData ? formatDate(streamData.date) : null;
     const userData = req.session.userData;
     const apiKey = serverKey;

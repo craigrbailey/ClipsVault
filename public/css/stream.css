@@ -67,7 +67,7 @@
 }
 
 .tag-list::-webkit-scrollbar {
-    width: 0.5em; 
+    width: 0.5em;
 }
 
 .tag-list::-webkit-scrollbar-track {
@@ -75,7 +75,7 @@
 }
 
 .tag-list::-webkit-scrollbar-thumb {
-    background-color: #dadada; 
+    background-color: #dadada;
     border-radius: 5px;
 }
 
@@ -124,7 +124,7 @@
 }
 
 .clip {
-    flex-grow: 1; 
+    flex-grow: 1;
     position: relative;
     display: flex;
     justify-content: start;
@@ -175,7 +175,7 @@
     border: none;
     background-color: #3f63ff;
     color: #dadada;
-    font-size: 2rem;
+    font-size: 1.5rem;
     cursor: pointer;
 }
 

@@ -28,7 +28,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-// POST /newstream endpoint
 router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamCategory = req.body.streamCategory;
   const streamDate = req.body.streamDate;

@@ -60,7 +60,7 @@ store.on('error', (error) => {
 });
 app.use(
   session({
-    secret: 'your-secret-key', 
+    secret: 'your-secret-key',
     resave: false,
     saveUninitialized: false,
     store: store,
@@ -118,7 +118,8 @@ import addStreamRouter from './routes/addstream.js';
 import getStreamsRouter from './routes/getstreams.js';
 import { TagRouter } from './routes/tags.js';
 import { ClipRouter } from './routes/clip.js';
-import {}
+import videoRouter from './routes/video.js';
+import favoriteRouter from './routes/favorite.js';
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -141,7 +142,8 @@ app.use('/api/stream', addStreamRouter);
 app.use('/api/getstreams', getStreamsRouter);
 app.use('/api/tags', TagRouter);
 app.use('/api/clip', ClipRouter);
-
+app.use('/video', videoRouter);
+app.use('/api/favorite', favoriteRouter);
 
 // Connect to OBS
 await connectToOBS();

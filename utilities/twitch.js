@@ -68,14 +68,14 @@ async function searchGameCategories(query) {
       return searchGameCategories(query);
     }
     writeToLogFile('error', `Error searching game categories: ${error.message}`);
-    throw error; 
+    throw error;
   }
 }
 
 // Function to validate the access token
 async function validateAccessToken() {
   const accessToken = await getTwitchAccessToken();
-  const response = await fetch('https://id.twitch.tv/oauth2/validate', {
+  const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
     headers: {
       'Authorization': `OAuth ${accessToken}`,
       'Client-ID': process.env.TWITCH_CLIENT_ID,
@@ -175,7 +175,7 @@ async function twitchLive() {
     img: '',
   }
   const category = await getUserCategory();
-  if (category === null) { 
+  if (category === null) {
     data.category = 'Just Chatting';
     data.img = './images/just-chatting.jpg';
     return data;
@@ -188,5 +188,7 @@ async function twitchLive() {
 
 
 // Export functions
-export { getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory,
-  twitchLive }
+export {
+  getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory,
+  twitchLive
+}

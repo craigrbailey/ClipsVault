@@ -329,6 +329,26 @@ async function addVideoToStream(streamId, videoId) {
   }
 }
 
+// Function to update the favorite status of a video
+async function updateVideoFavoriteStatus(videoId, favorite) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const objectId = new ObjectId(videoId);
+    const result = await videosCollection.updateOne(
+      { _id: objectId },
+      { $set: { favorite: favorite } }
+    );
+    if (result.modifiedCount === 1) {
+      writeToLogFile('info', 'Video favorite status updated successfully');
+    } else {
+      writeToLogFile('error', 'Video not found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating video favorite status: ${error}`);
+  }
+}
+
 // Function to update the stream length
 async function updateStreamData(streamId, newLength) {
   const db = await connectToMongoDB();
@@ -344,7 +364,7 @@ async function updateStreamData(streamId, newLength) {
     }
   } catch (error) {
     writeToLogFile('error', `Error updating stream length: ${error}`);
-  } 
+  }
 }
 
 // Function to update the live required setting
@@ -372,11 +392,11 @@ async function updateStreamer(streamer, status) {
         { _id: "settings" },
         { $set: { twitch: status } }
       )
-      } else if (streamer === 'youtube') {
-        await collection.updateOne(
-          { _id: "settings" },
-          { $set: { youtube: status } }
-          );
+    } else if (streamer === 'youtube') {
+      await collection.updateOne(
+        { _id: "settings" },
+        { $set: { youtube: status } }
+      );
     }
   } catch (error) {
     writeToLogFile('error', `Error updating streamer: ${error}`);
@@ -393,11 +413,11 @@ async function setStreamingPlatform(platform) {
         { _id: "settings" },
         { $set: { platform: 'twitch' } }
       )
-      } else if (platform === 'youtube') {
-        await collection.updateOne(
-          { _id: "settings" },
-          { $set: { platform: 'youtube' } }
-          );
+    } else if (platform === 'youtube') {
+      await collection.updateOne(
+        { _id: "settings" },
+        { $set: { platform: 'youtube' } }
+      );
     }
     writeToLogFile('info', `Platform set to: ${platform}`);
   } catch (error) {
@@ -421,9 +441,10 @@ async function getSettings() {
 async function addTagToVideo(videoId, newTag) {
   const db = await connectToMongoDB();
   try {
+    const objectId = new ObjectId(videoId);
     const collection = db.collection("videos");
     const result = await collection.updateOne(
-      { _id: videoId },
+      { _id: objectId },
       { $push: { tags: newTag } }
     );
     writeToLogFile('info', `Tag added to video document: ${newTag}`);
@@ -454,9 +475,10 @@ async function addTagToStream(streamId, newTag) {
 async function removeTagFromVideo(videoId, tagToRemove) {
   const db = await connectToMongoDB();
   try {
+    const objectId = new ObjectId(videoId);
     const collection = db.collection("videos");
     const result = await collection.updateOne(
-      { _id: videoId },
+      { _id: objectId },
       { $pull: { tags: tagToRemove } }
     );
     writeToLogFile('info', `Tag removed from video document: ${tagToRemove}`);
@@ -502,9 +524,9 @@ async function updateOBSSettings(ip, port, password) {
 async function getVideoData(videoId) {
   const db = await connectToMongoDB();
   try {
+    const objectId = new ObjectId(videoId);
     const collection = db.collection('videos');
-    const document = await collection.findOne({ _id: documentId });
-    return document;
+    return await collection.findOne({ _id: objectId });
   } catch (error) {
     writeToLogFile('error', `Error retrieving video data: ${error}`);
   }
@@ -642,7 +664,7 @@ async function getAllStreams() {
     const collection = db.collection('streams');
     const documents = await collection.find().sort({ _id: -1 }).toArray();
     return documents;
-  } catch (err) { 
+  } catch (err) {
     writeToLogFile('error', `Error retrieving all streams: ${err}`);
     return [];
   }
@@ -701,6 +723,25 @@ async function removeStream(streamId) {
   }
 }
 
+// Function to delete a video
+async function deleteVideo(videoId) {
+  const db = await connectToMongoDB();
+  const deleteFile = promisify(fs.unlink);
+  try {
+    const collection = db.collection('videos');
+    const objectId = new ObjectId(videoId);
+    const videos = await collection.findOne({ video_id: objectId });
+    const filePath = videos.file;
+    const result = await collection.deleteOne({ _id: objectId });
+    await deleteFile(filePath);
+    console.log(`Removed ${result.deletedCount} video.`);
+    writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
+  } catch (error) {
+    writeToLogFile('error', `Error removing stream: ${error}`);
+    console.error('Error removing documents:', error);
+  }
+}
+
 // Function to delete all files associated with a stream
 async function deleteFilesByStreamId(streamId) {
   const db = await connectToMongoDB();
@@ -710,7 +751,6 @@ async function deleteFilesByStreamId(streamId) {
     const collection = db.collection('videos');
     const objectId = new ObjectId(streamId);
     const videos = await collection.find({ stream_id: objectId }).toArray();
-
     for (const video of videos) {
       const filePath = video.file;
       const videoObjectId = new ObjectId(video._id);
@@ -812,5 +852,5 @@ export {
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
-  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform
+  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo
 }; 
