@@ -1,16 +1,16 @@
-import { fileURLToPath } from 'url';
 import { Router } from 'express';
-import { getMemoryUsage} from '../utilities/system.js';
+import { getMemoryUsage } from '../utilities/system.js';
 import { checkSetup } from '../db.js';
-import { updateLiveRequired } from '../db.js';
+import { updateLiveRequired, storeDiscordWebhookURL, getDiscordWebhookURL } from '../db.js';
+import { sendMessageToDiscord } from '../utilities/discord-message.js';
 
 const router = Router();
-const __filename = fileURLToPath(import.meta.url);
 
-router.get('/', checkSetup, (req, res) => {
+router.get('/', checkSetup, async (req, res) => {
   const userData = req.session.userData
   const memoryUsage = getMemoryUsage();
-  res.render('settings', { userData, memoryUsage });
+  const discordWebhookURL = await getDiscordWebhookURL();
+  res.render('settings', { userData, memoryUsage, discordWebhookURL });
 });
 
 router.post('/', (req, res) => {
@@ -22,6 +22,10 @@ router.post('/', (req, res) => {
       updateLiveRequired(value);
       res.status(200).send('Live Required setting updated successfully.');
     }
+  } else if (setting === 'discord') {
+    storeDiscordWebhookURL(value);
+    sendMessageToDiscord('Test message')
+    res.status(200).send('Discord Webhook URL updated successfully.');
   }
 });
 

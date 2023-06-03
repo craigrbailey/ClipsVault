@@ -70,7 +70,7 @@
     <div class="main-interface">
       <div class="video-interface">
         <div class="clip">
-          <video id="video" src="<%= videoData.file %>" controls></video>
+          <video id="video" src="<%= videoData.file %>" controls autoplay></video>
           <span id="duration">
             <%= videoData.length %>
           </span>
@@ -82,9 +82,11 @@
               <span id="video-category">
                 <%= videoData.category %>
               </span>
-              <span id="video-date">
-                <%= videoData.date %>
-              </span>
+              <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
+                <span>
+                  <%= videoData.date %>
+                </span>
+              </a>
             </div>
           </div>
           <div class="video-actions">
@@ -105,6 +107,9 @@
                   <i class="fa-solid fa-heart"></i>
                 </button>
                 <% } %>
+                  <button class="action-button" id="add-queue">
+                    <i class="fa-solid fa-list-ol"></i>
+                  </button>
           </div>
         </div>
         <div class="video-tags-container">
@@ -130,8 +135,36 @@
     const tagInput = document.getElementById('tag-input');
     const tagList = document.getElementById('tag-list');
     const videoId = urlParams.get('videoId');
+    const streamId = urlParams.get('streamId');
     const favoriteButton = document.querySelector('.favorite-button');
-    let isFavorite = <%= videoData.favorite %>;
+    const deleteButton = document.getElementById('delete-video');
+    const addButton = document.getElementById('add-queue');
+    let isFavorite = '<%= videoData.favorite %>';
+
+    addButton.addEventListener('click', () => {
+      console.log('Adding video to queue');
+      const body = {
+        id: videoId
+      };
+      fetch('/api/queue', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+        },
+        body: JSON.stringify(body)
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log('Video added to queue successfully');
+          } else {
+            console.error('Failed to add video to queue');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    });
 
     favoriteButton.addEventListener('click', () => {
       if (isFavorite) {
@@ -230,7 +263,6 @@
     }
 
     function removeTag(tagElement, tagToRemove) {
-
       fetch('/api/tags', {
         method: 'DELETE',
         headers: {
@@ -254,6 +286,56 @@
           console.error('Error removing tag:', error);
         });
     }
+
+    function deleteVideo() {
+      fetch('/api/deletevideo', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey
+        },
+        body: JSON.stringify({
+          id: videoId
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            if (streamId) {
+              window.location.href = '/stream?streamId=' + streamId;
+            } else {
+              window.location.href = '/';
+            }
+          } else {
+            console.error(data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function handleDeleteVideo() {
+      if (deleteButton.classList.contains('confirm')) {
+        deleteVideo();
+        return;
+      }
+      deleteButton.innerText = 'Confirm';
+      deleteButton.style.backgroundColor = 'red';
+      deleteButton.classList.add('confirm');
+      setTimeout(() => {
+        if (deleteButton.classList.contains('confirm')) {
+          const ele = document.createElement('i');
+          ele.classList.add('fa-solid', 'fa-trash');
+          deleteButton.innerText = '';
+          deleteButton.style.backgroundColor = '';
+          deleteButton.appendChild(ele);
+          deleteButton.classList.remove('confirm');
+        }
+      }, 3000);
+    }
+
+    deleteButton.addEventListener('click', handleDeleteVideo);
 
     tagList.addEventListener('click', function (event) {
       if (event.target.classList.contains('fa-circle-xmark')) {

@@ -1,124 +1,123 @@
 .latest-container {
-    text-align: center;
+  text-align: center;
 }
-  
-  .latest-container h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    font-size: 24px;
+
+.latest-container h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 24px;
 }
-  
-  .latest-streams-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: flex-start; 
-    width: 100%;
-    max-width: 100%;
-    gap: 10px;
-    text-decoration: none;
+
+.latest-streams-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  width: 100%;
+  max-width: 100%;
+  gap: 10px;
+  text-decoration: none;
 }
-  
-  #add-stream i {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 125px;
-    height: 225px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s, background-color 0.2s;
-    outline: 2px solid rgb(94, 94, 94);
+
+#add-stream i {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20vh;
+  height: 28vh;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.2s;
+  outline: 2px solid rgb(94, 94, 94);
 }
-  
-  #add-stream i:hover {
-    background-color: #49b3d8;
-    outline-color: #49b3d8;
+
+#add-stream i:hover {
+  background-color: #49b3d8;
+  outline-color: #49b3d8;
 }
-  
-  .stream {
-    position: relative;
-    display: flex;
-    flex: 0 0 175px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 175px;
-    height: auto; /* Adjusted height to auto */
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s;
-    margin-bottom: 10px;
-    text-decoration: none;
+
+.stream {
+  position: relative;
+  display: flex;
+  flex: 0 0 20vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 20vh;
+  height: auto;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  margin-bottom: 10px;
+  text-decoration: none;
 }
-  
-  .stream:hover {
-    transform: scale(1.05);
+
+.stream:hover {
+  transform: scale(1.05);
 }
-  
-  .stream-img-container {
-    position: relative;
-    height: 80%; /* Adjust the height to your desired value */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
+
+.stream-img-container {
+  position: relative;
+  height: 80%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
 }
-  
-  .stream-img-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 10px;
-    object-fit: cover; /* Added object-fit property */
+
+.stream-img-container img {
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  object-fit: cover;
 }
-  
-  #stream-duration {
-    position: absolute;
-    bottom: -25px;
-    right: 50%;
-    transform: translateX(50%);
-    min-width: 100%;
-    max-width: 100%;
-    font-size: 12px;
-    text-align: center;
-    color: rgb(255, 255, 255);
-    background-color: rgb(0, 0, 0, 0.5);
-    padding: 5px;
-    z-index: 1;
-    transition: bottom 0.2s;
+
+#stream-duration {
+  position: absolute;
+  bottom: -25px;
+  right: 50%;
+  transform: translateX(50%);
+  min-width: 100%;
+  max-width: 100%;
+  font-size: 12px;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0, 0.5);
+  padding: 5px;
+  z-index: 1;
+  transition: bottom 0.2s;
 }
-  
-  .stream:hover #stream-duration {
-    bottom: 0;
+
+.stream:hover #stream-duration {
+  bottom: 0;
 }
-  
-  #game-title {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    color: white;
+
+#game-title {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  color: white;
 }
-  
-  #stream-date {
-    font-size: 12px;
-    text-align: center;
-    color: rgb(124, 124, 124);
-    max-width: 175px;
+
+#stream-date {
+  font-size: 12px;
+  text-align: center;
+  color: rgb(124, 124, 124);
+  max-width: 175px;
 }
-  
-  #clips-amount {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    min-width: 35px;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-    color: rgb(255, 255, 255);
-    background-color: #49b3d8;
-    padding: 5px;
-    border-radius: 5px;
-    z-index: 1;
+
+#clips-amount {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  min-width: 35px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  color: rgb(255, 255, 255);
+  background-color: #49b3d8;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 1;
 }
-  

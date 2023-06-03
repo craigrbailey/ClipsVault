@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { twitchLive } from '../utilities/twitch.js';
-import { insertClip } from '../db.js';
-import { length } from '../utilities/obs.js';
-import { getAPIKey } from '../db.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import { twitchLive } from '../../utilities/twitch.js';
+import { insertClip } from '../../db.js';
+import { length } from '../../utilities/obs.js';
+import { getAPIKey } from '../../db.js';
+import { writeToLogFile } from '../../utilities/logging.js';
 
 let clipTags = [];
 const router = Router();
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
     if (start === 0) {
         return res.status(400).json({ error: 'Invalid start time.' });
     }
-    const { tags, clipLength } = req.body; 
+    const { tags, clipLength } = req.body;
     writeToLogFile('info', `Clip received: length: ${clipLength} Tags received: ${tags}`);
     const liveData = await twitchLive();
     insertClip(clipLength, start, tags, liveData.category, liveData.img);

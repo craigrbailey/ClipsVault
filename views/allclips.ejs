@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clips Vault</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/clips.css" />
+    <link rel="stylesheet" href="/css/loader.css">
+</head>
+
+<body>
+    <section id="menu">
+        <h1>Clips Vault</h1>
+
+        <div class="items">
+            <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
+            <li>
+                <i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a>
+            </li>
+            <li>
+                <i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a>
+            </li>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-container-details">
+                <span id="percent"></span>
+                <span id="storage"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="top-notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span id="top-notification"></span>
+    </div>
+
+    <div id="interface">
+        <div class="navigation">
+            <div class="notification-container">
+                <div class="notification-bell">
+                    <i class="fa fa-bell"></i>
+                    <span class="notification-count"></span>
+                </div>
+                <div class="notification-dropdown">
+                    <ul class="notification-list"></ul>
+                </div>
+            </div>
+            <div class="profile-settings">
+                <% if (userData) { %>
+                    <img src="<%= userData.profile_image_url %>" alt="" />
+                    <% } else { %>
+                        <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg" />
+                        <% } %>
+                            <div class="submenu">
+                                <a href="#">Sign Out</a>
+                                <a href="/settings">Settings</a>
+                            </div>
+            </div>
+        </div>
+
+
+        <div class="main-interface">
+            <div class="search-form">
+                <form action="search">
+                    <div>
+                        <div class="tag-search">
+                            <i class="fa-solid fa-search"></i>
+                            <input type="text" name="search" id="search" placeholder="Search for clips..." />
+                            <i id="chevron-down" class="fa-solid fa-chevron-down"></i>
+                        </div>
+                        <div class="tags-dropdown">
+                            <ul class="tags-list"></ul>
+                            <li>Test</li>
+                        </div>
+                    </div>
+                    <div class="category-search">
+                        <label for="from-date">Category:</label>
+                        <div class="category-dropdown">
+                            <span class="category-dropdown-selector">
+                                <span class="category-dropdown-selector-text">All</span>
+                                <i class="fa-solid fa-chevron-down"></i>
+                            </span>
+                            <ul class="category-dropdown-menu">
+                                <li>Option 1</li>
+                                <li>Option 2</li>
+                                <li>Option 3</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="date-search">
+                        <label for="from-date">From:</label>
+                        <input type="date" name="from-date" id="from-date" />
+                    </div>
+                    <div class="date-search">
+                        <label for="to-date">To:</label>
+                        <input type="date" name="to-date" id="to-date" />
+                    </div>
+                    <div class="favorite-selector">
+                        <label for="switch">Favorite:</label>
+                        <label class="switch">
+                            <input id="favorite" type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <div class="clips-interface">
+                <div class="searching">
+                    <svg viewBox="25 25 50 50">
+                        <circle r="20" cy="50" cx="50"></circle>
+                    </svg>
+                    <p>Searching...</p>
+                </div>
+                <% for (let i=0; i < videos.length; i++) { %>
+                    <a href="/video?videoId=<%= videos[i]._id %>">
+                        <div class="clip" data-id="<%= videos[i]._id %>">
+                            <div class="video-container">
+                                <video src="<%= videos[i].file %>" controls></video>
+                                <span class="clip-duration">
+                                    <%= videos[i].length %>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                    <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/base.js"></script>
+    <script>
+        const chevronDown = document.getElementById('chevron-down');
+        const tagsDropdown = document.querySelector('.tags-dropdown');
+        const searchDiv = document.querySelector('.searching');
+
+        chevronDown.addEventListener('click', () => {
+            console.log('clicked');
+            tagsDropdown.classList.toggle('show');
+            chevronDown.classList.toggle('rotate');
+        });
+        document.querySelector('form').addEventListener('change', searchClips);
+        function createVideoClipDiv(video) {
+            console.log(video.file)
+            const div = document.createElement('div');
+            div.classList.add('clip');
+            div.dataset.id = video._id;
+
+            const link = document.createElement('a');
+            link.href = `/video?videoId=${video._id}`;
+            div.appendChild(link);
+
+            const videoContainer = document.createElement('div');
+            videoContainer.classList.add('video-container');
+            link.appendChild(videoContainer);
+
+            const videoElement = document.createElement('video');
+            // const filePath = encodeURIComponent(video.file);
+            const filePath = video.file.replace(/\\/g, '/');
+            videoElement.src = `/${filePath}`;
+            videoElement.controls = true;
+            videoContainer.appendChild(videoElement);
+
+            const durationSpan = document.createElement('span');
+            durationSpan.classList.add('clip-duration');
+            durationSpan.textContent = video.length;
+            videoContainer.appendChild(durationSpan);
+
+            return div;
+        }
+
+
+        function searchClips() {
+            const tags = Array.from(document.querySelectorAll('.tags-list li')).map(li => li.textContent);
+            const category = document.querySelector('.category-dropdown-selector-text').textContent;
+            const from = document.getElementById('from-date').value;
+            const to = document.getElementById('to-date').value;
+            const favorite = document.getElementById('favorite').checked;
+            searchDiv.classList.add('show');
+            const body = {
+                tags: tags,
+                category: category,
+                from: from,
+                to: to,
+                favorite: favorite
+            };
+
+            fetch('/api/searchclips', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const clipsInterface = document.querySelector('.clips-interface');
+                    clipsInterface.innerHTML = '';
+                    searchDiv.classList.remove('show');
+                    data.forEach(video => {
+                        const clipDiv = createVideoClipDiv(video);
+                        clipsInterface.appendChild(clipDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { updateVideoFavoriteStatus } from '../db.js';
-import { serverKey } from '../utilities/api-key.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import { updateVideoFavoriteStatus } from '../../db.js';
+import { serverKey } from '../../utilities/api-key.js';
+import { writeToLogFile } from '../../utilities/logging.js';
 
 const router = Router();
 

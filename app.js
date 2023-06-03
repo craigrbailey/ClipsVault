@@ -105,21 +105,25 @@ import dashboardRouter from './routes/dashboard.js';
 import settingsRouter from './routes/settings.js';
 import setupRouter from './routes/setup.js';
 import memoryUsageRouter from './routes/memory-usage.js';
-import statusRouter from './routes/status.js';
+import statusRouter from './routes/api/status.js';
 import getQueueRouter from './routes/queue.js';
 import notificationsRouter from './routes/notifications.js';
-import obsConnectionRouter from './routes/obs-connection.js';
+import obsConnectionRouter from './routes/api/obs-connection.js';
 import obsConnectionSettings from './routes/obs-settings.js';
 import streamConnectionRouter from './routes/stream.js';
 import googleCallbackRouter from './routes/google-callback.js';
 import googleAuthRouter from './routes/googleauth.js';
-import categorySearchRouter from './routes/categorysearch.js';
-import addStreamRouter from './routes/addstream.js';
-import getStreamsRouter from './routes/getstreams.js';
-import { TagRouter } from './routes/tags.js';
-import { ClipRouter } from './routes/clip.js';
+import categorySearchRouter from './routes/api/categorysearch.js';
+import addStreamRouter from './routes/api/addstream.js';
+import getStreamsRouter from './routes/api/getstreams.js';
+import { TagRouter } from './routes/api/tags.js';
+import { ClipRouter } from './routes/api/clip.js';
 import videoRouter from './routes/video.js';
-import favoriteRouter from './routes/favorite.js';
+import favoriteRouter from './routes/api/favorite.js';
+import deleteVideoRouter from './routes/api/deleteVideo.js';
+import clipsRouter from './routes/clips.js';
+import searchClipsRouter from './routes/api/searchClips.js';
+import queueHandler from './routes/api/queue.js'
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -144,6 +148,10 @@ app.use('/api/tags', TagRouter);
 app.use('/api/clip', ClipRouter);
 app.use('/video', videoRouter);
 app.use('/api/favorite', favoriteRouter);
+app.use('/api/deletevideo', deleteVideoRouter);
+app.use('/allclips', clipsRouter);
+app.use('/api/searchclips', searchClipsRouter);
+app.use('/api/queue', queueHandler);
 
 // Connect to OBS
 await connectToOBS();

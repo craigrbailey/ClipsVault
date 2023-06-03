@@ -3,9 +3,9 @@ import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { insertStream, insertVideo, addVideoToStream, removeStream, getRefreshToken } from '../db.js';
-import { getGameBoxArt } from '../utilities/twitch.js';
-import { createFolder } from '../utilities/system.js';
+import { insertStream, insertVideo, addVideoToStream, removeStream } from '../../db.js';
+import { getGameBoxArt } from '../../utilities/twitch.js';
+import { createFolder, getVideoLength } from '../../utilities/system.js';
 
 const router = Router();
 
@@ -38,7 +38,8 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamId = await insertStream(streamDate, streamCategory, gameArt, '');
   try {
     for (const file of req.files) {
-      const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, '');
+      const fileLength = await getVideoLength(file.originalname);
+      const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, fileLength);
       addVideoToStream(streamId, videoId);
       const { size } = await fs.stat(file.path);
       if (size > largestSize * 2) {

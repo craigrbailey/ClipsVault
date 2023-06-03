@@ -12,7 +12,7 @@ async function getFileSize(filename) {
   return fileSizeInBytes;
 }
 
-function getVideoLength(filePath, callback) {
+async function getVideoLength(filePath, callback) {
   ffmpeg.ffprobe(filePath, (err, metadata) => {
     if (err) {
       callback(err, null);

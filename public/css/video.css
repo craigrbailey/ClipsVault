@@ -147,3 +147,9 @@ img {
 #tag-input input:focus {
     outline: none;
 }
+
+.confirm {
+    background-color: red;
+    color: white;
+    font-size: 1rem;
+}

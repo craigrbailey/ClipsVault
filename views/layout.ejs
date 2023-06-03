@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clips Vault</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/base.css">
+</head>
+
+<body>
+    <section id="menu">
+        <h1>Clips Vault</h1>
+
+        <div class="items">
+            <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
+            <li><i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a></li>
+            <li><i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a></li>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="progress-container-details">
+                <span id="percent"></span>
+                <span id="storage"></span>
+            </div>
+        </div>
+    </section>
+
+    <div class="top-notifications">
+        <i class="fa-solid fa-bell"></i>
+        <span id="top-notification"></span>
+    </div>
+
+    <div id="interface">
+        <div class="navigation">
+            <div class="notification-container">
+                <div class="notification-bell">
+                    <i class="fa fa-bell"></i>
+                    <span class="notification-count"></span>
+                </div>
+                <div class="notification-dropdown">
+                    <ul class="notification-list">
+                    </ul>
+                </div>
+            </div>
+            <div class="profile-settings">
+                <% if (userData) { %>
+                    <img src="<%= userData.profile_image_url %>" alt="">
+                    <% } else { %>
+                        <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg">
+                        <% } %>
+                            <div class="submenu">
+                                <a href="#">Sign Out</a>
+                                <a href="/settings">Settings</a>
+                            </div>
+            </div>
+        </div>
+        <%- body %>
+    </div>
+
+    <script src="/js/base.js"></script>
+</body>
+
+</html>

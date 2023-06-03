@@ -34,20 +34,10 @@
     </div>
   </section>
 
-  <div class="confirmation-window">
-    <h2>CONFIRM</h2>
-    <span>Are you sure</span>
-    <div>
-      <button id="confirm-btn">Confirm</button>
-      <button id="cancel-btn">Cancel</button>
-    </div>
-  </div>
-
   <div class="top-notifications">
     <i class="fa-solid fa-bell"></i>
     <span id="top-notification"></span>
   </div>
-
 
   <div id="interface">
     <div class="navigation">
@@ -139,7 +129,6 @@
       const streamId = urlParams.get('streamId');
       const deleteStreamButton = document.getElementById('delete-stream');
       const apiKey = '<%= apiKey %>';
-      console.log(`API Key: ${apiKey}`);
 
       videos.forEach(video => {
         video.addEventListener('mouseenter', () => {

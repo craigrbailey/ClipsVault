@@ -77,7 +77,7 @@
                     <div class="setting">
                         <div>
                             <h3>Live Required</h3>
-                            <span>Does OBS need to be live to track the recording</span> 
+                            <span>Does OBS need to be live to track the recording</span>
                         </div>
                         <label class="switch">
                             <input id="liveRequired" type="checkbox">
@@ -127,9 +127,10 @@
                             </label>
                         </div>
                         <div>
-                            <form>
+                            <form id="discord-form">
                                 <label for="webhook">Discord Webhook:</label>
-                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
+                                <input class="settings-input" type="text" id="webhook" name="webhook"
+                                    placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
                                 <button id="submit-button" type="submit">Submit</button>
                             </form>
                         </div>
@@ -146,9 +147,6 @@
                             <form>
                                 <label for="webhook">Port:</label>
                                 <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
-                                <label for="webhook">Discord Webhook:</label>
-                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
-                                <button id="submit-button" type="submit">Submit</button>
                             </form>
                         </div>
                     </div>
@@ -195,6 +193,45 @@
     </div>
     <script src="/js/base.js"></script>
     <script src="/js/settings.js"></script>
+    <script>
+        const discordForm = document.getElementById('discord-form');
+        const webhookInput = document.getElementById('webhook');
+
+        discordForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const webhookUrl = webhookInput.value;
+
+            if (isValidUrl(webhookUrl)) {
+                const body = {
+                    setting: 'discord',
+                    value: webhookUrl,
+                };
+                fetch('/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                console.log('Invalid webhook URL');
+            }
+        });
+
+        function isValidUrl(url) {
+            // Simple URL validation using a regular expression
+            const urlPattern = /^(https?:\/\/)?([\w.-]+)\.([a-zA-Z]{2,6})(\/[\w.-]*)*\/?$/;
+            return urlPattern.test(url);
+        }
+    </script>
 </body>
 
 </html>

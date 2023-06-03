@@ -115,6 +115,43 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
   }
 }
 
+// Function to store discord webhook url
+async function storeDiscordWebhookURL(webhookURL) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const filter = { _id: 'discord' };
+    const update = {
+      $set: {
+        webhookURL
+      },
+    };
+    const options = { upsert: true };
+    const result = await collection.updateOne(filter, update, options);
+    if (result.upsertedCount === 1) {
+      writeToLogFile("New Discord webhook URL stored successfully.");
+    } else {
+      writeToLogFile("Existing Discord webhook URL updated successfully.");
+    }
+  } catch (error) {
+    writeToLogFile("Error storing Discord webhook URL:", error);
+    throw error;
+  }
+};
+
+// Function to retrive discord webhook url
+async function getDiscordWebhookURL() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const webhookURL = await collection.findOne({ _id: 'discord' }, { projection: { webhookURL: 1 } });
+    return webhookURL ? webhookURL.webhookURL : null;
+  } catch (error) {
+    writeToLogFile("Error retrieving Discord webhook URL:", error);
+    throw error;
+  }
+};
+
 // Function to store twitch user data
 async function storeTwitchUserData(userData) {
   const db = await connectToMongoDB();
@@ -197,23 +234,16 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
 }
 
 // Function to add a queue item to the database
-async function insertQueue(streamId, file, date, category, size, length, favorite, tags, captions) {
+async function insertQueue(videoId) {
   const db = await connectToMongoDB();
   try {
-    const collection = db.collection("queue");
+    const objectId = new ObjectId(videoId);
     const document = {
-      stream_id: streamId,
-      file: file,
-      date: date,
-      category: category,
-      size: size,
-      length: length,
-      favorite: favorite,
-      tags: tags,
-      captions: captions
+      video_id: objectId
     };
-    const result = await collection.insertOne(document);
-    return result.insertedId;
+    const queueCollection = db.collection("queue");
+    await queueCollection.insertOne(document);
+    writeToLogFile('info', `Queue item created successfully. ID: ${videoId}`)
   } catch (error) {
     writeToLogFile('error', `Error inserting queue item: ${error}`);
     console.error("Error inserting video document:", error);
@@ -581,13 +611,19 @@ async function InitializeSetup() {
         cleanup_time: "0500",
         platform: null,
         twitch: null,
-        youtube: null
+        youtube: null,
+        discord: null
       }
       const notifications = {
         _id: 'notifications',
         discord: false,
         gmail: false,
       }
+      const discord = {
+        _id: 'discord',
+        webhookURL: null,
+      }
+      await collection.insertOne(discord);
       await collection.insertOne(notifications);
       await collection.insertOne(settings);
       await collection.insertOne({ _id: 'obs_settings', ip: null, port: null, password: null });
@@ -670,15 +706,26 @@ async function getAllStreams() {
   }
 }
 
+// Function to get all streams
+async function getAllVideos() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos');
+    const documents = await collection.find().sort({ _id: -1 }).toArray();
+    return documents;
+  } catch (err) {
+    writeToLogFile('error', `Error retrieving all streams: ${err}`);
+    return [];
+  }
+}
+
 //Get All Videos By Stream Id
 async function getVideosByStreamId(streamId) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection('videos');
     const objectId = new ObjectId(streamId);
-    const query = { stream_id: objectId };
-    const videos = await collection.find(query).toArray();
-
+    const videos = await collection.find({ stream_id: objectId }).toArray();
     return videos;
   } catch (err) {
     writeToLogFile('error', `Error retrieving videos by stream ID: ${err}`);
@@ -730,10 +777,16 @@ async function deleteVideo(videoId) {
   try {
     const collection = db.collection('videos');
     const objectId = new ObjectId(videoId);
-    const videos = await collection.findOne({ video_id: objectId });
-    const filePath = videos.file;
+    const video = await collection.findOne({ _id: objectId });
+    const filePath = video.file;
+    console.log(filePath);
     const result = await collection.deleteOne({ _id: objectId });
     await deleteFile(filePath);
+    const streamCollection = db.collection('streams');
+    await streamCollection.updateOne(
+      { _id: video.stream_id },
+      { $pull: { videos: objectId } }
+    );
     console.log(`Removed ${result.deletedCount} video.`);
     writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
   } catch (error) {
@@ -844,6 +897,57 @@ async function getAPIKey() {
   }
 }
 
+// Function to search for all ideos that are marked as favorite
+async function getAllFavoriteVideos() {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ favorite: true }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving favorite videos:', error);
+    return null;
+  }
+}
+
+// Function to search for all videos that contain a specific tag
+async function getVideosByTag(tag) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ tags: tag }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving videos by tag:', error);
+    return null;
+  }
+}
+
+// Function to search for all videos from a date range
+async function getVideosByDateRange(startDate, endDate) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ date: { $gte: startDate, $lte: endDate } }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving videos by date range:', error);
+    return null;
+  }
+}
+
+// Function to search for all videos with a speicifc category
+async function getVideosByCategory(category) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ category: category }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving videos by category:', error);
+    return null;
+  }
+}
 
 // Export the functions
 export {
@@ -852,5 +956,6 @@ export {
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
-  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo
+  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
+  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL
 }; 

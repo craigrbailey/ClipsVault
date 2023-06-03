@@ -107,7 +107,7 @@ async function refreshAccessToken() {
   try {
     const refreshToken = await getRefreshToken();
     const TWITCH_API_URL = 'https://id.twitch.tv/oauth2';
-    const response = await fetch(`${TWITCH_API_URL}/token`, {
+    const response = await axios.post(`${TWITCH_API_URL}/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
