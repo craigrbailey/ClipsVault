@@ -1,37 +1,68 @@
-<title>Clips Vault</title>
-<link rel="stylesheet" href="/css/dashboard.css" />
-<link rel="stylesheet" href="/css/upload.css" />
+<!DOCTYPE html>
+<html lang="en">
 
-<%- include('layout', { body: '' }) %>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+  <link rel="stylesheet" href="/css/upload.css" />
+</head>
 
-  <div class="main-interface">
-    <div class="latest-container">
-      <h3>Latest Streams</h3>
-      <div class="latest-streams-container">
-        <div class="stream" id="add-stream">
-          <i class="fa-solid fa-plus"></i>
-          <span>Add A Stream</span>
+<body>
+  <%- include('menu.ejs') %>
+
+  <section>
+    <div class="main-interface">
+      <div class="latest-container">
+        <h3>Latest Streams</h3>
+        <div class="latest-streams-container">
+          <div class="stream" id="add-stream">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add A Stream</span>
+          </div>
+          <% for (let i=0; i < streams.length; i++) { %>
+            <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
+              <div class="stream-img-container">
+                <img src="<%= streams[i].background_img %>" alt="" />
+                <span id="clips-amount">
+                  <%= streams[i].videos.length %>
+                </span>
+                <span id="stream-duration">
+                  <%= streams[i].length %>
+                </span>
+              </div>
+              <span id="game-title">
+                <%= streams[i].category %>
+              </span>
+              <span id="stream-date">
+                <%= streams[i].date %>
+              </span>
+            </a>
+            <% } %>
         </div>
-        <% for (let i=0; i < streams.length; i++) { %>
-          <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
-            <div class="stream-img-container">
-              <img src="<%= streams[i].background_img %>" alt="" />
-              <span id="clips-amount">
-                <%= streams[i].videos.length %>
-              </span>
-              <span id="stream-duration">
-                <%= streams[i].length %>
-              </span>
-            </div>
-            <span id="game-title">
-              <%= streams[i].category %>
-            </span>
-            <span id="stream-date">
-              <%= streams[i].date %>
-            </span>
-          </a>
-          <% } %>
       </div>
     </div>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/upload-form.js"></script>
+  </section>
+  <script src="/js/dashboard.js"></script>
+  <script src="/js/upload-form.js"></script>
+  <script>
+    var currentPage = window.location.href;
+    console.log(`Current page: ${currentPage}`);
+    var menuLinks = document.getElementsByClassName('menu-link');
+    for (var i = 0; i < menuLinks.length; i++) {
+      var link = menuLinks[i];
+      if (currentPage.includes('localhost') && link.textContent === 'Dashboard') {
+        link.classList.add('selected');
+      }
+    }
+  </script>
+</body>
+
+</html>

@@ -1,11 +1,14 @@
 .latest-container {
   text-align: center;
+  color: white;
 }
 
 .latest-container h3 {
   margin-top: 0;
   margin-bottom: 10px;
   font-size: 24px;
+  font-weight: bold;
+  text-align: center;
 }
 
 .latest-streams-container {
@@ -19,12 +22,12 @@
   text-decoration: none;
 }
 
-#add-stream i {
+#add-stream {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 20vh;
+  width: 15vh;
   height: 28vh;
   border-radius: 10px;
   cursor: pointer;
@@ -32,7 +35,7 @@
   outline: 2px solid rgb(94, 94, 94);
 }
 
-#add-stream i:hover {
+#add-stream:hover {
   background-color: #49b3d8;
   outline-color: #49b3d8;
 }
@@ -40,12 +43,11 @@
 .stream {
   position: relative;
   display: flex;
-  flex: 0 0 20vh;
+  flex: 0 0 15vh;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 20vh;
-  height: auto;
+  width: 15vh;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s;

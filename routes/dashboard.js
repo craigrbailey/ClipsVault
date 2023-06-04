@@ -19,7 +19,7 @@ router.get('/', checkSetup, async (req, res) => {
   });
   const userData = req.session.userData
   const memoryUsage = getMemoryUsage();
-  res.render('dashboard', { layout: 'layout', content: 'dashboard', userData, memoryUsage, streams });
+  res.render('dashboard', { userData, memoryUsage, streams });
 });
 
 export default router;
