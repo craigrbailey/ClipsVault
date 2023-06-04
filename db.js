@@ -148,6 +148,29 @@ async function getDiscordWebhookURL() {
   }
 };
 
+// Function to update discord toggle
+async function updateDiscordToggle(value) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const filter = { _id: 'notifications' };
+    const update = {
+      $set: {
+        discord: value
+      },
+    };
+    const options = { upsert: true };
+    await collection.updateOne(filter, update, options);
+    if (value === 'true') {
+      writeToLogFile('info', 'Discord notifications enabled.')
+    } else {
+      writeToLogFile('info', 'Discord notifications disabled.')
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error storing Discord toggle: ${error}`);
+  }
+};
+
 // Function to store twitch user data
 async function storeTwitchUserData(userData) {
   const db = await connectToMongoDB();
@@ -939,5 +962,5 @@ export {
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
-  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL
+  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle
 }; 

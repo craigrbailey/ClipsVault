@@ -7,327 +7,46 @@
     gap: 1em;
 }
 
-.main-interface h1 {
-    margin-left: 32px;
-    font-size: 36px;
-    font-weight: bold;
-    color: #fff;
-}
-
 .settings {
-    background-color: #0d0d0d;
+    background-color: #f0f0f0;
     padding: 20px;
     border-radius: 5px;
-}
-
-.settings-container div:nth-child(2) div:first-child {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.settings-container div:nth-child(5) div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2em;
-}
-
-.settings-container div:nth-child(2) form button {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    border-radius: 5px;
-    border: 0;
-    padding: 10px;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.settings form input {
-    background-color: transparent;
-    border: 0;
-    border-bottom: 2px #fff solid;
-    display: block;
     width: 100%;
-    padding: 15px 0;
-    font-size: 18px;
-    color: #fff;
 }
 
-#connection-links {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 50px;
-}
-
-#connection-links a {
-    display: inline-block;
-    padding: 10px 20px;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: bold;
+.settings input {
     border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-#connect-with-twitch {
-    background-color: #9147ff;
-}
-
-#connect-with-twitch:hover {
-    background-color: #6e2dff;
-}
-
-#connect-to-youtube {
-    background-color: #ff0000;
-}
-
-#connect-to-youtube:hover {
-    background-color: #cc0000;
-}
-
-.discord-join {
-    background-color: #7289DA;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-height: 200px;
-}
-
-.discord-join h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.discord-join p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.discord-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: white;
-    color: #7289DA;
+    background-color: #e9e9e9;
+    color: rgb(2, 2, 2);
+    font-size: 1rem;
     border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.discord-button:hover {
-    background-color: #f5f5f5;
-}
-
-.twitch-follow {
-    background-color: #9146FF;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-height: 200px;
-    display: flex;
-    flex-direction: row;
-}
-
-.twitch-follow .profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
-
-.twitch-follow h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.twitch-follow p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.twitch-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: white;
-    color: #9146FF;
     border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
+    padding: 5px;
+    width: 100%;
 }
 
-.twitch-button:hover {
-    background-color: #f5f5f5;
+.setting {
+    margin-bottom: 1vh;
+    margin-top: 1vh;
 }
 
-.twitter-follow {
-    background-color: #1DA1F2;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.twitter-follow h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.twitter-follow p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.twitter-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: white;
-    color: #1DA1F2;
+.settings select {
+    border: none;
+    background-color: #e9e9e9;
+    color: rgb(2, 2, 2);
+    font-size: 1rem;
     border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.twitter-button:hover {
-    background-color: #f5f5f5;
-}
-
-.buy-me-a-coffee {
-    background-color: #FFDD00;
-    color: black;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.buy-me-a-coffee h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.buy-me-a-coffee p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.coffee-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #000000;
-    color: white;
     border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
+    padding: 5px;
+    width: 100%;
 }
 
-.coffee-button:hover {
-    background-color: #333333;
-}
-
-.youtube-subscribe {
-    background-color: #FF0000;
-    color: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.youtube-subscribe h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.youtube-subscribe p {
-    font-size: 16px;
-    margin-bottom: 20px;
-}
-
-.youtube-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: white;
-    color: #FF0000;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.youtube-button:hover {
-    background-color: #f5f5f5;
+.settings input:focus {
+    outline: none;
 }
 
 .settings span {
     color: rgb(134, 141, 151);
-}
-
-.notification-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 10px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-
-.notification-toggle div {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 10px 0;
-}
-
-.notification-toggle form {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 10px 0;
-    width: 100%;
-}
-
-.notification-toggle form button {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
-    border-radius: 5px;
-    border: 0;
-    padding: 10px;
-    color: #fff;
-    font-size: 18px;
-    cursor: pointer;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 150px;
-}
-
-.notification-toggle div {
-    display: flex;
-    flex-direction: row;
-}
-
-.toggle-label {
-    margin-right: 10px;
 }
 
 .switch {
@@ -373,12 +92,97 @@ input:checked+.slider:before {
     transform: translateX(26px);
 }
 
-.notification-form {
-    margin-top: 10px;
+
+#general-settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
 }
 
-.notification-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+#live-required {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#cleanup-time {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+#platform {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#api-key {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.api-key-input {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+button {
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.copied {
+    background-color: #75f841;
+    color: #1e1e1e;
+}
+
+#obs-settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#obs-settings form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+#obs-settings form button {
+    height: 5vh;
+    width: 10vh;
+    font-size: 1rem;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#notification-settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
 }

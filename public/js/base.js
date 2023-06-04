@@ -26,25 +26,3 @@ function showNotifications(numNotifications) {
     notificationDropdown.style.height = 'auto';
   }
 }
-
-
-function updateMemoryUsage() {
-    fetch('/memory-usage')
-      .then(response => response.json())
-      .then(({ usedMemoryPercentage, usedMemory, totalMemory }) => {
-        const freeMemoryPercentage = (100 - usedMemoryPercentage).toFixed(0);
-  
-        const progressBar = document.querySelector('.progress-bar');
-        const percent = document.getElementById('percent');
-        const storage = document.getElementById('storage');
-  
-        progressBar.style.width = `${freeMemoryPercentage}%`;
-        percent.innerHTML = `${freeMemoryPercentage}% Remaining`;
-        storage.innerHTML = `${usedMemory} / ${totalMemory}`;
-      })
-      .catch(error => console.error(error));
-  }
-
-window.addEventListener('load', () => {
-    updateMemoryUsage();
-  });

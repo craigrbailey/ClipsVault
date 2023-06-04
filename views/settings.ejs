@@ -18,12 +18,12 @@
     <%- include('menu.ejs') %>
         <div class="main-interface">
             <div class="settings-container">
-                <div class="settings">
+                <div class="settings" id="general-settings">
                     <h2>General</h2>
-                    <span>General Settings</span>
-                    <div class="setting">
+                    <span>Configure general settings for the application</span>
+                    <div class="setting" id="live-required">
                         <div>
-                            <h3>Live Required</h3>
+                            <h4>Live Required</h4>
                             <span>Does OBS need to be live to track the recording</span>
                         </div>
                         <label class="switch">
@@ -31,117 +31,100 @@
                             <span class="slider"></span>
                         </label>
                     </div>
-
-                    <div class="setting">
-                        <label for="cleanup-time">Cleanup Time:</label>
+                    <div>
+                        <h4>Cleanup Time</h4>
+                        <span>Specifiy the time does maintenace</span>
+                    </div>
+                    <div class="setting" id="cleanup-time">
                         <select id="cleanup-time">
-                            <option value="1">1 hour</option>
-                            <option value="2">2 hours</option>
-                            <option value="3">3 hours</option>
+                            <option value="0">Midnight</option>
+                            <option value="1">1 AM</option>
+                            <option value="2">2 AM</option>
+                            <option value="3">3 AM</option>
+                            <option value="4">4 AM</option>
+                            <option value="5">5 AM</option>
+                            <option value="6">6 AM</option>
+                            <option value="7">7 AM</option>
+                            <option value="8">8 AM</option>
+                            <option value="9">9 AM</option>
+                            <option value="10">10 AM</option>
+                            <option value="11">11 AM</option>
+                            <option value="12">Noon</option>
+                            <option value="13">1 PM</option>
+                            <option value="14">2 PM</option>
+                            <option value="15">3 PM</option>
+                            <option value="16">4 PM</option>
+                            <option value="17">5 PM</option>
+                            <option value="18">6 PM</option>
+                            <option value="19">7 PM</option>
+                            <option value="20">8 PM</option>
+                            <option value="21">9 PM</option>
+                            <option value="22">10 PM</option>
+                            <option value="23">11 PM</option>
                         </select>
                     </div>
-
-                    <div class="setting">
-                        <label for="platform">Platform:</label>
-                        <select id="platform">
+                    <div class="setting" id="platform">
+                        <div>
+                            <h4>Platform</h4>
+                            <span>Specifiy which platform you stream on. Default is twitch</span>
+                        </div>
+                        <select>
                             <option value="twitch">Twitch</option>
                             <option value="youtube">YouTube</option>
                         </select>
                     </div>
-                    <div class="settings api-key-container">
-                        <input type="text" id="api-key-input" value=<%=apiKey %> readonly>
-                        <button id="new-api-key">
-                            <i class="fa-solid fa-sync"></i>
-                        </button>
-                        <button class="copy-api-key-button">
-                            Copy
-                        </button>
+                    <div class="setting api-key-container" id="api-key">
+                        <div>
+                            <h4>API Key</h4>
+                            <span>API key to make requests to the application</span>
+                        </div>
+                        <div class="api-key-input">
+                            <input type="text" id="api-key-input" value=<%=apiKey %> readonly>
+                            <button id="new-api-key">
+                                <i class="fa-solid fa-sync"></i>
+                            </button>
+                            <button id="copy-api-key-button">
+                                Copy
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <div class="settings">
+                <div class="settings" id="obs-settings">
                     <h2>OBS Connection</h2>
                     <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
-                    <form>
+                    <form id="obs-settings-form">
                         <label for="host">Host:</label>
                         <input class="settings-input" type="text" id="host" name="host"><br><br>
                         <label for="port">Port:</label>
                         <input class="settings-input" type="text" id="port" name="port"><br><br>
                         <label for="password">Password:</label>
                         <input class="settings-input" type="password" id="password" name="password"><br><br>
-                        <button id="obs-button" type="submit"></button>
+                        <button id="obs-button" type="submit">Connect</button>
                     </form>
                 </div>
-                <div class="settings">
+                <div class="settings" id="notification-settings">
                     <h2>Notifications</h2>
                     <span>Configure Notification Settings</span>
-                    <div class="notification-toggle">
-                        <div>
-                            <h3 class="notification-app">Discord</h3>
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div>
-                            <form id="discord-form">
-                                <label for="webhook">Discord Webhook:</label>
-                                <input class="settings-input" type="text" id="webhook" name="webhook"
-                                    placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
-                                <button id="submit-button" type="submit">Submit</button>
-                            </form>
-                        </div>
+                    <div id="discord-settings">
+                        <h3 class="notification-app">Discord</h3>
+                        <label class="switch" id="discord-toggle">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
                     </div>
-                    <div class="notification-toggle">
-                        <div>
-                            <h3 class="notification-app">GMAIL</h3>
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </div>
-                        <div>
-                            <form>
-                                <label for="webhook">Port:</label>
-                                <input class="settings-input" type="text" id="webhook" name="webhook"><br><br>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="settings">
-                    <h2>Connections</h2>
-                    <div id="connection-links">
-                        <a id="connect-with-twitch" href="/authorize">Authorize with Twitch</a>
-                        <a id="connect-to-youtube">Connect to YouTube</a>
+                    <div>
+                        <form id="discord-form">
+                            <label for="webhook">Discord Webhook:</label>
+                            <input class="settings-input" type="text" id="webhook" name="webhook"
+                                placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
+                            <button id="submit-button" type="submit">Submit</button>
+                        </form>
                     </div>
                 </div>
                 <div class="settings">
                     <h2>Support The Project</h2>
-                    <span>If you've enjoyed using the app consider checking out my socials</span>
+                    <span>Consider supporting the project</span>
                     <div>
-                        <div class="discord-join">
-                            <h3>Join Our Discord Server!</h3>
-                            <p>Click the button below to join our Discord server and chat with other members.</p>
-                            <a href="https://discord.gg/yourserverinvite" target="_blank" class="discord-button">Join
-                                Server</a>
-                        </div>
-                        <div class="twitch-follow">
-                            <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
-                                alt="Profile Picture" class="profile-image">
-                            <h3>Follow Me on Twitch!</h3>
-                            <p>Click the button below to follow me on Twitch and stay up-to-date with my streams.</p>
-                            <a href="https://www.twitch.tv/dadthegam3r" target="_blank" class="twitch-button">Follow</a>
-                        </div>
-                        <div class="twitter-follow">
-                            <h3>Follow Me on Twitter!</h3>
-                            <p>Click the button below to follow me on Twitter and stay up-to-date with my tweets.</p>
-                            <a href="https://twitter.com/yourusername" target="_blank" class="twitter-button">Follow</a>
-                        </div>
-                        <div class="buy-me-a-coffee">
-                            <h3>Buy Me a Coffee</h3>
-                            <p>Click the button below to support me on Buy Me a Coffee.</p>
-                            <a href="https://www.buymeacoffee.com/yourusername" target="_blank"
-                                class="coffee-button">Buy Me a Coffee</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -157,11 +140,84 @@
                     link.classList.add('selected');
                 }
             }
-            const copyApiKeyButton = document.querySelector('.copy-api-key-button');
+            const copyApiKeyButton = document.getElementById('copy-api-key-button');
             const discordForm = document.getElementById('discord-form');
             const webhookInput = document.getElementById('webhook');
             const serverapiKey = '<%= serverKey %>';
             const newApiKeyButton = document.getElementById('new-api-key');
+            const discordToggle = document.getElementById('discord-toggle');
+            const obsSettingsForm = document.getElementById('obs-settings-form');
+            obsSettingsForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent form submission
+                const hostInput = document.getElementById('host');
+                const portInput = document.getElementById('port');
+                const host = hostInput.value.trim();
+                const port = portInput.value.trim();
+                const validHost = validateHost(host);
+                const validPort = validatePort(port);
+                if (validHost && validPort) {
+                    const settings = {
+                        host: host,
+                        port: port,
+                        password: document.getElementById('password').value
+                    };
+                    const body = {
+                        setting: 'obsSettings',
+                        value: settings
+                    };
+                    fetch('/api/settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('Settings saved successfully');
+                            } else {
+                                console.error('Failed to save settings');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+            });
+
+            function validateHost(host) {
+                const ipPattern = /^(localhost|\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/;
+                return ipPattern.test(host);
+            }
+
+            function validatePort(port) {
+                return !isNaN(port);
+            }
+
+            discordToggle.addEventListener('change', () => {
+                const isChecked = discordToggle.querySelector('input').checked;
+                const body = {
+                    setting: 'discordToggle',
+                    value: isChecked,
+                };
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Toggle request sent successfully.');
+                        } else {
+                            console.error('Toggle request failed.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Toggle request error:', error);
+                    });
+            });
 
             newApiKeyButton.addEventListener('click', updateApiKey);
 
@@ -196,6 +252,10 @@
                 const apiKeyInput = document.getElementById('api-key-input');
                 apiKeyInput.select();
                 document.execCommand('copy');
+                copyApiKeyButton.classList.add('copied');
+                setTimeout(() => {
+                    copyApiKeyButton.classList.remove('copied');
+                }, 1000);
             }
 
             function isValidUrl(url) {
@@ -211,7 +271,7 @@
                             'Content-Type': 'application/json',
                             'x-api-key': serverapiKey,
                         },
-                        body: JSON.stringify({ setting: 'apikey'})
+                        body: JSON.stringify({ setting: 'apikey' })
                     });
 
                     if (response.ok) {
