@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getDiscordWebhookURL } from '../db.js';
+import { writeToLogFile } from './logging.js';
 
 async function sendMessageToDiscord(message) {
     console.log('Sending message to Discord...');
@@ -10,9 +11,9 @@ async function sendMessageToDiscord(message) {
 
     try {
         await axios.post(webhookURL, payload);
-        console.log("Message sent successfully!");
+        writeToLogFile('info', `Message sent to Discord: ${message}`);
     } catch (error) {
-        console.error(`Error sending message to Discord: ${error}`);
+        writeToLogFile('error', `Error sending message to Discord: ${error}`);
     }
 }
 

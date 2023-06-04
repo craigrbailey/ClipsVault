@@ -141,10 +141,21 @@ async function getDiscordWebhookURL() {
   try {
     const collection = db.collection("settings");
     const webhookURL = await collection.findOne({ _id: 'discord' }, { projection: { webhookURL: 1 } });
-    console.log(webhookURL);
     return webhookURL ? webhookURL.webhookURL : null;
   } catch (error) {
     writeToLogFile('error', `Error retrieving Discord webhook URL: ${error}`);
+  }
+};
+
+// Function to get discord status
+async function getDiscordStatus() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const discordStatus = await collection.findOne({ _id: 'discord' }, { projection: { discord: 1 } });
+    return discordStatus;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving Discord status: ${error}`);
   }
 };
 
@@ -168,6 +179,25 @@ async function updateDiscordToggle(value) {
     }
   } catch (error) {
     writeToLogFile('error', `Error storing Discord toggle: ${error}`);
+  }
+};
+
+// Function to update the cleanup time
+async function updateCleanupTime(time) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const filter = { _id: 'settings' };
+    const update = {
+      $set: {
+        cleanup_time: time
+      },
+    };
+    const options = { upsert: true };
+    await collection.updateOne(filter, update, options);
+    writeToLogFile('info', `Cleanup time updated to: ${time}`);
+  } catch (error) {
+    writeToLogFile('error', `Error updating cleanup time: ${error}`);
   }
 };
 
@@ -444,17 +474,10 @@ async function setStreamingPlatform(platform) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    if (platform === 'twitch') {
-      await collection.updateOne(
-        { _id: "settings" },
-        { $set: { platform: 'twitch' } }
-      )
-    } else if (platform === 'youtube') {
-      await collection.updateOne(
-        { _id: "settings" },
-        { $set: { platform: 'youtube' } }
-      );
-    }
+    await collection.updateOne(
+      { _id: "settings" },
+      { $set: { platform: platform } }
+    )
     writeToLogFile('info', `Platform set to: ${platform}`);
   } catch (error) {
     writeToLogFile('error', `Error updating platform: ${error}`);
@@ -466,10 +489,46 @@ async function getSettings() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    const settings = await collection.findOne({ _id: "settings" });
+    const settings = await collection.find().toArray();
     return settings;
   } catch (error) {
     writeToLogFile('error', `Error retrieving settings: ${error}`);
+  }
+}
+
+// Function to retrieve the live required setting
+async function getLiveRequired() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "settings" }, { projection: { live_required: 1 } });
+    return settings.live_required;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving live required: ${error}`);
+  }
+}
+
+// Function to retrieve the cleanup time
+async function getCleanupTime() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "settings" }, { projection: { cleanup_time: 1 } });
+    return settings.cleanup_time;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving cleanup time: ${error}`);
+  }
+}
+
+// Function to retrive the notifications toggle
+async function getNotificationsToggle() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "notifications" });
+    return settings;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving notifications toggle: ${error}`);
   }
 }
 
@@ -962,5 +1021,6 @@ export {
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
-  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle
+  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
+  updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus
 }; 

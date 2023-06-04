@@ -26,49 +26,49 @@
                             <h4>Live Required</h4>
                             <span>Does OBS need to be live to track the recording</span>
                         </div>
-                        <label class="switch">
-                            <input id="liveRequired" type="checkbox">
+                        <label class="switch" id="liveRequiredSwitch">
+                            <input id="liveRequired" type="checkbox" <%= liveRequired ? 'checked' : '' %>>
                             <span class="slider"></span>
                         </label>
                     </div>
                     <div>
-                        <h4>Cleanup Time</h4>
-                        <span>Specifiy the time does maintenace</span>
+                        <h4>Maintenace Time</h4>
+                        <span>Specifiy the time the application performs maintenace</span>
                     </div>
                     <div class="setting" id="cleanup-time">
-                        <select id="cleanup-time">
-                            <option value="0">Midnight</option>
-                            <option value="1">1 AM</option>
-                            <option value="2">2 AM</option>
-                            <option value="3">3 AM</option>
-                            <option value="4">4 AM</option>
-                            <option value="5">5 AM</option>
-                            <option value="6">6 AM</option>
-                            <option value="7">7 AM</option>
-                            <option value="8">8 AM</option>
-                            <option value="9">9 AM</option>
-                            <option value="10">10 AM</option>
-                            <option value="11">11 AM</option>
-                            <option value="12">Noon</option>
-                            <option value="13">1 PM</option>
-                            <option value="14">2 PM</option>
-                            <option value="15">3 PM</option>
-                            <option value="16">4 PM</option>
-                            <option value="17">5 PM</option>
-                            <option value="18">6 PM</option>
-                            <option value="19">7 PM</option>
-                            <option value="20">8 PM</option>
-                            <option value="21">9 PM</option>
-                            <option value="22">10 PM</option>
-                            <option value="23">11 PM</option>
+                        <select id="maintenance-time">
+                            <option value="0000">Midnight</option>
+                            <option value="0100">1 AM</option>
+                            <option value="0200">2 AM</option>
+                            <option value="0300">3 AM</option>
+                            <option value="0400">4 AM</option>
+                            <option value="0500">5 AM</option>
+                            <option value="0600">6 AM</option>
+                            <option value="0700">7 AM</option>
+                            <option value="0800">8 AM</option>
+                            <option value="0900">9 AM</option>
+                            <option value="1000">10 AM</option>
+                            <option value="1100">11 AM</option>
+                            <option value="1200">Noon</option>
+                            <option value="1300">1 PM</option>
+                            <option value="1400">2 PM</option>
+                            <option value="1500">3 PM</option>
+                            <option value="1600">4 PM</option>
+                            <option value="1700">5 PM</option>
+                            <option value="1800">6 PM</option>
+                            <option value="1900">7 PM</option>
+                            <option value="2000">8 PM</option>
+                            <option value="2100">9 PM</option>
+                            <option value="2200">10 PM</option>
+                            <option value="2300">11 PM</option>
                         </select>
                     </div>
                     <div class="setting" id="platform">
                         <div>
                             <h4>Platform</h4>
-                            <span>Specifiy which platform you stream on. Default is twitch</span>
+                            <span>Specifiy which platform you stream on/span>
                         </div>
-                        <select>
+                        <select id="platform-select">
                             <option value="twitch">Twitch</option>
                             <option value="youtube">YouTube</option>
                         </select>
@@ -94,11 +94,11 @@
                     <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
                     <form id="obs-settings-form">
                         <label for="host">Host:</label>
-                        <input class="settings-input" type="text" id="host" name="host"><br><br>
+                        <input class="settings-input" type="text" id="host" name="host" value="<%= obsSettings.ip !== null ? obsSettings.ip : '' %>"><br><br>
                         <label for="port">Port:</label>
-                        <input class="settings-input" type="text" id="port" name="port"><br><br>
+                        <input class="settings-input" type="text" id="port" name="port" value="<%= obsSettings.port !== null ? obsSettings.port : '' %>" ><br><br>
                         <label for="password">Password:</label>
-                        <input class="settings-input" type="password" id="password" name="password"><br><br>
+                        <input class="settings-input" type="password" id="password" name="password" value="<%= obsSettings.password !== null ? obsSettings.password : '' %>"><br><br>
                         <button id="obs-button" type="submit">Connect</button>
                     </form>
                 </div>
@@ -108,7 +108,7 @@
                     <div id="discord-settings">
                         <h3 class="notification-app">Discord</h3>
                         <label class="switch" id="discord-toggle">
-                            <input type="checkbox">
+                            <input type="checkbox" <%= discordStatus ? 'checked' : '' %>>
                             <span class="slider"></span>
                         </label>
                     </div>
@@ -147,8 +147,90 @@
             const newApiKeyButton = document.getElementById('new-api-key');
             const discordToggle = document.getElementById('discord-toggle');
             const obsSettingsForm = document.getElementById('obs-settings-form');
+            const liveRequiredSwitch = document.getElementById('liveRequiredSwitch');
+            const liveRequiredCheckbox = document.getElementById('liveRequired');
+            const cleanupTimeSelect = document.getElementById('maintenance-time');
+            const platformSelect = document.getElementById('platform-select');
+
+            platformSelect.addEventListener('change', () => {
+                const selectedValue = platformSelect.value;
+                console.log(selectedValue);
+                const settings = {
+                    setting: 'platform',
+                    value: selectedValue
+                };
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Platform setting updated successfully');
+                        } else {
+                            console.error('Failed to update Platform setting');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            cleanupTimeSelect.addEventListener('change', () => {
+                const selectedValue = cleanupTimeSelect.value;
+                console.log(selectedValue);
+                const settings = {
+                    setting: 'maintenanceTime',
+                    value: selectedValue
+                };
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Cleanup Time setting updated successfully');
+                        } else {
+                            console.error('Failed to update Cleanup Time setting');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
+            liveRequiredSwitch.addEventListener('change', () => {
+                const value = liveRequiredCheckbox.checked;
+                const settings = {
+                    setting: 'liveRequired',
+                    value: value
+                };
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Live Required setting updated successfully');
+                        } else {
+                            console.error('Failed to update Live Required setting');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            });
+
             obsSettingsForm.addEventListener('submit', (e) => {
-                e.preventDefault(); // Prevent form submission
+                e.preventDefault();
                 const hostInput = document.getElementById('host');
                 const portInput = document.getElementById('port');
                 const host = hostInput.value.trim();
