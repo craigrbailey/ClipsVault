@@ -68,13 +68,16 @@ async function searchGameCategories(query) {
       return searchGameCategories(query);
     }
     writeToLogFile('error', `Error searching game categories: ${error.message}`);
-    throw error;
   }
 }
 
 // Function to validate the access token
 async function validateAccessToken() {
   const accessToken = await getTwitchAccessToken();
+  if (accessToken === null) {
+    writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
+    return;
+  }
   const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
     headers: {
       'Authorization': `OAuth ${accessToken}`,
@@ -83,22 +86,17 @@ async function validateAccessToken() {
     }
   });
   if (response.message === 'undefined') {
-    console.log('Access token not found, reauthenticate with Twitch.');
     writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
     return
   }
-  if (response.ok) {
-    const data = await response.json();
-    console.log(`Access token validated, data: ${data}`)
-    storeTwitchAuthToken(data.access_token, data.refresh_token, data.expires_in)
-    return data;
+  if (response.status === 200) {
+    return
   } else if (response.status === 400) {
-    console.log('Access token not found, reauthenticate with Twitch.');
     writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
     return
   } else if (response.status === 401) {
     await refreshAccessToken();
-    return validateAccessToken();
+    await validateAccessToken();
   }
 }
 
@@ -106,30 +104,26 @@ async function validateAccessToken() {
 async function refreshAccessToken() {
   try {
     const refreshToken = await getRefreshToken();
-    const TWITCH_API_URL = 'https://id.twitch.tv/oauth2';
-    const response = await axios.post(`${TWITCH_API_URL}/token`, {
-      method: 'POST',
+    console.log(`Refresh token: ${refreshToken}`);
+    const params = new URLSearchParams();
+    params.append('client_id', process.env.TWITCH_CLIENT_ID);
+    params.append('client_secret', process.env.TWITCH_CLIENT_SECRET);
+    params.append('grant_type', 'refresh_token');
+    params.append('refresh_token', refreshToken);
+    const response = await axios.post(`https://id.twitch.tv/oauth2/token`, params, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: process.env.TWITCH_CLIENT_ID,
-        client_secret: process.env.TWITCH_CLIENT_SECRET
-      })
     });
-    if (!response.ok) {
-      if (response.status === 400) {
-        await storeTwitchAuthToken(null, null, null);
-        writeToLogFile('error', 'Refresh token not found, reauthenticate with Twitch.');
-      }
+    if (response.status === 400) {
+      await storeTwitchAuthToken(null, null, null);
+      writeToLogFile('error', 'Refresh token not found, reauthenticate with Twitch.');
+      return;
     }
-    const data = await response.json();
+    const data = response.data;
     await storeTwitchAuthToken(data.access_token, data.refresh_token, data.expires_in);
   } catch (error) {
     writeToLogFile('error', `Error refreshing access token: ${error.message}`);
-    throw error;
   }
 }
 

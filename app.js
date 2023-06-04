@@ -11,13 +11,13 @@ import { connectToOBS, obsConnection } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import multer from 'multer';
 import { watcher } from './utilities/watcher.js'
-import { validateAccessToken } from './utilities/twitch.js';
+import { validateAccessToken, refreshAccessToken } from './utilities/twitch.js';
 import cron from 'node-cron';
 
 config();
-
+await validateAccessToken();
 // Validates access token every 4 hours
-cron.schedule('0 */1 * * *', () => {
+cron.schedule('0 */4 * * *', () => {
   validateAccessToken();
 });
 
@@ -124,6 +124,7 @@ import deleteVideoRouter from './routes/api/deleteVideo.js';
 import clipsRouter from './routes/clips.js';
 import searchClipsRouter from './routes/api/searchClips.js';
 import queueHandler from './routes/api/queue.js'
+import settingsApiRouter from './routes/api/settings.js';
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -152,6 +153,7 @@ app.use('/api/deletevideo', deleteVideoRouter);
 app.use('/allclips', clipsRouter);
 app.use('/api/searchclips', searchClipsRouter);
 app.use('/api/queue', queueHandler);
+app.use('/api/settings', settingsApiRouter);
 
 // Connect to OBS
 await connectToOBS();

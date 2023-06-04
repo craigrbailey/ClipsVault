@@ -4,7 +4,6 @@ import { serverKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 
 const router = Router();
-let clipTags = [];
 
 router.post('/', async (req, res) => {
     const requestApiKey = req.headers['x-api-key'];

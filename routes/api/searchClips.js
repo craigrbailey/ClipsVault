@@ -11,6 +11,7 @@ function formatStreamLength(lengthInSeconds) {
 }
 
 router.post('/', checkSetup, async (req, res) => {
+    console.log('Searching for clips...');
     let videos = [];
     const { tags, category, from, to, favorite } = req.body;
     if (tags.length > 0) {

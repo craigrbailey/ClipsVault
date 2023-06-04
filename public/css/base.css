@@ -64,6 +64,53 @@ body {
     border-radius: 50%;
     margin-right: 10px;
     font-size: 2rem;
+    position: relative;
+    display: inline-block;
+}
+
+.notification-count {
+    position: absolute;
+    top: 8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.notification-container {
+    position: relative;
+}
+
+.notifications {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 0, 0, 5px, 5px;
+}
+
+.notification-bell:hover+.notifications,
+.notifications:hover {
+    display: block;
+}
+
+.notifications li {
+    margin-bottom: 5px;
+    list-style: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.notifications li:hover {
+    background-color: #333;
+    color: #fff;
 }
 
 .profile-settings img {

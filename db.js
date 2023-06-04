@@ -23,7 +23,6 @@ async function connectToMongoDB() {
     return dbConnection;
   } catch (error) {
     writeToLogFile('error', `Error connecting to MongoDB: ${error}`);
-    throw error;
   }
 }
 
@@ -40,8 +39,7 @@ async function createCollection(collectionName) {
       writeToLogFile(`Created collection: ${collectionName}`);
     }
   } catch (error) {
-    writeToLogFile('Error creating collection:', error);
-    throw error;
+    writeToLogFile('error', `Error creating collection: ${error}`);
   }
 }
 
@@ -110,8 +108,7 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
       writeToLogFile("Existing Twitch auth token data updated successfully.");
     }
   } catch (error) {
-    writeToLogFile("Error storing Twitch auth token data:", error);
-    throw error;
+    writeToLogFile('error', `Error storing Twitch auth token data: ${error}`);
   }
 }
 
@@ -134,8 +131,7 @@ async function storeDiscordWebhookURL(webhookURL) {
       writeToLogFile("Existing Discord webhook URL updated successfully.");
     }
   } catch (error) {
-    writeToLogFile("Error storing Discord webhook URL:", error);
-    throw error;
+    writeToLogFile('error', `Error storing Discord webhook URL: ${error}`);
   }
 };
 
@@ -145,10 +141,10 @@ async function getDiscordWebhookURL() {
   try {
     const collection = db.collection("settings");
     const webhookURL = await collection.findOne({ _id: 'discord' }, { projection: { webhookURL: 1 } });
+    console.log(webhookURL);
     return webhookURL ? webhookURL.webhookURL : null;
   } catch (error) {
-    writeToLogFile("Error retrieving Discord webhook URL:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving Discord webhook URL: ${error}`);
   }
 };
 
@@ -172,8 +168,7 @@ async function storeTwitchUserData(userData) {
       writeToLogFile("User data stored successfully.");
     }
   } catch (error) {
-    writeToLogFile("Error storing user data:", error);
-    throw error;
+    writeToLogFile('error', `Error storing Twitch user data: ${error}`);
   }
 }
 
@@ -185,9 +180,7 @@ async function getTwitchAccessToken() {
     const tokenData = await collection.findOne({ type: "twitch" }, { projection: { token: 1 } });
     return tokenData ? tokenData.token : null;
   } catch (error) {
-    writeToLogFile("Error retrieving Twitch access token:", error);
-    console.error("Error retrieving access token:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving Twitch access token: ${error}`);
   }
 }
 
@@ -227,9 +220,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
     writeToLogFile('info', `Video document created successfully. ID: ${result.insertedId}`)
     return result.insertedId;
   } catch (error) {
-    writeToLogFile('error', `Error inserting video document: ${error}`);
-    console.error("Error inserting video document:", error);
-    throw error;
+    writeToLogFile('error', `Error inserting video: ${error}`);
   }
 }
 
@@ -246,8 +237,6 @@ async function insertQueue(videoId) {
     writeToLogFile('info', `Queue item created successfully. ID: ${videoId}`)
   } catch (error) {
     writeToLogFile('error', `Error inserting queue item: ${error}`);
-    console.error("Error inserting video document:", error);
-    throw error;
   }
 }
 
@@ -260,8 +249,6 @@ async function removeQueueItemById(itemId) {
     return result.deletedCount > 0;
   } catch (error) {
     writeToLogFile('error', `Error removing queue item by ID: ${error}`);
-    console.error("Error removing queue item by ID:", error);
-    throw error;
   }
 }
 
@@ -277,8 +264,6 @@ async function addNotification(notification) {
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error creating notification document: ${error}`);
-    console.error("Error creating notification document:", error);
-    throw error;
   }
 }
 
@@ -291,8 +276,6 @@ async function removeNotificationById(notificationId) {
     return result.deletedCount > 0;
   } catch (error) {
     writeToLogFile('error', `Error removing notification by ID: ${error}`);
-    console.error("Error removing notification by ID:", error);
-    throw error;
   }
 }
 
@@ -567,7 +550,7 @@ async function checkSetup(req, res, next) {
   try {
     const db = await connectToMongoDB();
     const collection = db.collection("settings");
-    const settings = await collection.findOne({});
+    const settings = await collection.findOne({ _id: "settings" });
     const isSetupComplete = settings && settings.setup_complete;
     if (isSetupComplete) {
       next();
@@ -582,11 +565,11 @@ async function checkSetup(req, res, next) {
 
 // Function to complete the setup
 async function completeSetup() {
-  const db = await connectToMongoDB();
   try {
+    const db = await connectToMongoDB();
     const collection = db.collection("settings");
     await collection.updateOne(
-      {},
+      { _id: "settings" },
       { $set: { setup_complete: true } },
       { upsert: true }
     );
@@ -749,8 +732,7 @@ async function retrieveUserData() {
       return null;
     }
   } catch (error) {
-    console.error("Error retrieving user data:", error);
-    throw error;
+    writeToLogFile('error', `Error retrieving user data: ${error}`);
   }
 }
 

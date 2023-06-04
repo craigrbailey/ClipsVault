@@ -11,8 +11,6 @@ function updateButtonStatus(status) {
       button.style.backgroundColor = 'green';
       button.style.cursor = 'default';
       button.disabled = true;
-  
-      // Disable host, port, and password inputs
       hostInput.disabled = true;
       hostInput.value = 'localhost';
       portInput.disabled = true;
@@ -24,8 +22,6 @@ function updateButtonStatus(status) {
       button.innerText = 'Connect';
       button.style.backgroundColor = 'initial';
       button.disabled = false;
-  
-      // Enable host, port, and password inputs
       hostInput.disabled = false;
       portInput.disabled = false;
       passwordInput.disabled = false;
@@ -47,23 +43,15 @@ function getOBSConnectionStatus() {
   
 // Initial update to button status
 getOBSConnectionStatus();
-
-// Periodic updates to button status (every 5 seconds)
 setInterval(getOBSConnectionStatus, 5000);
 
-// Add event listener to the switch toggle event
 liveRequiredSwitch.addEventListener('change', () => {
   console.log('Live Required switch changed.')
-  // Get the current value of the switch
   const isChecked = liveRequiredSwitch.checked;
-
-  // Prepare the data to send in the POST request
   const data = {
     setting: 'liveRequired',
     value: isChecked.toString()
   };
-
-  // Send the POST request
   fetch('/settings', {
     method: 'POST',
     headers: {

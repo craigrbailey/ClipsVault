@@ -17,80 +17,115 @@
 
 <body>
     <%- include('menu.ejs') %>
-    <section>
-        <div class="main-interface">
-            <div class="search-form">
-                <form action="search">
-                    <h3>Search</h3>
-                    <div>
-                        <div class="tag-search">
-                            <i class="fa-solid fa-search"></i>
-                            <input type="text" name="search" id="search" placeholder="Search for clips..." />
-                        </div>
-                    </div>
-                    <div class="category-search">
-                        <label for="from-date">Category:</label>
-                        <div class="category-dropdown">
-                            <span class="category-dropdown-selector">
-                                <span class="category-dropdown-selector-text">All</span>
-                                <i class="fa-solid fa-chevron-down"></i>
-                            </span>
-                            <ul class="category-dropdown-menu">
-                                <li>Option 1</li>
-                                <li>Option 2</li>
-                                <li>Option 3</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="date-search">
-                        <label for="from-date">From:</label>
-                        <input type="date" name="from-date" id="from-date" />
-                    </div>
-                    <div class="date-search">
-                        <label for="to-date">To:</label>
-                        <input type="date" name="to-date" id="to-date" />
-                    </div>
-                    <div class="favorite-selector">
-                        <label for="switch">Favorite:</label>
-                        <label class="switch">
-                            <input id="favorite" type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </form>
-            </div>
-            <div class="clips-interface">
-                <div class="searching">
-                    <svg viewBox="25 25 50 50">
-                        <circle r="20" cy="50" cx="50"></circle>
-                    </svg>
-                    <p>Searching...</p>
-                </div>
-                <% for (let i=0; i < videos.length; i++) { %>
-                    <a href="/video?videoId=<%= videos[i]._id %>">
-                        <div class="clip" data-id="<%= videos[i]._id %>">
-                            <div class="video-container">
-                                <video src="<%= videos[i].file %>" controls></video>
-                                <span class="clip-duration">
-                                    <%= videos[i].length %>
-                                </span>
+        <section>
+            <div class="main-interface">
+                <div class="search-form" id="search-form">
+                    <form action="search">
+                        <h1>Search</h1>
+                        <div class="tags-search">
+                            <label for="from-date">Tags:</label>
+                            <div class="tags-search-container">
+                                <div class="tags-list">
+                                    <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
+                                    <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
+                                    <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
+                                </div>
+                                <div class="tag-search-input">
+                                    <i class="fa-solid fa-search"></i>
+                                    <input type="text" name="search" id="search" placeholder="Search tags..." />
+                                </div>
                             </div>
                         </div>
-                    </a>
-                    <% } %>
-            </div>
-    </section>
+                        <div class="category-search">
+                            <label for="from-date">Category:</label>
+                            <div class="category-dropdown">
+                                <span class="category-dropdown-selector">
+                                    <span class="category-dropdown-selector-text">All</span>
+                                    <i class="fa-solid fa-chevron-down" id="chevron-down"></i>
+                                </span>
+                                <ul class="category-dropdown-menu">
+                                    <li>Option 1</li>
+                                    <li>Option 2</li>
+                                    <li>Option 3</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="date-search">
+                            <label for="from-date">From:</label>
+                            <input type="date" name="from-date" id="from-date" />
+                        </div>
+                        <div class="date-search">
+                            <label for="to-date">To:</label>
+                            <input type="date" name="to-date" id="to-date" />
+                        </div>
+                        <div class="favorite-selector">
+                            <label for="switch">Favorite:</label>
+                            <label class="switch">
+                                <input id="favorite" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="clips-interface">
+                    <div class="searching">
+                        <svg viewBox="25 25 50 50">
+                            <circle r="20" cy="50" cx="50"></circle>
+                        </svg>
+                        <p>Searching...</p>
+                    </div>
+                    <% for (let i=0; i < videos.length; i++) { %>
+                        <div class="clip" data-id="<%= videos[i]._id %>">
+                            <video src="<%= videos[i].file %>" controls></video>
+                        </div>
+                        <% } %>
+                </div>
+        </section>
         <script>
             const chevronDown = document.getElementById('chevron-down');
-            const tagsDropdown = document.querySelector('.tags-dropdown');
+            const categoryDropdown = document.querySelector('.category-dropdown-menu');
+            const dropdownSelectorText = document.querySelector('.category-dropdown-selector-text');
+            const dropdownOptions = document.querySelectorAll('.category-dropdown-menu li');
             const searchDiv = document.querySelector('.searching');
+            const clips = document.querySelectorAll('.clip');
+            const closeIcons = document.querySelectorAll('.fa-circle-xmark');
+            const form = document.getElementById('search-form');
+            var menuLinks = document.getElementsByClassName('menu-link');
+            for (var i = 0; i < menuLinks.length; i++) {
+                var link = menuLinks[i];
+                if (link.textContent === 'Clips') {
+                    link.classList.add('selected');
+                }
+            }
+            dropdownOptions.forEach((option) => {
+                option.addEventListener('click', () => {
+                    const selectedOptionText = option.textContent;
+                    dropdownSelectorText.textContent = selectedOptionText;
+                    categoryDropdown.classList.toggle('show');
+                    chevronDown.classList.toggle('rotate');
+                });
+            });
+            closeIcons.forEach((icon) => {
+                icon.addEventListener('click', (event) => {
+                    const span = event.target.parentNode;
+                    span.remove();
+                });
+            });
+
+            clips.forEach((clip) => {
+                clip.addEventListener('click', () => {
+                    const videoId = clip.dataset.id;
+                    window.location.href = `/video?videoId=${videoId}`;
+                });
+            });
 
             chevronDown.addEventListener('click', () => {
-                console.log('clicked');
-                tagsDropdown.classList.toggle('show');
+                categoryDropdown.classList.toggle('show');
                 chevronDown.classList.toggle('rotate');
             });
-            document.querySelector('form').addEventListener('change', searchClips);
+
+            form.addEventListener('change', searchClips);
+            console.log(document.querySelector('form'));
             function createVideoClipDiv(video) {
                 console.log(video.file)
                 const div = document.createElement('div');
@@ -116,13 +151,15 @@
                 durationSpan.classList.add('clip-duration');
                 durationSpan.textContent = video.length;
                 videoContainer.appendChild(durationSpan);
-
                 return div;
             }
 
-
             function searchClips() {
-                const tags = Array.from(document.querySelectorAll('.tags-list li')).map(li => li.textContent);
+                const tags = Array.from(document.querySelectorAll('.tags-list span')).map(span => {
+                    const tagText = span.textContent.replace(span.querySelector('i').outerHTML, '');
+                    return tagText.trim();
+                });
+                console.log(tags);
                 const category = document.querySelector('.category-dropdown-selector-text').textContent;
                 const from = document.getElementById('from-date').value;
                 const to = document.getElementById('to-date').value;

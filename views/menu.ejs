@@ -15,6 +15,11 @@
                     <i class="fa fa-bell"></i>
                     <span class="notification-count">15</span>
                 </div>
+                <ul class="notifications">
+                    <li>Notification 1</li>
+                    <li>Notification 2</li>
+                    <li>Notification 3</li>
+                </ul>
             </div>
             <div class="profile-settings">
                 <% if (userData) { %>
@@ -27,19 +32,4 @@
     </div>
 </section>
 <script>
-    var currentPage = window.location.href;
-    console.log(`Current page: ${currentPage}`);
-    var menuLinks = document.getElementsByClassName('menu-link');
-    for (var i = 0; i < menuLinks.length; i++) {
-        var link = menuLinks[i];
-        if (currentPage.is('localhost') && link.textContent === 'Dashboard') {
-            link.classList.add('selected');
-        } else if (currentPage.includes('allclips') && link.textContent === 'Clips') {
-            link.classList.add('selected');
-        } else if (currentPage.includes('queue') && link.textContent === 'Queue') {
-            link.classList.add('selected');
-        } else if (currentPage.includes('settings') && link.textContent === 'Settings') {
-            link.classList.add('selected');
-        }
-    }
 </script>
