@@ -479,7 +479,6 @@ async function insertStream(date, category, backgroundImg, captions) {
     const document = {
       date: date,
       videos: [],
-      video_count: 0,
       length: 0,
       category: category,
       background_img: backgroundImg,

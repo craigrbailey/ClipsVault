@@ -22,12 +22,17 @@
   text-decoration: none;
 }
 
+a {
+  text-decoration: none;
+  color: white;
+}
+
 #add-stream {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 10vh;
+  width: 13vh;
   height: 20.75vh;
   border-radius: 10px;
   cursor: pointer;

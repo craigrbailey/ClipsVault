@@ -22,10 +22,12 @@
       <div class="latest-container">
         <h3>Latest Streams</h3>
         <div class="latest-streams-container">
-          <div class="stream" id="add-stream">
-            <i class="fa-solid fa-plus"></i>
-            <span>Add A Stream</span>
-          </div>
+          <a href="/addstream">
+            <div class="stream" id="add-stream">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add A Stream</span>
+            </div>
+          </a>
           <% for (let i=0; i < streams.length; i++) { %>
             <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
               <div class="stream-img-container">
