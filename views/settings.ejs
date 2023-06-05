@@ -259,7 +259,6 @@
             const liveRequiredSwitch = document.getElementById('liveRequiredSwitch');
             const liveRequiredCheckbox = document.getElementById('liveRequired');
             const cleanupTimeSelect = document.getElementById('maintenance-time');
-            const platformSelect = document.getElementById('platform-select');
             const notiOptionsToggle = document.getElementById('noti-options-toggler');
             const gmailToggle = document.getElementById('gmail-toggle');
             const obsButton = document.getElementById('obs-button');
@@ -380,32 +379,6 @@
                 notiOptions.forEach((option) => {
                     option.style.display = option.style.display === 'flex' ? 'none' : 'flex';
                 });
-            });
-
-            platformSelect.addEventListener('change', () => {
-                const selectedValue = platformSelect.value;
-                console.log(selectedValue);
-                const settings = {
-                    setting: 'platform',
-                    value: selectedValue
-                };
-                fetch('/api/settings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(settings)
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('Platform setting updated successfully');
-                        } else {
-                            console.error('Failed to update Platform setting');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
             });
 
             function updateToggleSetting(setting, value) {
