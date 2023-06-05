@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { updateLiveRequired, storeDiscordWebhookURL,storeAPIKey, updateDiscordToggle, updateOBSSettings, updateCleanupTime, setStreamingPlatform, updateGmailToggle} from '../../db.js';
+import { updateLiveRequired, storeDiscordWebhookURL,storeAPIKey, updateDiscordToggle, updateOBSSettings, updateCleanupTime, setStreamingPlatform, 
+    updateGmailToggle, updateNotificationToggle, updateArchiveSettings} from '../../db.js';
 import { sendMessageToDiscord } from '../../utilities/discord-message.js';
 import { serverKey, generateApiKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
@@ -45,6 +46,14 @@ router.post('/', async (req, res) => {
         console.log('gmailToggle');
         updateGmailToggle(value);
         res.status(200).send('gmailToggle updated successfully.');
+    } else if (setting === 'notificationToggle') {
+        const toggle = req.body.toggle;
+        updateNotificationToggle(toggle, value);
+        res.status(200).send('notificationToggle updated successfully.');
+    } else if (setting === 'archiveSettings') {
+        const{ archive, archiveTime } = value;
+        updateArchiveSettings(archive, archiveTime);
+        res.status(200).send('Archive Settings updated successfully.');
     }
 });
 

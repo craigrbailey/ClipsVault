@@ -45,18 +45,42 @@ async function createCollection(collectionName) {
 
 // Initialize the database
 async function initdb() {
-  createCollection('tokens');
-  createCollection('streams');
-  createCollection('videos');
-  createCollection('tags');
-  createCollection('userdata');
-  createCollection('queue');
-  createCollection('notifications');
-  createCollection('clips');;
-  createCollection('trash');
-  InitializeSetup();
-  InitializeTokens();
-  storeAPIKeyIfNotExists();
+  await createCollections();
+  await InitializeSetup();
+  await InitializeTokens();
+}
+
+// Function to create collections based off an array
+async function createCollections(collections) {
+  collections = [
+    'tokens',
+    'streams',
+    'videos',
+    'categories',
+    'tags',
+    'userdata',
+    'queue',
+    'notifications',
+    'clips',
+    'trash',
+    'settings'
+  ]
+  const db = await connectToMongoDB();
+  try {
+    const collectionNames = await db.listCollections().toArray();
+    const existingCollections = collectionNames.map(
+      (collection) => collection.name
+    );
+    const collectionsToCreate = collections.filter(
+      (collection) => !existingCollections.includes(collection)
+    );
+    for (const collection of collectionsToCreate) {
+      await db.createCollection(collection);
+      writeToLogFile('info',`Created collection: ${collection}`);
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error creating collections: ${error}`);
+  }
 }
 
 // Function to initialize the tokens collection
@@ -251,9 +275,9 @@ async function storeTwitchUserData(userData) {
     const options = { upsert: true };
     const result = await collection.findOneAndUpdate(query, update, options);
     if (result.lastErrorObject.updatedExisting) {
-      writeToLogFile("User data updated successfully.");
+      writeToLogFile('info', 'Twitch user data updated successfully.');
     } else {
-      writeToLogFile("User data stored successfully.");
+      writeToLogFile('info', 'Twitch user data stored successfully.');
     }
   } catch (error) {
     writeToLogFile('error', `Error storing Twitch user data: ${error}`);
@@ -531,6 +555,21 @@ async function getSettings() {
   }
 }
 
+// Function to update a setting in the database
+async function updateNotificationToggle(setting, value) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    await collection.updateOne(
+      { _id: "notifications" },
+      { $set: { [setting]: value } }
+    );
+    writeToLogFile('info', `Setting updated successfully. Setting: ${setting} Value: ${value}`);
+  } catch (error) {
+    writeToLogFile('error', `Error updating setting: ${error}`);
+  }
+}
+
 // Function to retrieve the live required setting
 async function getLiveRequired() {
   const db = await connectToMongoDB();
@@ -702,7 +741,6 @@ async function InitializeSetup() {
   try {
     const collection = db.collection("settings");
     const count = await collection.countDocuments();
-
     if (count === 0) {
       const settings = {
         _id: 'settings',
@@ -729,6 +767,13 @@ async function InitializeSetup() {
         _id: 'discord',
         webhookURL: null,
       }
+      const archive = {
+        _id: 'archive',
+        archive: false,
+        archiveTime: null,
+      }
+      await storeAPIKeyIfNotExists();
+      await collection.insertOne(archive);
       await collection.insertOne(discord);
       await collection.insertOne(notifications);
       await collection.insertOne(settings);
@@ -737,6 +782,21 @@ async function InitializeSetup() {
     }
   } catch (error) {
     writeToLogFile('error', `Error initializing setup: ${error}`);
+  }
+}
+
+// Function to update archive settings
+async function updateArchiveSettings(archive, archiveTime) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    await collection.updateOne(
+      { _id: "archive" },
+      { $set: { archive: archive, archiveTime: archiveTime } }
+    );
+    writeToLogFile('info', 'Archive settings updated successfully.');
+  } catch (error) {
+    writeToLogFile('error', `Error updating archive settings: ${error}`);
   }
 }
 
@@ -954,12 +1014,10 @@ async function storeAPIKeyIfNotExists() {
   try {
     const settingsCollection = db.collection('settings');
     const existingAPIKey = await settingsCollection.findOne({ _id: 'api_key' });
-
     if (existingAPIKey && existingAPIKey.value) {
       return;
     } else {
       storeAPIKey();
-      console.log('API key stored successfully:', apiKey);
     }
   } catch (error) {
     writeToLogFile('error', `Error storing API key: ${error}`)
@@ -970,16 +1028,16 @@ async function storeAPIKeyIfNotExists() {
 async function storeAPIKey() {
   const db = await connectToMongoDB();
   try {
-    const apiKey = generateApiKey();
+    const apiKey = await generateApiKey();
     const settingsCollection = db.collection('settings');
     const hexedAPIKey = Buffer.from(apiKey).toString('hex');
     await settingsCollection.updateOne(
-      { _id: 'api_key' },
+      { _id: 'apikey' },
       { $set: { value: hexedAPIKey } },
       { upsert: true }
     );
   } catch (error) {
-    writeToLogFile('Error storing API key:', error);
+    writeToLogFile('error', `Error storing API key: ${error}`);
   }
 }
 
@@ -988,16 +1046,16 @@ async function getAPIKey() {
   const db = await connectToMongoDB();
   try {
     const settingsCollection = db.collection('settings');
-    const result = await settingsCollection.findOne({ _id: 'api_key' });
+    const result = await settingsCollection.findOne({ _id: 'apikey' });
     if (result && result.value) {
       const apiKey = Buffer.from(result.value, 'hex').toString('utf-8');
       return apiKey;
     } else {
-      writeToLogFile('API key not found.');
+      writeToLogFile('error','API key not found.');
       return null;
     }
   } catch (error) {
-    writeToLogFile('Error retrieving API key:', error);
+    writeToLogFile('error', `Error retrieving API key: ${error}`);
     return null;
   }
 }
@@ -1063,5 +1121,6 @@ export {
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
-  updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle
+  updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
+  updateArchiveSettings
 }; 

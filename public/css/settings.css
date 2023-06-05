@@ -112,6 +112,35 @@ input:checked+.slider:before {
     padding: 10px;
 }
 
+#archiveToggleContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: #e9e9e9;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+#archiveToggle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background-color: #e9e9e9;
+    border-radius: 5px;
+}
+
+#archiveToggleContainer form {
+    display: none;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    width: 100%;
+}
+
 .maintenace-time {
     display: flex;
     flex-direction: row;

@@ -8,15 +8,18 @@ const router = Router();
 
 router.get('/', checkSetup, async (req, res) => {
   const obsSettings = await getOBSSettings();
+  const cleanUpTime = await getCleanupTime();
   const liveRequired = await getLiveRequired();
   const discordStatus = await getDiscordStatus();
   const gmailToggle = await getGmailToggle();
+  const toggleSettings = await getNotificationsToggle();
   const userData = req.session.userData
   const memoryUsage = getMemoryUsage();
   const discordWebhookURL = await getDiscordWebhookURL();
   const apiKey = await getAPIKey();
   const serverKey = await getAPIKey();
-  res.render('settings', { userData, memoryUsage, discordWebhookURL, apiKey, serverKey, obsSettings, liveRequired, discordStatus, gmailToggle, obsConnection });
+  res.render('settings', { userData, memoryUsage, discordWebhookURL, apiKey, serverKey, obsSettings, liveRequired, 
+    discordStatus, gmailToggle, obsConnection, toggleSettings, cleanUpTime });
 });
 
 export default router;

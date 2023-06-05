@@ -115,12 +115,9 @@ function getMemoryUsage() {
 
 // Define the middleware function
 function checkSetup(req, res, next) {
-  // Check if the setup is complete
   if (isSetupComplete) {
-    // If setup is complete, continue to the next middleware or route
     next();
   } else {
-    // If setup is not complete, redirect to the setup page
     res.redirect('/setup');
   }
 }
@@ -150,7 +147,20 @@ function getCurrentDate() {
   return `${year}-${month}-${day}`;
 }
 
+// Function to convert from military time to standard time
+async function convertToStandardTime(militaryTime) {
+  if (militaryTime === '0000') {
+    return 'Midnight';
+  } else {
+    const hours = parseInt(militaryTime.substring(0, 2));
+    const minutes = militaryTime.substring(2);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const standardHours = hours % 12 === 0 ? 12 : hours % 12;
+    return `${standardHours}:${minutes} ${period}`;
+  }
+}
+
 export {
   getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup,
-  formatDate, moveFileToTrash, getCurrentDate
+  formatDate, moveFileToTrash, getCurrentDate, convertToStandardTime
 };
