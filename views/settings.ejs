@@ -24,49 +24,51 @@
                     <div class="setting" id="live-required">
                         <div>
                             <h4>Live Required</h4>
-                            <span>Does OBS need to be live to track the recording</span>
+                            <span>Does OBS need to be streaming for the application to track the stream</span>
                         </div>
                         <label class="switch" id="liveRequiredSwitch">
-                            <input id="liveRequired" type="checkbox" <%= liveRequired ? 'checked' : '' %>>
+                            <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
                             <span class="slider"></span>
                         </label>
                     </div>
-                    <div>
-                        <h4>Maintenace Time</h4>
-                        <span>Specifiy the time the application performs maintenace</span>
-                    </div>
-                    <div class="setting" id="cleanup-time">
-                        <select id="maintenance-time">
-                            <option value="0000">Midnight</option>
-                            <option value="0100">1 AM</option>
-                            <option value="0200">2 AM</option>
-                            <option value="0300">3 AM</option>
-                            <option value="0400">4 AM</option>
-                            <option value="0500">5 AM</option>
-                            <option value="0600">6 AM</option>
-                            <option value="0700">7 AM</option>
-                            <option value="0800">8 AM</option>
-                            <option value="0900">9 AM</option>
-                            <option value="1000">10 AM</option>
-                            <option value="1100">11 AM</option>
-                            <option value="1200">Noon</option>
-                            <option value="1300">1 PM</option>
-                            <option value="1400">2 PM</option>
-                            <option value="1500">3 PM</option>
-                            <option value="1600">4 PM</option>
-                            <option value="1700">5 PM</option>
-                            <option value="1800">6 PM</option>
-                            <option value="1900">7 PM</option>
-                            <option value="2000">8 PM</option>
-                            <option value="2100">9 PM</option>
-                            <option value="2200">10 PM</option>
-                            <option value="2300">11 PM</option>
-                        </select>
+                    <div class="maintenace-time">
+                        <div>
+                            <h4>Maintenace Time</h4>
+                            <span>Specifiy the time the application performs maintenace</span>
+                        </div>
+                        <div id="cleanup-time">
+                            <select id="maintenance-time">
+                                <option value="0000">Midnight</option>
+                                <option value="0100">1 AM</option>
+                                <option value="0200">2 AM</option>
+                                <option value="0300">3 AM</option>
+                                <option value="0400">4 AM</option>
+                                <option value="0500">5 AM</option>
+                                <option value="0600">6 AM</option>
+                                <option value="0700">7 AM</option>
+                                <option value="0800">8 AM</option>
+                                <option value="0900">9 AM</option>
+                                <option value="1000">10 AM</option>
+                                <option value="1100">11 AM</option>
+                                <option value="1200">Noon</option>
+                                <option value="1300">1 PM</option>
+                                <option value="1400">2 PM</option>
+                                <option value="1500">3 PM</option>
+                                <option value="1600">4 PM</option>
+                                <option value="1700">5 PM</option>
+                                <option value="1800">6 PM</option>
+                                <option value="1900">7 PM</option>
+                                <option value="2000">8 PM</option>
+                                <option value="2100">9 PM</option>
+                                <option value="2200">10 PM</option>
+                                <option value="2300">11 PM</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="setting" id="platform">
                         <div>
                             <h4>Platform</h4>
-                            <span>Specifiy which platform you stream on/span>
+                            <span>Specifiy which platform you stream on</span>
                         </div>
                         <select id="platform-select">
                             <option value="twitch">Twitch</option>
@@ -94,11 +96,14 @@
                     <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
                     <form id="obs-settings-form">
                         <label for="host">Host:</label>
-                        <input class="settings-input" type="text" id="host" name="host" value="<%= obsSettings.ip !== null ? obsSettings.ip : '' %>"><br><br>
+                        <input class="settings-input" type="text" id="host" name="host"
+                            value="<%= obsSettings.ip !== null ? obsSettings.ip : '' %>"><br><br>
                         <label for="port">Port:</label>
-                        <input class="settings-input" type="text" id="port" name="port" value="<%= obsSettings.port !== null ? obsSettings.port : '' %>" ><br><br>
+                        <input class="settings-input" type="text" id="port" name="port"
+                            value="<%= obsSettings.port !== null ? obsSettings.port : '' %>"><br><br>
                         <label for="password">Password:</label>
-                        <input class="settings-input" type="password" id="password" name="password" value="<%= obsSettings.password !== null ? obsSettings.password : '' %>"><br><br>
+                        <input class="settings-input" type="password" id="password" name="password"
+                            value="<%= obsSettings.password !== null ? obsSettings.password : '' %>"><br><br>
                         <button id="obs-button" type="submit">Connect</button>
                     </form>
                 </div>
@@ -106,20 +111,98 @@
                     <h2>Notifications</h2>
                     <span>Configure Notification Settings</span>
                     <div id="discord-settings">
-                        <h3 class="notification-app">Discord</h3>
-                        <label class="switch" id="discord-toggle">
-                            <input type="checkbox" <%= discordStatus ? 'checked' : '' %>>
-                            <span class="slider"></span>
-                        </label>
+                        <div>
+                            <h3 class="notification-app">Discord</h3>
+                            <label class="switch" id="discord-toggle">
+                                <input type="checkbox" <%=discordStatus ? 'checked' : '' %>>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
-                    <div>
-                        <form id="discord-form">
-                            <label for="webhook">Discord Webhook:</label>
-                            <input class="settings-input" type="text" id="webhook" name="webhook"
-                                placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
-                            <button id="submit-button" type="submit">Submit</button>
-                        </form>
-                    </div>
+                    <% if (discordStatus) { %>
+                        <div>
+                            <form id="discord-form">
+                                <h3 class="notification-app">Discord Webhook</h3>
+                                <input class="settings-input" type="text" id="webhook" name="webhook"
+                                    placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
+                                <button id="submit-button" type="submit">Submit</button>
+                            </form>
+                        </div>
+                        <% } %>
+                            <div>
+                                <div id="gmail-settings">
+                                    <h3 class="notification-app">Gmail</h3>
+                                    <label class="switch" id="gmail-toggle">
+                                        <input type="checkbox" <%=gmailToggle ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="notification-options">
+                                <h3>Notification Options</h3>
+                                <i class="fa-solid fa-chevron-up" id="noti-options-toggler"></i>
+                                <span>Adjust which notificaions you wish to receive</span>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Clip Added</h4>
+                                        <span>Receive a notificaion when a clip is added</span>
+                                    </div>
+                                    <label class="switch" id="new-clip-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Clip Removed</h4>
+                                        <span>Receive a notificaion when a clip is manually removed</span>
+                                    </div>
+                                    <label class="switch" id="clip-removed-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Stream Added</h4>
+                                        <span>Receive a notificaion when a new stream is added</span>
+                                    </div>
+                                    <label class="switch" id="new-stream-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Stream Removed</h4>
+                                        <span>Receive a notificaion when a new stream is manually removed</span>
+                                    </div>
+                                    <label class="switch" id="stream-removed-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Clip archived</h4>
+                                        <span>Receive a notificaion when a clip is archived</span>
+                                    </div>
+                                    <label class="switch" id="clip-archived-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="noti-option">
+                                    <div class="options-desc">
+                                        <h4>Maintenace Complete</h4>
+                                        <span>Receive a notificaion when maintenace is completed</span>
+                                    </div>
+                                    <label class="switch" id="maintenace-noti">
+                                        <input id="liveRequired" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
                 </div>
                 <div class="settings">
                     <h2>Support The Project</h2>
@@ -151,6 +234,41 @@
             const liveRequiredCheckbox = document.getElementById('liveRequired');
             const cleanupTimeSelect = document.getElementById('maintenance-time');
             const platformSelect = document.getElementById('platform-select');
+            const notiOptionsToggle = document.getElementById('noti-options-toggler');
+            const gmailToggle = document.getElementById('gmail-toggle');
+
+            gmailToggle.addEventListener('change', () => {
+                const isChecked = gmailToggle.querySelector('input').checked;
+                const body = {
+                    setting: 'gmailToggle',
+                    value: isChecked,
+                };
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(body),
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Toggle request sent successfully.');
+                        } else {
+                            console.error('Toggle request failed.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Toggle request error:', error);
+                    });
+            });
+
+            notiOptionsToggle.addEventListener('click', () => {
+                const notiOptions = document.querySelectorAll('.noti-option');
+                notiOptionsToggle.style.transform = notiOptionsToggle.style.transform === 'rotate(180deg)' ? 'rotate(0deg)' : 'rotate(180deg)';
+                notiOptions.forEach((option) => {
+                    option.style.display = option.style.display === 'flex' ? 'none' : 'flex';
+                });
+            });
 
             platformSelect.addEventListener('change', () => {
                 const selectedValue = platformSelect.value;
@@ -291,6 +409,12 @@
                 })
                     .then(response => {
                         if (response.ok) {
+                            console.log('Toggle request sent successfully.');
+                            if (isChecked) {
+                                document.getElementById('discord-form').style.display = 'block';
+                            } else {
+                                document.getElementById('discord-form').style.display = 'none';
+                            }
                             console.log('Toggle request sent successfully.');
                         } else {
                             console.error('Toggle request failed.');

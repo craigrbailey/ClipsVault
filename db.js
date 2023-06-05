@@ -152,8 +152,8 @@ async function getDiscordStatus() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
-    const discordStatus = await collection.findOne({ _id: 'discord' }, { projection: { discord: 1 } });
-    return discordStatus;
+    const discordStatus = await collection.findOne({ _id: 'notifications' }, { projection: { discord: 1 } });
+    return discordStatus.discord;
   } catch (error) {
     writeToLogFile('error', `Error retrieving Discord status: ${error}`);
   }
@@ -179,6 +179,41 @@ async function updateDiscordToggle(value) {
     }
   } catch (error) {
     writeToLogFile('error', `Error storing Discord toggle: ${error}`);
+  }
+};
+
+// Function to update gmail toggle
+async function updateGmailToggle(value) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const filter = { _id: 'notifications' };
+    const update = {
+      $set: {
+        gmail: value
+      },
+    };
+    const options = { upsert: true };
+    await collection.updateOne(filter, update, options);
+    if (value === true) {
+      writeToLogFile('info', 'Gmail notifications enabled.')
+    } else {
+      writeToLogFile('info', 'Gmail notifications disabled.')
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error storing Gmail toggle: ${error}`);
+  }
+};
+
+// Function to get gmail toggle
+async function getGmailToggle() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const gmailToggle = await collection.findOne({ _id: 'notifications' }, { projection: { gmail: 1 } });
+    return gmailToggle.gmail;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving Gmail toggle: ${error}`);
   }
 };
 
@@ -1022,5 +1057,5 @@ export {
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
-  updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus
+  updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle
 }; 

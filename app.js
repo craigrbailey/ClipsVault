@@ -15,7 +15,7 @@ import { validateAccessToken, refreshAccessToken } from './utilities/twitch.js';
 import cron from 'node-cron';
 
 config();
-await validateAccessToken();
+// await validateAccessToken();
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
   validateAccessToken();
