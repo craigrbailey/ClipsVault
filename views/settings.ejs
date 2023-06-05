@@ -236,6 +236,37 @@
             const platformSelect = document.getElementById('platform-select');
             const notiOptionsToggle = document.getElementById('noti-options-toggler');
             const gmailToggle = document.getElementById('gmail-toggle');
+            const obsButton = document.getElementById('obs-button');
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                try {
+                    const obsConnectionData = await getObsConnection();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            });
+
+            async function getObsConnection() {
+                try {
+                    const response = await fetch('/api/obs-connection');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.status === true) {
+                            obsButton.textContent = 'Connected';
+                            obsButton.classList.add('connected');
+                        } else {
+                            obsButton.textContent = 'Connect';
+                            obsButton.classList.remove('connected');
+                        }
+                        return data;
+                    } else {
+                        throw new Error('Error: ' + response.status);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    throw error;
+                }
+            }
 
             gmailToggle.addEventListener('change', () => {
                 const isChecked = gmailToggle.querySelector('input').checked;

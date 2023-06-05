@@ -136,7 +136,7 @@ app.use('/memory-usage', memoryUsageRouter);
 app.use('/status', statusRouter);
 app.use('/get-queue', getQueueRouter);
 app.use('/notifications', notificationsRouter);
-app.use('/obs-connection', obsConnectionRouter);
+app.use('/api/obs-connection', obsConnectionRouter);
 app.use('/obs-settings', obsConnectionSettings);
 app.use('/stream/:streamId', streamConnectionRouter);
 app.use('/stream', streamConnectionRouter);

@@ -718,6 +718,12 @@ async function InitializeSetup() {
         _id: 'notifications',
         discord: false,
         gmail: false,
+        clipAdded: false,
+        clipDeleted: false,
+        streamAdded: false,
+        streamDeleted: false,
+        clipArchived: false,
+        maintenace: false
       }
       const discord = {
         _id: 'discord',

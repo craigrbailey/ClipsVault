@@ -191,6 +191,11 @@ button {
     width: 100%;
 }
 
+.connected {
+    background-color: #2ea100;
+    color: #ffffff;
+}
+
 #obs-settings form {
     display: flex;
     flex-direction: column;
