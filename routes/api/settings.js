@@ -8,6 +8,7 @@ import { writeToLogFile } from '../../utilities/logging.js';
 const router = Router();
 
 router.post('/', async (req, res) => {
+    console.log('settings');
     const setting = req.body.setting;
     const value = req.body.value;
     if (setting === 'liveRequired') {

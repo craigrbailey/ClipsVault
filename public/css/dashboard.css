@@ -27,8 +27,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 15vh;
-  height: 28vh;
+  width: 10vh;
+  height: 20.75vh;
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;

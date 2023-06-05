@@ -411,12 +411,28 @@ async function addNotification(notification) {
   try {
     const collection = db.collection("notifications");
     const document = {
-      notification: notification
+      notification: notification,
+      read: false,
+      date: new Date(),
     };
     const result = await collection.insertOne(document);
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error creating notification document: ${error}`);
+  }
+}
+
+// Function to mark a notification as read
+async function markNotificationAsRead(notificationId) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("notifications");
+    await collection.updateOne(
+      { _id: notificationId },
+      { $set: { read: true } }
+    );
+  } catch (error) {
+    writeToLogFile('error', `Error marking notification as read: ${error}`);
   }
 }
 
@@ -813,6 +829,7 @@ async function InitializeSetup() {
         _id: 'archive',
         archive: false,
         archiveTime: null,
+        archivePct: null
       }
       const categories = {
         _id: 'categories',
@@ -833,17 +850,29 @@ async function InitializeSetup() {
 }
 
 // Function to update archive settings
-async function updateArchiveSettings(archive, archiveTime) {
+async function updateArchiveSettings(archive, archiveTime, archivePct) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
     await collection.updateOne(
       { _id: "archive" },
-      { $set: { archive: archive, archiveTime: archiveTime } }
+      { $set: { archive: archive, archiveTime: archiveTime, archivePct: archivePct } }
     );
     writeToLogFile('info', 'Archive settings updated successfully.');
   } catch (error) {
     writeToLogFile('error', `Error updating archive settings: ${error}`);
+  }
+}
+
+// Function to get archive settings
+async function getArchiveSettings() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "archive" });
+    return settings;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving archive settings: ${error}`);
   }
 }
 
@@ -1169,5 +1198,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings
 }; 

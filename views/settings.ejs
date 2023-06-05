@@ -38,19 +38,26 @@
                                 <span>Compress older videos to save space</span>
                             </div>
                             <label class="switch" id="archiveSwitch">
-                                <input id="archive" type="checkbox" <%=liveRequired ? 'checked' : '' %>>
+                                <input id="archive" type="checkbox" <%=archiveSettings.archive ? 'checked' : '' %>>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <form action="compress" id="compressOptions">
-                            <label for="">Older than:</label>
+                        <form action="compress" id="compressOptions" <%= archiveSettings.archive ? 'style="display: flex;"' : '' %>>
+                            <label for="">Older Than:</label>
                             <select name="" id="compressList">
-                                <option value="30">30 Days</option>
-                                <option value="60">60 Days</option>
-                                <option value="90">90 Days</option>
-                                <option value="120">120 Days</option>
-                                <option value="150">150 Days</option>
-                                <option value="180" selected>180 Days</option>
+                                <option value="30" <%= archiveSettings.archiveTime === '30' ? 'selected' : '' %>>30 Days</option>
+                                <option value="60" <%= archiveSettings.archiveTime === '60' ? 'selected' : '' %>>60 Days</option>
+                                <option value="90" <%= archiveSettings.archiveTime === '90' ? 'selected' : '' %>>90 Days</option>
+                                <option value="120" <%= archiveSettings.archiveTime === '120' ? 'selected' : '' %>>120 Days</option>
+                                <option value="150" <%= archiveSettings.archiveTime === '150' ? 'selected' : '' %>>150 Days</option>
+                                <option value="180" <%= archiveSettings.archiveTime === '180' ? 'selected' : '' %>>180 Days</option>
+                            </select>
+                            <label for="">Compression Precentage:</label>
+                            <select name="" id="compressPct">
+                                <option value="10">10%</option>
+                                <option value="25">25%</option>
+                                <option value="50">50%</option>
+                                <option value="75">75%</option>
                             </select>
                         </form>
                     </div>
@@ -87,16 +94,6 @@
                                 <option value="2300" <%= cleanUpTime === '2300' ? 'selected' : '' %>>11 PM</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="setting" id="platform">
-                        <div>
-                            <h4>Platform</h4>
-                            <span>Specifiy which platform you stream on</span>
-                        </div>
-                        <select id="platform-select">
-                            <option value="twitch">Twitch</option>
-                            <option value="youtube">YouTube</option>
-                        </select>
                     </div>
                     <div class="setting api-key-container" id="api-key">
                         <div>
@@ -278,7 +275,6 @@
             });
             archiveToggle.addEventListener('change', () => {
                 const isChecked = archiveToggle.querySelector('input').checked;
-                console.log('Archive Toggle:', isChecked);
                 updateArchiveSetting(isChecked, selectElement.value);
                 if (isChecked) {
                     compressForm.style.display = 'flex';

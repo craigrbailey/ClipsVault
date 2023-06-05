@@ -24,20 +24,14 @@ async function getVideoLength(filePath, callback) {
 }
 
 async function createFolder(dateString) {
-  // Convert the string to a moment object
   const momentObj = moment(dateString, 'YYYY-MM-DD');
-
-  // Get the year, month, and day
   const year = momentObj.year();
   const month = momentObj.format('MMMM');
   const day = momentObj.date();
   const dayOfWeek = momentObj.format('dddd');
-
-  // Create the directories if they don't exist
   const yearFolder = path.join('clips', year.toString());
   const monthFolder = path.join(yearFolder, month);
   const dayFolder = path.join(monthFolder, `${day} - ${dayOfWeek}`);
-
   if (!fs.existsSync(yearFolder)) {
     fs.mkdirSync(yearFolder);
   }
@@ -47,9 +41,6 @@ async function createFolder(dateString) {
   if (!fs.existsSync(dayFolder)) {
     fs.mkdirSync(dayFolder);
   }
-
-  // Return the results as a string
-  console.log(dayFolder);
   return dayFolder;
 }
 
@@ -58,7 +49,6 @@ function formatDate(dateString) {
   const options = { month: 'long', day: 'numeric', year: 'numeric' };
   return date.toLocaleDateString(undefined, options);
 }
-
 
 function generateDateFolderStructure() {
   const now = new Date();
@@ -93,14 +83,10 @@ function getMemoryUsage() {
   const totalMemoryFormatted = totalMemory.toFixed(2);
   let totalMemoryUnit = units[totalMemoryIndex];
   let usedMemoryUnit = units[usedMemoryIndex];
-
-  // If total memory is over 999GB, display as TB
   if (totalMemoryUnit === 'GB' && totalMemoryFormatted >= 999) {
     totalMemoryFormatted /= 1024;
     totalMemoryUnit = 'TB';
   }
-
-  // If used memory is over 999GB, display as TB
   if (usedMemoryUnit === 'GB' && usedMemoryFormatted >= 999) {
     usedMemoryFormatted /= 1024;
     usedMemoryUnit = 'TB';
@@ -112,8 +98,6 @@ function getMemoryUsage() {
     totalMemory: `${totalMemoryFormatted} ${totalMemoryUnit}`
   };
 }
-
-// Define the middleware function
 function checkSetup(req, res, next) {
   if (isSetupComplete) {
     next();

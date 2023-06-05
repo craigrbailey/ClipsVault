@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Clips Vault</title>
+    <title>Clips Vault - Clips</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -90,6 +90,9 @@
             const clips = document.querySelectorAll('.clip');
             const closeIcons = document.querySelectorAll('.fa-circle-xmark');
             const form = document.getElementById('search-form');
+            const toDateInput = document.getElementById('to-date');
+            const today = new Date().toISOString().split('T')[0];
+            toDateInput.value = today;
             var menuLinks = document.getElementsByClassName('menu-link');
             for (var i = 0; i < menuLinks.length; i++) {
                 var link = menuLinks[i];

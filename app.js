@@ -13,6 +13,9 @@ import multer from 'multer';
 import { watcher } from './utilities/watcher.js'
 import { validateAccessToken, refreshAccessToken } from './utilities/twitch.js';
 import cron from 'node-cron';
+import { notificationHandler } from './utilities/notificationHandler.js';
+
+await notificationHandler('Server started.');
 
 config();
 // Validates access token every 4 hours
@@ -110,7 +113,7 @@ import notificationsRouter from './routes/notifications.js';
 import obsConnectionRouter from './routes/api/obs-connection.js';
 import obsConnectionSettings from './routes/obs-settings.js';
 import streamConnectionRouter from './routes/stream.js';
-import googleCallbackRouter from './routes/google-callback.js';
+import googleCallbackRouter from './routes/googleCallback.js';
 import googleAuthRouter from './routes/googleauth.js';
 import categorySearchRouter from './routes/api/categorysearch.js';
 import addStreamRouter from './routes/api/addstream.js';
@@ -124,6 +127,7 @@ import clipsRouter from './routes/clips.js';
 import searchClipsRouter from './routes/api/searchClips.js';
 import queueHandler from './routes/api/queue.js'
 import settingsApiRouter from './routes/api/settings.js';
+import addStreamView from './routes/addstream.js';
 
 // Register routes
 app.use('/auth/twitch/callback', twitchCallBackRouter);
@@ -153,6 +157,7 @@ app.use('/allclips', clipsRouter);
 app.use('/api/searchclips', searchClipsRouter);
 app.use('/api/queue', queueHandler);
 app.use('/api/settings', settingsApiRouter);
+app.use('/addstream', addStreamView);
 
 // Connect to OBS
 await connectToOBS();

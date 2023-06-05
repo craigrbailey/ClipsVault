@@ -15,58 +15,7 @@
 </head>
 
 <body>
-  <section id="menu">
-    <h1>Clips Vault</h1>
-
-    <div class="items">
-      <li><i class="fa-solid fa-gauge"></i><a href="/">Dashboard</a></li>
-      <li>
-        <i class="fa-solid fa-clapperboard"></i><a href="/clips">Clips</a>
-      </li>
-      <li>
-        <i class="fa-solid fa-list-ol"></i><a href="#">Queue<span class="queue-notification"></span></a>
-      </li>
-    </div>
-    <div class="progress-container">
-      <div class="progress-bar-container">
-        <div class="progress-bar"></div>
-      </div>
-      <div class="progress-container-details">
-        <span id="percent"></span>
-        <span id="storage"></span>
-      </div>
-    </div>
-  </section>
-
-  <div class="top-notifications">
-    <i class="fa-solid fa-bell"></i>
-    <span id="top-notification"></span>
-  </div>
-
-  <div id="interface">
-    <div class="navigation">
-      <div class="notification-container">
-        <div class="notification-bell">
-          <i class="fa fa-bell"></i>
-          <span class="notification-count"></span>
-        </div>
-        <div class="notification-dropdown">
-          <ul class="notification-list"></ul>
-        </div>
-      </div>
-      <div class="profile-settings">
-        <% if (userData) { %>
-          <img src="<%= userData.profile_image_url %>" alt="" />
-          <% } else { %>
-            <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg" />
-            <% } %>
-              <div class="submenu">
-                <a href="#">Sign Out</a>
-                <a href="/settings">Settings</a>
-              </div>
-      </div>
-    </div>
-
+  <%- include('menu.ejs') %>
     <div class="main-interface">
       <div class="video-interface">
         <div class="clip">
@@ -127,230 +76,230 @@
         </div>
       </div>
     </div>
-  </div>
-  <script src="/js/base.js"></script>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const apiKey = '<%= apiKey %>';
-    const tagInput = document.getElementById('tag-input');
-    const tagList = document.getElementById('tag-list');
-    const videoId = urlParams.get('videoId');
-    const streamId = urlParams.get('streamId');
-    const favoriteButton = document.querySelector('.favorite-button');
-    const deleteButton = document.getElementById('delete-video');
-    const addButton = document.getElementById('add-queue');
-    let isFavorite = '<%= videoData.favorite %>';
+    </div>
+    <script src="/js/base.js"></script>
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const apiKey = '<%= apiKey %>';
+      const tagInput = document.getElementById('tag-input');
+      const tagList = document.getElementById('tag-list');
+      const videoId = urlParams.get('videoId');
+      const streamId = urlParams.get('streamId');
+      const favoriteButton = document.querySelector('.favorite-button');
+      const deleteButton = document.getElementById('delete-video');
+      const addButton = document.getElementById('add-queue');
+      let isFavorite = '<%= videoData.favorite %>';
 
-    addButton.addEventListener('click', () => {
-      console.log('Adding video to queue');
-      const body = {
-        id: videoId
-      };
-      fetch('/api/queue', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey
-        },
-        body: JSON.stringify(body)
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log('Video added to queue successfully');
-          } else {
-            console.error('Failed to add video to queue');
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    });
-
-    favoriteButton.addEventListener('click', () => {
-      if (isFavorite) {
-        fetch('/api/favorite', {
+      addButton.addEventListener('click', () => {
+        console.log('Adding video to queue');
+        const body = {
+          id: videoId
+        };
+        fetch('/api/queue', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': apiKey
           },
-          body: JSON.stringify({
-            favoriteType: 'video',
-            id: videoId,
-            status: false
-          })
+          body: JSON.stringify(body)
         })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              favoriteButton.innerHTML = '<i class="fa-regular fa-heart"></i>';
-              isFavorite = false;
-              console.log(data.message);
+          .then(response => {
+            if (response.ok) {
+              console.log('Video added to queue successfully');
             } else {
-              console.error(data.error);
+              console.error('Failed to add video to queue');
             }
           })
           .catch(error => {
             console.error('Error:', error);
           });
-      } else {
-        fetch('/api/favorite', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey
-          },
-          body: JSON.stringify({
-            favoriteType: 'video',
-            id: videoId,
-            status: true
+      });
+
+      favoriteButton.addEventListener('click', () => {
+        if (isFavorite) {
+          fetch('/api/favorite', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey
+            },
+            body: JSON.stringify({
+              favoriteType: 'video',
+              id: videoId,
+              status: false
+            })
           })
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              favoriteButton.innerHTML = '<i class="fa-solid fa-heart favorite"></i>';
-              isFavorite = true;
-              console.log(data.message);
-            } else {
-              console.error(data.error);
-            }
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                favoriteButton.innerHTML = '<i class="fa-regular fa-heart"></i>';
+                isFavorite = false;
+                console.log(data.message);
+              } else {
+                console.error(data.error);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        } else {
+          fetch('/api/favorite', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey
+            },
+            body: JSON.stringify({
+              favoriteType: 'video',
+              id: videoId,
+              status: true
+            })
           })
-          .catch(error => {
-            console.error('Error:', error);
-          });
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                favoriteButton.innerHTML = '<i class="fa-solid fa-heart favorite"></i>';
+                isFavorite = true;
+                console.log(data.message);
+              } else {
+                console.error(data.error);
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+            });
+        }
+      });
+
+      function addTagToVideo(event) {
+        event.preventDefault();
+
+        const newTag = tagInput.value.trim();
+
+        if (newTag !== '') {
+          const tagType = 'video';
+          const id = videoId;
+
+          fetch('/api/tags', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey
+            },
+            body: JSON.stringify({
+              tagType: tagType,
+              id: id,
+              newTag: newTag
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              if (data.success) {
+                const tagElement = document.createElement('span');
+                const iconElement = document.createElement('i');
+                iconElement.classList.add('fa-solid', 'fa-circle-xmark');
+                tagElement.textContent = newTag;
+                tagElement.appendChild(iconElement);
+                tagList.appendChild(tagElement);
+                tagInput.value = '';
+              }
+            })
+            .catch(error => {
+              console.error('Error adding tag:', error);
+            });
+        }
       }
-    });
 
-    function addTagToVideo(event) {
-      event.preventDefault();
-
-      const newTag = tagInput.value.trim();
-
-      if (newTag !== '') {
-        const tagType = 'video';
-        const id = videoId;
-
+      function removeTag(tagElement, tagToRemove) {
         fetch('/api/tags', {
-          method: 'POST',
+          method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': apiKey
           },
           body: JSON.stringify({
-            tagType: tagType,
-            id: id,
-            newTag: newTag
+            tagType: 'video',
+            id: videoId,
+            tagToRemove: tagToRemove
           })
         })
           .then(response => response.json())
           .then(data => {
             console.log(data);
             if (data.success) {
-              const tagElement = document.createElement('span');
-              const iconElement = document.createElement('i');
-              iconElement.classList.add('fa-solid', 'fa-circle-xmark');
-              tagElement.textContent = newTag;
-              tagElement.appendChild(iconElement);
-              tagList.appendChild(tagElement);
-              tagInput.value = '';
+              tagList.removeChild(tagElement);
             }
           })
           .catch(error => {
-            console.error('Error adding tag:', error);
+            console.error('Error removing tag:', error);
           });
       }
-    }
 
-    function removeTag(tagElement, tagToRemove) {
-      fetch('/api/tags', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey
-        },
-        body: JSON.stringify({
-          tagType: 'video',
-          id: videoId,
-          tagToRemove: tagToRemove
+      function deleteVideo() {
+        fetch('/api/deletevideo', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey
+          },
+          body: JSON.stringify({
+            id: videoId
+          })
         })
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          if (data.success) {
-            tagList.removeChild(tagElement);
-          }
-        })
-        .catch(error => {
-          console.error('Error removing tag:', error);
-        });
-    }
-
-    function deleteVideo() {
-      fetch('/api/deletevideo', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey
-        },
-        body: JSON.stringify({
-          id: videoId
-        })
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            if (streamId) {
-              window.location.href = '/stream?streamId=' + streamId;
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              if (streamId) {
+                window.location.href = '/stream?streamId=' + streamId;
+              } else {
+                window.location.href = '/';
+              }
             } else {
-              window.location.href = '/';
+              console.error(data.error);
             }
-          } else {
-            console.error(data.error);
-          }
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    }
-
-    function handleDeleteVideo() {
-      if (deleteButton.classList.contains('confirm')) {
-        deleteVideo();
-        return;
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
       }
-      deleteButton.innerText = 'Confirm';
-      deleteButton.style.backgroundColor = 'red';
-      deleteButton.classList.add('confirm');
-      setTimeout(() => {
+
+      function handleDeleteVideo() {
         if (deleteButton.classList.contains('confirm')) {
-          const ele = document.createElement('i');
-          ele.classList.add('fa-solid', 'fa-trash');
-          deleteButton.innerText = '';
-          deleteButton.style.backgroundColor = '';
-          deleteButton.appendChild(ele);
-          deleteButton.classList.remove('confirm');
+          deleteVideo();
+          return;
         }
-      }, 3000);
-    }
-
-    deleteButton.addEventListener('click', handleDeleteVideo);
-
-    tagList.addEventListener('click', function (event) {
-      if (event.target.classList.contains('fa-circle-xmark')) {
-        const tagElement = event.target.parentNode;
-        const tagToRemove = tagElement.textContent.trim();
-        removeTag(tagElement, tagToRemove);
+        deleteButton.innerText = 'Confirm';
+        deleteButton.style.backgroundColor = 'red';
+        deleteButton.classList.add('confirm');
+        setTimeout(() => {
+          if (deleteButton.classList.contains('confirm')) {
+            const ele = document.createElement('i');
+            ele.classList.add('fa-solid', 'fa-trash');
+            deleteButton.innerText = '';
+            deleteButton.style.backgroundColor = '';
+            deleteButton.appendChild(ele);
+            deleteButton.classList.remove('confirm');
+          }
+        }, 3000);
       }
-    });
 
-    tagInput.addEventListener('keypress', function (event) {
-      if (event.key === 'Enter') {
-        addTagToVideo(event);
-      }
-    });
-  </script>
+      deleteButton.addEventListener('click', handleDeleteVideo);
+
+      tagList.addEventListener('click', function (event) {
+        if (event.target.classList.contains('fa-circle-xmark')) {
+          const tagElement = event.target.parentNode;
+          const tagToRemove = tagElement.textContent.trim();
+          removeTag(tagElement, tagToRemove);
+        }
+      });
+
+      tagInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+          addTagToVideo(event);
+        }
+      });
+    </script>
 </body>
 
 </html>
