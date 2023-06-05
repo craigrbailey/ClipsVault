@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getMemoryUsage } from '../utilities/system.js';
 import { obsConnection } from '../utilities/obs.js';
 import { getDiscordWebhookURL, getAPIKey, getOBSSettings, checkSetup, getLiveRequired, 
-  getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, getGmailToggle } from '../db.js';
+  getCleanupTime, getNotificationsToggle, getDiscordStatus, getGmailToggle } from '../db.js';
 
 const router = Router();
 

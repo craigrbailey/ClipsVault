@@ -27,8 +27,6 @@
                             <div class="tags-search-container">
                                 <div class="tags-list">
                                     <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
-                                    <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
-                                    <span>Tag<i class="fa-solid fa-circle-xmark"></i></span>
                                 </div>
                                 <div class="tag-search-input">
                                     <i class="fa-solid fa-search"></i>
@@ -44,9 +42,11 @@
                                     <i class="fa-solid fa-chevron-down" id="chevron-down"></i>
                                 </span>
                                 <ul class="category-dropdown-menu">
-                                    <li>Option 1</li>
-                                    <li>Option 2</li>
-                                    <li>Option 3</li>
+                                    <% categories.forEach(category=> { %>
+                                        <li>
+                                            <%= category %>
+                                        </li>
+                                        <% }) %>
                                 </ul>
                             </div>
                         </div>

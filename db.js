@@ -56,7 +56,6 @@ async function createCollections(collections) {
     'tokens',
     'streams',
     'videos',
-    'categories',
     'tags',
     'userdata',
     'queue',
@@ -329,10 +328,52 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
       captions: captions
     };
     const result = await collection.insertOne(document);
+    await addCategory(category);
     writeToLogFile('info', `Video document created successfully. ID: ${result.insertedId}`)
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error inserting video: ${error}`);
+  }
+}
+
+// Function to add a category to the database if it doesn't exist
+async function addCategory(category) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos'); // Replace with your actual collection name
+    const document = await collection.findOne({ _id: 'categories' });
+    if (document) {
+      if (!document.categories.includes(category)) {
+        await collection.updateOne(
+          { _id: 'categories' },
+          { $push: { categories: category } }
+        );
+        writeToLogFile('info', `Category "${category}" added successfully.`);
+      }
+    } else {
+      await collection.insertOne({ _id: 'categories', categories: [category] });
+      console.log(`Category "${category}" added successfully.`);
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error adding category to databse: ${error}`);
+  }
+}
+
+// Function to get all categories
+async function getAllCategories() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos');
+    const document = await collection.findOne({ _id: 'categories' });
+    if (document) {
+      const categories = document.categories;
+      return categories;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving categories from database: ${error}`);
+    return [];
   }
 }
 
@@ -740,6 +781,7 @@ async function InitializeSetup() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("settings");
+    const videoCollection = db.collection("videos");
     const count = await collection.countDocuments();
     if (count === 0) {
       const settings = {
@@ -772,7 +814,12 @@ async function InitializeSetup() {
         archive: false,
         archiveTime: null,
       }
+      const categories = {
+        _id: 'categories',
+        categories: []
+      }
       await storeAPIKeyIfNotExists();
+      await videoCollection.insertOne(categories);
       await collection.insertOne(archive);
       await collection.insertOne(discord);
       await collection.insertOne(notifications);
@@ -877,7 +924,7 @@ async function getAllVideos() {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection('videos');
-    const documents = await collection.find().sort({ _id: -1 }).toArray();
+    const documents = await collection.find({ _id: { $ne: 'categories' } }).sort({ _id: -1 }).toArray();
     return documents;
   } catch (err) {
     writeToLogFile('error', `Error retrieving all streams: ${err}`);
@@ -1122,5 +1169,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings
+  updateArchiveSettings, getAllCategories, addCategory
 }; 
