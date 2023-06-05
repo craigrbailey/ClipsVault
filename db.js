@@ -584,21 +584,6 @@ async function updateStreamer(streamer, status) {
   }
 }
 
-// Function to update the streamer
-async function setStreamingPlatform(platform) {
-  const db = await connectToMongoDB();
-  try {
-    const collection = db.collection("settings");
-    await collection.updateOne(
-      { _id: "settings" },
-      { $set: { platform: platform } }
-    )
-    writeToLogFile('info', `Platform set to: ${platform}`);
-  } catch (error) {
-    writeToLogFile('error', `Error updating platform: ${error}`);
-  }
-}
-
 // Function to retrieve all settings from the database
 async function getSettings() {
   const db = await connectToMongoDB();
@@ -804,7 +789,6 @@ async function InitializeSetup() {
         setup_complete: false,
         live_required: false,
         cleanup_time: "0500",
-        platform: null,
         twitch: null,
         youtube: null,
         discord: null
@@ -1194,7 +1178,7 @@ export {
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
-  getAPIKey, getSettings, updateStreamer, updateLiveRequired, setStreamingPlatform, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
+  getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings

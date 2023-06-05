@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import axios from 'axios';
-import { storeTwitchAuthToken, storeTwitchUserData, updateStreamer, getSettings, setStreamingPlatform } from '../db.js';
+import { storeTwitchAuthToken, storeTwitchUserData, updateStreamer, getSettings } from '../db.js';
 import { getUserData } from '../utilities/twitch.js';
 import { writeToLogFile } from '../utilities/logging.js';
 
@@ -20,10 +20,6 @@ router.get('/', async (req, res) => {
     const userData = await getUserData();
     await storeTwitchUserData(userData);
     req.session.userData = userData;
-    const currentSettings = await getSettings();
-    if (currentSettings.platform === null) {
-      await setStreamingPlatform('twitch');
-    }
     updateStreamer('twitch', true);
     writeToLogFile('info', `Tokens and user data successfully stored in the database. User data: ${JSON.stringify(userData)}`);
     res.redirect('/');

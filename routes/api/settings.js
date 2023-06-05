@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { updateLiveRequired, storeDiscordWebhookURL,storeAPIKey, updateDiscordToggle, updateOBSSettings, updateCleanupTime, setStreamingPlatform, 
+import { updateLiveRequired, storeDiscordWebhookURL,storeAPIKey, updateDiscordToggle, updateOBSSettings, updateCleanupTime, 
     updateGmailToggle, updateNotificationToggle, updateArchiveSettings} from '../../db.js';
 import { sendMessageToDiscord } from '../../utilities/discord-message.js';
 import { serverKey, generateApiKey } from '../../utilities/api-key.js';
@@ -39,9 +39,6 @@ router.post('/', async (req, res) => {
     } else if (setting === 'maintenanceTime') {
         updateCleanupTime(value);
         res.status(200).send('Maintenance Time updated successfully.');
-    } else if (setting === 'platform') {
-        setStreamingPlatform(value);
-        res.status(200).send('Platform updated successfully.');
     } else if (setting === 'gmailToggle') {
         console.log('gmailToggle');
         updateGmailToggle(value);
