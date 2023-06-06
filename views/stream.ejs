@@ -21,12 +21,12 @@
         <img id="stream-image" src="<%= streamData.background_img %>" alt="">
         <div class="stream-info">
           <span class="label">Date:</span>
-          <input class="edit-stream-input" type="date" value="<%= streamData.date %>" disabled>
+          <input class="edit-stream-input" id="streamDate" type="date" value="<%= streamData.date %>" disabled>
           <span class="label">Category:</span>
           <input class="edit-stream-input" id="streamCategory" type="text" value="<%= streamData.category %>" disabled>
           <div id="suggestions"></div>
           <span class="label">Duration:</span>
-          <input class="edit-stream-input" type="text" value="<%= streamData.length %>" disabled>
+          <input class="edit-stream-input" id="streamDuration" type="text" value="<%= streamData.length %>" disabled>
           <!-- <div class="stream-tags">
             <span class="label">Tags</span>
             <div class="tag-list" id="tag-list">
@@ -111,6 +111,7 @@
             input.disabled = true;
             const streamCategory = document.getElementById('streamCategory');
             getBoxArt(streamCategory.value);
+            updateStream();
           });
           editStreamBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
         } else {
@@ -327,6 +328,30 @@
             .catch(error => console.error('Error:', error));
         }, 500);
       });
+
+      // Function to update stream info
+      async function updateStream() {
+        const streamCategory = document.getElementById('streamCategory').value;
+        const streamDate = document.getElementById('streamDate').value;
+        const response = await fetch('/api/stream', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            streamId,
+            streamCategory,
+            streamDate
+          })
+        });
+        if (!response.ok) {
+          console.log('Error updating stream');
+          return;
+        } else {
+          console.log('Success updating stream');
+          return;
+        }
+      }
     </script>
 </body>
 

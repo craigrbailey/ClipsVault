@@ -1,5 +1,5 @@
 import OBSWebSocket from 'obs-websocket-js';
-import { getOBSSettings, insertStream, updateStreamData, insertVideo } from '../db.js';
+import { getOBSSettings, insertStream, updateStreamLength, insertVideo } from '../db.js';
 import path from 'path';
 import { getCurrentDate, createFolder, getFileSize } from './system.js';
 import { twitchLive } from './twitch.js';

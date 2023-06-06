@@ -62,7 +62,6 @@ async function searchGameCategories(query) {
     });
     return categories;
   } catch (error) {
-    console.error('Error searching game categories:', error);
     if (error.response && error.response.status === 401) {
       await refreshAccessToken();
       return searchGameCategories(query);
@@ -104,7 +103,6 @@ async function validateAccessToken() {
 async function refreshAccessToken() {
   try {
     const refreshToken = await getRefreshToken();
-    console.log(`Refresh token: ${refreshToken}`);
     const params = new URLSearchParams();
     params.append('client_id', process.env.TWITCH_CLIENT_ID);
     params.append('client_secret', process.env.TWITCH_CLIENT_SECRET);

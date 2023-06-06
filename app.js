@@ -102,7 +102,7 @@ import streamConnectionRouter from './routes/stream.js';
 import googleCallbackRouter from './routes/googleCallback.js';
 import googleAuthRouter from './routes/googleauth.js';
 import categorySearchRouter from './routes/api/categorysearch.js';
-import addStreamRouter from './routes/api/addstream.js';
+import StreamRouter from './routes/api/addstream.js';
 import getStreamsRouter from './routes/api/getstreams.js';
 import { TagRouter } from './routes/api/tags.js';
 import { ClipRouter } from './routes/api/clip.js';
@@ -121,7 +121,7 @@ const apiRouter = express.Router();
 apiRouter.use('/notifications', notificationsRouter);
 apiRouter.use('/obs-connection', obsConnectionRouter);
 apiRouter.use('/categorysearch', categorySearchRouter);
-apiRouter.use('/stream', addStreamRouter);
+apiRouter.use('/stream', StreamRouter);
 apiRouter.use('/getstreams', getStreamsRouter);
 apiRouter.use('/tags', TagRouter);
 apiRouter.use('/clip', ClipRouter);
@@ -133,7 +133,7 @@ apiRouter.use('/settings', settingsApiRouter);
 
 // Create regular router
 const regularRouter = express.Router();
-regularRouter.use('/twitch/callback', twitchCallBackRouter);
+regularRouter.use('/auth/twitch/callback', twitchCallBackRouter);
 regularRouter.use('/authorize', authorizeRouter);
 regularRouter.use('/', dashboardRouter);
 regularRouter.use('/settings', settingsRouter);

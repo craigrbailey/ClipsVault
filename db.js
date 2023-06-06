@@ -4,7 +4,7 @@ import { promisify } from 'util';
 import { dirname } from 'path';
 import { writeToLogFile } from './utilities/logging.js';
 import { generateApiKey } from './utilities/api-key.js';
-
+import { getGameBoxArt } from './utilities/twitch.js';
 
 const uri = 'mongodb://192.168.1.31:27017';
 const client = new MongoClient(uri);
@@ -336,73 +336,27 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
   }
 }
 
-// Function to update the category of a stream
-async function updateStreamCategory(streamId, category) {
+// Function to update a streams info
+async function updateStream(streamId, date, category) {
   const db = await connectToMongoDB();
+  const img = await getGameBoxArt(category);
   try {
     const collection = db.collection("streams");
     const result = await collection.updateOne(
-      { _id: streamId },
-      { $set: { category: category } }
+      { _id: new ObjectId(streamId) },
+      {
+        $set: {
+          date: date,
+          category: category,
+          background_img: img,
+        },
+      }
     );
     if (result.modifiedCount === 0) {
       writeToLogFile('error', 'No matching document found');
     }
   } catch (error) {
-    writeToLogFile('error', `Error updating stream category: ${error}`);
-  }
-}
-
-// Function to update the category of a video
-async function updateVideoCategory(videoId, category) {
-  const db = await connectToMongoDB();
-  const img = await getCategoryImg(category);
-  try {
-    const collection = db.collection("videos");
-    const result = await collection.updateOne(
-      { _id: new ObjectId(videoId) },
-      { $set: { category: category } },
-      { $set: { categoryImg: img } }
-    );
-    if (result.modifiedCount === 0) {
-      writeToLogFile('error', 'No matching document found');
-    }
-  } catch (error) {
-    writeToLogFile('error', `Error updating video category: ${error}`);
-  }
-}
-
-// Function to update the date of a stream
-async function updateStreamDate(streamId, date) {
-  const db = await connectToMongoDB();
-  try {
-    const collection = db.collection("streams");
-    const result = await collection.updateOne(
-      { _id: streamId },
-      { $set: { date: date } }
-    );
-    if (result.modifiedCount === 0) {
-      writeToLogFile('error', 'No matching document found');
-    }
-  } catch (error) {
-    writeToLogFile('error', `Error updating stream date: ${error}`);
-  }
-}
-
-// Function to update the duration of a stream
-async function updateStreamDuration(streamId, duration) {
-  const db = await connectToMongoDB();
-  try {
-    const collection = db.collection("streams");
-    const result = await collection.updateOne(
-      { _id: streamId },
-      { $set: { length: duration } }
-    );
-    if (result.modifiedCount === 0) {
-      writeToLogFile('error', 'No matching document found');
-    }
-  } catch (error) {
-    writeToLogFile('error', `Error updating stream duration: ${error}`);
+    writeToLogFile('error', `Error updating stream: ${error}`);
   }
 }
 
@@ -613,7 +567,7 @@ async function updateVideoFavoriteStatus(videoId, favorite) {
 }
 
 // Function to update the stream length
-async function updateStreamData(streamId, newLength) {
+async function updateStreamLength(streamId, newLength) {
   const db = await connectToMongoDB();
   try {
     const streamsCollection = db.collection('streams');
@@ -1259,9 +1213,9 @@ export {
   getAllQueueItems, getAllNotifications, removeNotificationById, addNotification, getVideoData, updateOBSSettings,
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
-  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamData, removeStream, getRefreshToken, insertClip, storeAPIKey,
+  addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamLength, removeStream, getRefreshToken, insertClip, storeAPIKey,
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream
 }; 
