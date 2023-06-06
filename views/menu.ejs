@@ -17,6 +17,13 @@
                 </div>
                 <ul class="notifications">
                     <button id="ack-btn">Acknowledge All</button>
+                    <div class="notification-item">
+                        <li class="noti">Some notification</li>
+                        <div>
+                            <span class="noti-date">6/5/2023</span>
+                            <span class="noti-time">5:55PM</span>
+                        </div>
+                    </div>
                 </ul>
             </div>
             <div class="profile-settings">
@@ -33,84 +40,81 @@
     const acknowledgeButton = document.getElementById('ack-btn');
     const notificationCount = document.querySelector('.notification-count');
     const notificationContainer = document.querySelector('.notification-container');
+    const notifications = document.querySelector('.notifications');
+    let hideTimeout;
 
-    async function toggleAcknowledgeButton() {
-        if (notificationContainer.childElementCount > 0) {
-            acknowledgeButton.style.display = 'block';
-        } else {
-            acknowledgeButton.style.display = 'none';
-        }
+    notificationContainer.addEventListener('mouseleave', () => {
+        hideTimeout = setTimeout(() => {
+            notifications.style.display = 'none';
+        }, 1000);
+    });
+
+    notificationContainer.addEventListener('mouseenter', () => {
+        notifications.style.display = 'flex';
+        clearTimeout(hideTimeout);
+    });
+
+    function formatDate(dateString) {
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options);
     }
 
-    async function fetchNotifications() {
-        try {
-            const response = await fetch('/api/notifications', {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (response.ok) {
-                const notifications = await response.json();
+    function formatTime(timeString) {
+        const options = { hour: 'numeric', minute: 'numeric' };
+        const time = new Date(timeString);
+        return time.toLocaleTimeString(undefined, options).replace(/\s/g, '').toUpperCase();
+    }
+
+    function createNotificationItem(notification) {
+        const { _id, notification: text, read, date } = notification;
+        const notificationItem = document.createElement('div');
+        notificationItem.classList.add('notification-item');
+        notificationItem.setAttribute('data-id', _id);
+        const notificationElement = document.createElement('li');
+        notificationElement.classList.add('noti');
+        notificationElement.textContent = text;
+        const notificationDateTime = document.createElement('div');
+        const dateElement = document.createElement('span');
+        dateElement.classList.add('noti-date');
+        dateElement.textContent = formatDate(date);
+        const timeElement = document.createElement('span');
+        timeElement.classList.add('noti-time');
+        timeElement.textContent = formatTime(date);
+        notificationDateTime.appendChild(dateElement);
+        notificationDateTime.appendChild(timeElement);
+        if (read) {
+            notificationElement.classList.add('read');
+        }
+        notificationItem.appendChild(notificationElement);
+        notificationItem.appendChild(notificationDateTime);
+
+        return notificationItem;
+    }
+
+    async function getNotifications() {
+        fetch('/api/notifications')
+            .then(response => response.json())
+            .then(data => {
                 const notificationsContainer = document.querySelector('.notifications');
-                notificationsContainer.innerHTML = '';
-                notifications.forEach(notification => {
+                if (data.length > 0) {
+                    notificationCount.textContent = data.length;
+                    notificationCount.style.display = 'block';
+                } else {
+                    notificationCount.style.display = 'none';
+                }
+
+                data.forEach(notification => {
                     const notificationItem = createNotificationItem(notification);
                     notificationsContainer.appendChild(notificationItem);
                 });
-                if (notifications.length > 0) {
-                    notificationCount.style.display = 'block';
-                }
-                notificationCount.textContent = notifications.length;
-            } else {
-                console.error('Error:', response.status);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    async function markNotificationAsRead(notificationId) {
-        fetch('/api/notifications', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: notificationId })
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Notification marked as read:', notificationId);
-                    notificationElement.classList.add('read');
-                    const notificationCount = document.querySelector('.notification-count');
-                    if (notificationCount) {
-                        const count = parseInt(notificationCount.textContent, 10);
-                        notificationCount.textContent = count > 0 ? count - 1 : 0;
-                    }
-                } else {
-                    console.error('Error marking notification as read:', response.status);
-                }
             })
             .catch(error => {
-                console.error('Error marking notification as read:', error);
+                console.error('Error fetching notifications:', error);
             });
     }
 
-    async function createNotificationItem(notification) {
-        const notificationItem = document.createElement('li');
-        notificationItem.dataset.id = notification._id;
-        notificationItem.textContent = notification.notification;
-
-        notificationItem.addEventListener('mouseenter', () => {
-            const notificationId = notificationItem.dataset.id;
-            markNotificationAsRead(notificationId);
-        });
-        return notificationItem;
-    }
-    
-    document.addEventListener('DOMContentLoaded', async () => {
-        await toggleAcknowledgeButton();
-        await fetchNotifications();
-        setInterval(await fetchNotifications, 5000);
+    window.addEventListener('load', () => {
+        getNotifications();
     });
-
 </script>
