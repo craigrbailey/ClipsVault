@@ -38,12 +38,17 @@
 
     notificationContainer.addEventListener('mouseleave', () => {
         hideTimeout = setTimeout(() => {
-            notifications.style.display = 'none';
-        }, 1000);
+            notifications.style.opacity = '0';
+            setTimeout(() => {
+                notifications.style.display = 'none';
+            }, 900);
+        }, 1100);
     });
+
 
     notificationContainer.addEventListener('mouseenter', () => {
         notifications.style.display = 'flex';
+        notifications.style.opacity = '1';
         clearTimeout(hideTimeout);
     });
 

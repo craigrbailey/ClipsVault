@@ -3,6 +3,7 @@ import fs, { write } from 'fs';
 import path from 'path';
 import moment from 'moment';
 import os from 'os';
+import { writeToLogFile } from './logging.js';
 
 // Function to get the size of a file in bytes
 async function getFileSize(filename) {
@@ -17,7 +18,7 @@ async function getFileSize(filename) {
 async function getVideoLength(filePath, callback) {
   ffmpeg.ffprobe(filePath, (err, metadata) => {
     if (err) {
-      writeLogMessage('error', `Error getting video length: ${err}`);
+      writeToLogFile('error', `Error getting video length: ${err}`);
     } else {
       const duration = metadata.format.duration;
       callback(null, duration);
@@ -119,7 +120,7 @@ function moveFileToTrash(filePath) {
     fs.mkdirSync(trashDir);
   }
   fs.renameSync(filePath, trashFilePath);
-  console.log(`Moved file to trash: ${trashFilePath}`);
+  writeToLogFile('info', `Moved file to trash: ${trashFilePath}`);
 
   return trashFilePath;
 }
