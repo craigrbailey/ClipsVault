@@ -1,9 +1,10 @@
 import ffmpeg from 'fluent-ffmpeg';
-import fs from 'fs';
+import fs, { write } from 'fs';
 import path from 'path';
 import moment from 'moment';
 import os from 'os';
 
+// Function to get the size of a file in bytes
 async function getFileSize(filename) {
   const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size;
@@ -12,10 +13,11 @@ async function getFileSize(filename) {
   return fileSizeInBytes;
 }
 
+// Function to get the length of a video in seconds
 async function getVideoLength(filePath, callback) {
   ffmpeg.ffprobe(filePath, (err, metadata) => {
     if (err) {
-      callback(err, null);
+      writeLogMessage('error', `Error getting video length: ${err}`);
     } else {
       const duration = metadata.format.duration;
       callback(null, duration);
@@ -23,6 +25,7 @@ async function getVideoLength(filePath, callback) {
   });
 }
 
+// Function to create a folder for a given date
 async function createFolder(dateString) {
   const momentObj = moment(dateString, 'YYYY-MM-DD');
   const year = momentObj.year();
@@ -44,12 +47,14 @@ async function createFolder(dateString) {
   return dayFolder;
 }
 
+// Function to format a date string
 function formatDate(dateString) {
   const date = new Date(dateString);
   const options = { month: 'long', day: 'numeric', year: 'numeric' };
   return date.toLocaleDateString(undefined, options);
 }
 
+// Function to generate a folder structure for a given date
 function generateDateFolderStructure() {
   const now = new Date();
   const year = now.getFullYear();
@@ -60,24 +65,22 @@ function generateDateFolderStructure() {
   return `${year}/${month}/${day} ${dayOfWeek}`;
 }
 
+// Function to get the memory usage of the system
 function getMemoryUsage() {
   let totalMemory = os.totalmem();
   let freeMemory = os.freemem();
   let usedMemory = totalMemory - freeMemory;
-
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   let usedMemoryIndex = 0;
   while (usedMemory >= 1024 && usedMemoryIndex < units.length - 1) {
     usedMemory /= 1024;
     usedMemoryIndex++;
   }
-
   let totalMemoryIndex = 0;
   while (totalMemory >= 1024 && totalMemoryIndex < units.length - 1) {
     totalMemory /= 1024;
     totalMemoryIndex++;
   }
-
   const usedMemoryPercentage = Math.floor((usedMemory / totalMemory) * 100);
   const usedMemoryFormatted = usedMemory.toFixed(2);
   const totalMemoryFormatted = totalMemory.toFixed(2);
@@ -91,13 +94,14 @@ function getMemoryUsage() {
     usedMemoryFormatted /= 1024;
     usedMemoryUnit = 'TB';
   }
-
   return {
     memoryPct: usedMemoryPercentage,
     usedMemory: `${usedMemoryFormatted} ${usedMemoryUnit}`,
     totalMemory: `${totalMemoryFormatted} ${totalMemoryUnit}`
   };
 }
+
+// Function to check if the setup process has been completed
 function checkSetup(req, res, next) {
   if (isSetupComplete) {
     next();
@@ -106,23 +110,21 @@ function checkSetup(req, res, next) {
   }
 }
 
+// Function to move a file to the trash directory
 function moveFileToTrash(filePath) {
   const trashDir = './trash';
   const fileName = filePath.split('/').pop();
   const trashFilePath = `${trashDir}/${fileName}`;
-
-  // Create the trash directory if it doesn't exist
   if (!fs.existsSync(trashDir)) {
     fs.mkdirSync(trashDir);
   }
-
-  // Move the file to the trash directory
   fs.renameSync(filePath, trashFilePath);
   console.log(`Moved file to trash: ${trashFilePath}`);
 
   return trashFilePath;
 }
 
+// Function to get the current date in 'YYYY-MM-DD' format
 function getCurrentDate() {
   const now = new Date();
   const year = now.getFullYear();
@@ -144,6 +146,7 @@ async function convertToStandardTime(militaryTime) {
   }
 }
 
+// Export functions
 export {
   getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup,
   formatDate, moveFileToTrash, getCurrentDate, convertToStandardTime

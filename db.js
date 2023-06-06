@@ -1194,5 +1194,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications
 }; 

@@ -58,8 +58,22 @@
                             <label for="to-date">To:</label>
                             <input type="date" name="to-date" id="to-date" />
                         </div>
-                        <div class="favorite-selector">
-                            <label for="switch">Favorite:</label>
+                        <div id="time-filter">
+                            <select name="" id="">
+                                <option value="all">Greater Than</option>
+                                <option value="favorite">Less Than</option>
+                            </select>
+                            <input type="text" name="seconds" id="seconds" placeholder="In seconds..." />
+                        </div>
+                        <div class="favorite-selector toggle-switch">
+                            <label for="switch">Favorite</label>
+                            <label class="switch">
+                                <input id="favorite" type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="entire-stream-selector toggle-switch">
+                            <label for="switch">Entire Stream</label>
                             <label class="switch">
                                 <input id="favorite" type="checkbox">
                                 <span class="slider"></span>

@@ -193,7 +193,7 @@
     cursor: pointer;
 }
 
-.confirm-mode {
+.action-button.confirm-mode {
     background: red;
     font-size: 1rem;
 }

@@ -137,15 +137,14 @@
       });
 
       function confirmDeleteStream() {
-        deleteStreamButton.style.backgroundColor = 'red';
-        deleteStreamButton.style.fontSize = '1rem';
         deleteStreamButton.innerHTML = 'Confirm';
         deleteStreamButton.addEventListener('click', handleConfirm);
         deleteStreamButton.classList.add('confirm-mode');
 
         confirmationTimer = setTimeout(() => {
-          deleteStreamButton.style.backgroundColor = '#3f63ff';
-          deleteStreamButton.innerHTML = '';
+          const i = document.createElement('i');
+          i.classList.add('fa-solid', 'fa-trash');
+          deleteStreamButton.innerHTML = i.outerHTML;
           deleteStreamButton.classList.remove('confirm-mode');
         }, 3000);
       }

@@ -1,6 +1,5 @@
 import { existsSync, mkdirSync, appendFile, readdir, stat, unlink } from 'fs';
 import { join } from 'path';
-import { CronJob } from 'cron';
 import { __dirname } from '../app.js'
 
 const logsDirectory = './logs'
@@ -32,7 +31,7 @@ function getCurrentDate() {
 }
 
 // Remove log files older than 7 days
-function removeOldLogFiles() {
+async function removeOldLogFiles() {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - 7);
 
@@ -64,10 +63,4 @@ function removeOldLogFiles() {
     });
 }
 
-// Schedule log rotation and cleanup tasks
-new CronJob('0 0 * * *', () => {
-    writeToLogFile('info', 'New log file created');
-    removeOldLogFiles();
-}, null, true);
-
-export { writeToLogFile };
+export { writeToLogFile, removeOldLogFiles };

@@ -9,7 +9,6 @@ async function createClips(stream) {
     const db = await connectToMongoDB();
     const clipsCollection = db.collection('clips');
     try {
-        // Iterate through the clips collection
         const cursor = clipsCollection.find();
         const count = 0;
         while (await cursor.hasNext()) {
