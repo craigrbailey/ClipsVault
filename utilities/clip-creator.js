@@ -5,7 +5,7 @@ import { connectToMongoDB } from '../db.js';
 
 ffmpeg.setFfmpegPath('ffmpeg/bin/ffmpeg.exe');
 
-async function createClips(stream) {
+async function createClips(streamFile) {
     const db = await connectToMongoDB();
     const clipsCollection = db.collection('clips');
     try {
@@ -16,7 +16,7 @@ async function createClips(stream) {
 
             const { _id, length, start, tags, category, categoryImg } = clip;
             console.log(`Creating clip for ID: ${_id}. length: ${length}, start: ${start}, tags: ${tags}, category: ${category}, categoryImg: ${categoryImg}`)
-            const inputFilePath = stream; // Replace with your input video file path
+            const inputFilePath = streamFile; // Replace with your input video file path
 
             // Calculate the start and duration for the clip
             const startTime = moment.duration(start, 'seconds').asSeconds(); // Convert start time to seconds
