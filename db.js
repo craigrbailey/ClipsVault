@@ -311,7 +311,7 @@ async function getRefreshToken() {
 }
 
 // Function to insert a video into the database
-async function insertVideo(streamId, file, date, category, img, size, length, captions) {
+async function insertVideo(streamId, file, date, category, img, size, length, tags, captions) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("videos");
@@ -324,7 +324,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
       size: size,
       length: length,
       favorite: false,
-      tags: [],
+      tags: tags,
       captions: captions
     };
     const result = await collection.insertOne(document);
@@ -333,6 +333,76 @@ async function insertVideo(streamId, file, date, category, img, size, length, ca
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error inserting video: ${error}`);
+  }
+}
+
+// Function to update the category of a stream
+async function updateStreamCategory(streamId, category) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("streams");
+    const result = await collection.updateOne(
+      { _id: streamId },
+      { $set: { category: category } }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'No matching document found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating stream category: ${error}`);
+  }
+}
+
+// Function to update the category of a video
+async function updateVideoCategory(videoId, category) {
+  const db = await connectToMongoDB();
+  const img = await getCategoryImg(category);
+  try {
+    const collection = db.collection("videos");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(videoId) },
+      { $set: { category: category } },
+      { $set: { categoryImg: img } }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'No matching document found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating video category: ${error}`);
+  }
+}
+
+// Function to update the date of a stream
+async function updateStreamDate(streamId, date) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("streams");
+    const result = await collection.updateOne(
+      { _id: streamId },
+      { $set: { date: date } }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'No matching document found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating stream date: ${error}`);
+  }
+}
+
+// Function to update the duration of a stream
+async function updateStreamDuration(streamId, duration) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("streams");
+    const result = await collection.updateOne(
+      { _id: streamId },
+      { $set: { length: duration } }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'No matching document found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating stream duration: ${error}`);
   }
 }
 
@@ -511,11 +581,10 @@ async function insertStream(date, category, backgroundImg, captions) {
 async function addVideoToStream(streamId, videoId) {
   try {
     const collection = dbConnection.collection('streams');
-    const result = await collection.updateOne(
+    await collection.updateOne(
       { _id: streamId },
       {
-        $push: { videos: videoId },
-        $inc: { video_count: 1 }
+        $push: { videos: videoId }
       }
     );
   } catch (err) {
