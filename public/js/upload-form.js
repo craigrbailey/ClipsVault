@@ -117,11 +117,10 @@ document.querySelector('form').addEventListener('submit', function (e) {
         .then(response => response.json())
         .then(data => {
             console.log('Success:', data);
-            if (data.message === 'Upload successful') {
-                selectedFiles = [];
-                document.getElementById('fileList').innerHTML = '';
-                document.getElementById('streamCategory').value = '';
-                window.location.href = '/stream/' + data.streamId;
+            if (data.success) {
+                setTimeout(() => {
+                    window.location.href = '/stream?streamId='+ data.streamId;
+                }, 1500);
             }
         })
         .catch((error) => {

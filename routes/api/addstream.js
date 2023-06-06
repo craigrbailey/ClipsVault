@@ -31,8 +31,6 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamCategory = req.body.streamCategory;
   const streamDate = req.body.streamDate;
   const folder = await createFolder(streamDate);
-  let largestFile;
-  let largestSize = 0;
   const gameArt = await getGameBoxArt(streamCategory);
   const streamId = await insertStream(streamDate, streamCategory, gameArt, '');
   try {
@@ -41,21 +39,9 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
       const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, fileLength);
       await addVideoToStream(streamId, videoId);
       const { size } = await fs.stat(file.path);
-      if (size > largestSize * 2) {
-        largestFile = file;
-        largestSize = size;
-      }
       await fs.rename(file.path, `${folder}/${file.originalname}`);
     }
-    if (largestFile) {
-      res.json({
-        message: 'Upload successful',
-        largestFile: largestFile.originalname,
-        largestSize
-      });
-    } else {
-      res.json({ message: 'Upload successful', notice: 'No single file is at least double the size of any other file.' });
-    }
+    res.json({ success: true, message: 'Stream added successfully', streamId: streamId });
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: 'Internal server error' });

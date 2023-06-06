@@ -4,8 +4,8 @@ import path from 'path';
 import moment from 'moment';
 import os from 'os';
 import { writeToLogFile } from './logging.js';
-const ffmpegPath = '../ffmpeg/bin/ffmpeg.exe';
-const ffprobePath = '../ffmpeg/bin/ffprobe.exe';
+const ffmpegPath = 'ffmpeg/bin/ffmpeg.exe'
+const ffprobePath = 'ffmpeg/bin/ffprobe.exe'
 
 // Function to get the size of a file in bytes
 async function getFileSize(filename) {
