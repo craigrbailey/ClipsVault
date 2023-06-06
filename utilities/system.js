@@ -1,9 +1,11 @@
 import ffmpeg from 'fluent-ffmpeg';
-import fs, { write } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
 import os from 'os';
 import { writeToLogFile } from './logging.js';
+const ffmpegPath = '../ffmpeg/bin/ffmpeg.exe';
+const ffprobePath = '../ffmpeg/bin/ffprobe.exe';
 
 // Function to get the size of a file in bytes
 async function getFileSize(filename) {
@@ -15,14 +17,19 @@ async function getFileSize(filename) {
 }
 
 // Function to get the length of a video in seconds
-async function getVideoLength(filePath, callback) {
-  ffmpeg.ffprobe(filePath, (err, metadata) => {
-    if (err) {
-      writeToLogFile('error', `Error getting video length: ${err}`);
-    } else {
-      const duration = metadata.format.duration;
-      callback(null, duration);
-    }
+function getVideoLength(filePath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+  ffmpeg.setFfprobePath(ffprobePath);
+  return new Promise((resolve, reject) => {
+    ffmpeg.ffprobe(filePath, (err, metadata) => {
+      if (err) {
+        reject(err);
+      } else {
+        const durationInSeconds = Math.round(metadata.format.duration);
+        console.log(`Duration: ${durationInSeconds} seconds`);
+        resolve(durationInSeconds);
+      }
+    });
   });
 }
 

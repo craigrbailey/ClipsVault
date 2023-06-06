@@ -25,7 +25,6 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-
 const upload = multer({ storage: storage })
 
 router.post('/', upload.array('fileUpload'), async (req, res) => {
@@ -38,9 +37,9 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamId = await insertStream(streamDate, streamCategory, gameArt, '');
   try {
     for (const file of req.files) {
-      const fileLength = await getVideoLength(file.originalname);
+      const fileLength = await getVideoLength(file.path);
       const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, fileLength);
-      addVideoToStream(streamId, videoId);
+      await addVideoToStream(streamId, videoId);
       const { size } = await fs.stat(file.path);
       if (size > largestSize * 2) {
         largestFile = file;
