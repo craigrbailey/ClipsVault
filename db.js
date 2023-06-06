@@ -305,7 +305,6 @@ async function getRefreshToken() {
     return refreshToken;
   } catch (error) {
     writeToLogFile('error', `Error retrieving refresh token: ${error}`);
-    console.error('Error retrieving refresh token:', error);
     return null;
   }
 }
@@ -364,7 +363,7 @@ async function updateStream(streamId, date, category) {
 async function addCategory(category) {
   const db = await connectToMongoDB();
   try {
-    const collection = db.collection('videos'); // Replace with your actual collection name
+    const collection = db.collection('videos');
     const document = await collection.findOne({ _id: 'categories' });
     if (document) {
       if (!document.categories.includes(category)) {
@@ -376,7 +375,6 @@ async function addCategory(category) {
       }
     } else {
       await collection.insertOne({ _id: 'categories', categories: [category] });
-      console.log(`Category "${category}" added successfully.`);
     }
   } catch (error) {
     writeToLogFile('error', `Error adding category to databse: ${error}`);
@@ -1220,6 +1218,25 @@ async function getVideosOlderThanDays(days) {
   }
 }
 
+// Function to  remove categories from the database if there are no videos with that category
+async function removeCategoriesIfNoVideos() {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const categoriesCollection = db.collection('categories');
+    const categories = await categoriesCollection.find().toArray();
+    for (const category of categories) {
+      const videos = await videosCollection.find({ category: category }).toArray();
+      if (videos.length === 0) {
+        await categoriesCollection.deleteOne({ category: category });
+        writeToLogFile('info', `Removed category from search: ${category}`);
+      }
+    }
+  } catch (error) {
+    writeToLogFile('Error removing categories if no videos:', error);
+  }
+}
+
 // Export the functions
 export {
   connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getTwitchAccessToken,
@@ -1230,5 +1247,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, removeCategoriesIfNoVideos
 }; 

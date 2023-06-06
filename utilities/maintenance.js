@@ -1,5 +1,5 @@
 import { existsSync, write } from 'fs';
-import { connectToMongoDB, deleteOldNotifications, getVideosOlderThanDays, getArchiveSettings } from '../db.js';
+import { connectToMongoDB, deleteOldNotifications, getVideosOlderThanDays, getArchiveSettings, removeCategoriesIfNoVideos } from '../db.js';
 import { removeOldLogFiles, writeToLogFile } from './logging.js';
 import { shrinkVideoFileSize } from './archiveVideo.js';
 
@@ -59,6 +59,7 @@ async function maintenace() {
     await deleteOldNotifications();
     await removeDocumentsWithMissingFiles();
     await removeOldLogFiles();
+    await removeCategoriesIfNoVideos();
 }
 
 
