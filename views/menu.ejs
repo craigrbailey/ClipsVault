@@ -13,17 +13,10 @@
             <div class="notification-container">
                 <div class="notification-bell">
                     <i class="fa fa-bell"></i>
-                    <span class="notification-count"></span>
+                    <span class="notification-count">0</span>
                 </div>
                 <ul class="notifications">
                     <button id="ack-btn">Acknowledge All</button>
-                    <div class="notification-item">
-                        <li class="noti">Some notification</li>
-                        <div>
-                            <span class="noti-date">6/5/2023</span>
-                            <span class="noti-time">5:55PM</span>
-                        </div>
-                    </div>
                 </ul>
             </div>
             <div class="profile-settings">
@@ -66,6 +59,13 @@
         return time.toLocaleTimeString(undefined, options).replace(/\s/g, '').toUpperCase();
     }
 
+    // Function to increase notification count
+    function increaseNotificationCount() {
+        const count = parseInt(notificationCount.textContent);
+        notificationCount.textContent = count + 1;
+        notificationCount.style.display = 'block';
+    }
+
     function createNotificationItem(notification) {
         const { _id, notification: text, read, date } = notification;
         const notificationItem = document.createElement('div');
@@ -84,12 +84,51 @@
         notificationDateTime.appendChild(dateElement);
         notificationDateTime.appendChild(timeElement);
         if (read) {
-            notificationElement.classList.add('read');
+            notificationItem.classList.add('read');
         }
         notificationItem.appendChild(notificationElement);
         notificationItem.appendChild(notificationDateTime);
 
         return notificationItem;
+    }
+
+    function deleteNotification(notificationId) {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: notificationId })
+        };
+
+        fetch('/api/notifications', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Notification deleted successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error deleting notification:', error);
+            });
+    }
+
+    // Function to acknowledge all notifications
+    function acknowledgeAll() {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ all: true })
+        };
+
+        fetch('/api/notifications', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Notifications acknowledged successfully:', data);
+                const notificationItems = document.querySelectorAll('.notification-item');
+                notificationItems.forEach(item => {
+                    item.classList.add('read');
+                });
+            })
+            .catch(error => {
+                console.error('Error acknowledging notifications:', error);
+            });
     }
 
     async function getNotifications() {
@@ -98,7 +137,11 @@
             .then(data => {
                 const notificationsContainer = document.querySelector('.notifications');
                 if (data.length > 0) {
-                    notificationCount.textContent = data.length;
+                    for (let i = 0; i < data.length; i++) {
+                        if (!data[i].read) {
+                            increaseNotificationCount();
+                        }
+                    }
                     notificationCount.style.display = 'block';
                 } else {
                     notificationCount.style.display = 'none';

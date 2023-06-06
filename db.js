@@ -461,6 +461,18 @@ async function getAllNotifications() {
   }
 }
 
+//Function to delete all notifications from the database that are older than a set argument
+async function deleteOldNotifications(days) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("notifications");
+    const result = await collection.deleteMany({ date: { $lt: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } });
+    writeToLogFile('info', `Deleted ${result.deletedCount} notifications.`);
+  } catch (error) {
+    writeToLogFile('error', `Error deleting old notifications: ${error}`);
+  }
+}
+
 // Function to get all queue items
 async function getAllQueueItems() {
   const db = await connectToMongoDB();

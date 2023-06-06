@@ -26,6 +26,21 @@
     justify-content: space-between;
 }
 
+.stream-info input {
+    width: 100%;
+    height: 50px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    background-color: transparent;
+}
+
+.edit-mode {
+    border: solid 1px #dadada;
+}
+
 .stream-info h3 {
     font-size: 1.5rem;
     color: #333;
@@ -190,4 +205,124 @@
 .stream-actions button:hover {
     background-color: #3f63ff;
     opacity: 0.8;
+}
+
+.stream-info form {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+form.show {
+    display: flex;
+}
+
+.upload-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 100%;
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: #4caf50;
+}
+
+.btn-success {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#fileList {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: .5em;
+    justify-content: center;
+    align-items: center;
+}
+
+#fileList span {
+    display: flex;
+    align-items: center;
+    padding: .2em;
+    border-radius: 5px;
+    font-size: .9em;
+    font-size: 16px;
+}
+
+.fa-times-circle {
+    margin-left: .5em;
+    color: #d4d4d4;
+    cursor: pointer;
+    margin-top: .2em;
+}
+
+.fa-times-circle:hover {
+    color: #dc3545;
+}
+
+#suggestions {
+    display: none;
+    position: absolute;
+    flex-direction: column;
+    gap: .25em;
+    top: 84%;
+    justify-content: flex-start;
+    overflow-y: auto;
+    max-height: 200px;
+    width: 475px;
+    align-items: start;
+    color: rgb(52, 52, 52);
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    z-index: 1;
+}
+
+#suggestions::-webkit-scrollbar {
+    width: 10px;
+}
+
+#suggestions::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#suggestions::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 20px;
+}
+
+#suggestions::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    width: 100%;
+}
+
+.suggestion-item:hover {
+    background-color: #4caf50;
+}
+
+.suggestion-item img {
+    width: 10%;
+    height: 10%;
+    object-fit: cover;
 }

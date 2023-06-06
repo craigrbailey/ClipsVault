@@ -18,20 +18,15 @@
   <%- include('menu.ejs') %>
     <div class="stream-container">
       <div class="stream-info-container">
-        <img src="<%= streamData.background_img %>" alt="">
+        <img id="stream-image" src="<%= streamData.background_img %>" alt="">
         <div class="stream-info">
           <span class="label">Date:</span>
-          <h3>
-            <%= streamData.date %>
-          </h3>
+          <input class="edit-stream-input" type="date" value="<%= streamData.date %>" disabled>
           <span class="label">Category:</span>
-          <h3>
-            <%= streamData.category %>
-          </h3>
+          <input class="edit-stream-input" id="streamCategory" type="text" value="<%= streamData.category %>" disabled>
+          <div id="suggestions"></div>
           <span class="label">Duration:</span>
-          <h3>
-            <%= streamData.length %>
-          </h3>
+          <input class="edit-stream-input" type="text" value="<%= streamData.length %>" disabled>
           <!-- <div class="stream-tags">
             <span class="label">Tags</span>
             <div class="tag-list" id="tag-list">
@@ -55,10 +50,22 @@
             <button class="action-button" id="add-video">
               <i class="fa-solid fa-plus"></i>
             </button>
-            <button class="action-button" id="add-video">
+            <button class="action-button" id="edit-stream">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
           </div>
+          <form action="">
+            <h2>Add A Video</h2>
+            <div class="form-group upload-area" onclick="document.getElementById('fileUpload').click()">
+              <label>Upload Files (Click or Drag and Drop)</label>
+              <input type="file" id="fileUpload" name="fileUpload" multiple required style="display: none"
+                onchange="displayFiles(this)">
+            </div>
+            <div class="fileList">
+              <span></span>
+            </div>
+            <button type="submit" class="btn btn-success">Add</button>
+          </form>
         </div>
       </div>
       <div class="clips-interface">
@@ -85,6 +92,37 @@
       const streamId = urlParams.get('streamId');
       const deleteStreamButton = document.getElementById('delete-stream');
       const apiKey = '<%= apiKey %>';
+      const streamInputs = document.querySelectorAll('.edit-stream-input');
+      const editStreamBtn = document.getElementById('edit-stream');
+      const addVideoBtn = document.getElementById('add-video');
+      let editMode = false;
+      let selectedFiles = [];
+      let updatedImg = false;
+
+      addVideoBtn.addEventListener('click', () => {
+        document.querySelector('form').classList.toggle('show');
+      });
+
+      editStreamBtn.addEventListener('click', () => {
+        if (editMode) {
+          // Exiting edit mode
+          streamInputs.forEach(input => {
+            input.style.border = 'none';
+            input.disabled = true;
+            const streamCategory = document.getElementById('streamCategory');
+            getBoxArt(streamCategory.value);
+          });
+          editStreamBtn.innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
+        } else {
+          // Entering edit mode
+          streamInputs.forEach(input => {
+            input.style.border = 'solid 1px #dadada';
+            input.disabled = false;
+          });
+          editStreamBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+        }
+        editMode = !editMode;
+      });
 
       videos.forEach(video => {
         video.addEventListener('mouseenter', () => {
@@ -96,97 +134,6 @@
           video.removeAttribute('controls');
           video.pause();
         });
-      });
-
-      function addTagToStream(event) {
-        event.preventDefault();
-
-        const tagInput = document.getElementById('tag-input');
-        const tagList = document.getElementById('tag-list');
-        const newTag = tagInput.value.trim();
-
-        if (newTag !== '') {
-          const tagType = 'stream';
-
-          fetch('/api/tags', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': apiKey
-            },
-            body: JSON.stringify({
-              tagType: tagType,
-              id: streamId,
-              newTag: newTag
-            })
-          })
-            .then(response => response.json())
-            .then(data => {
-              console.log(data);
-              if (data.success) {
-                // Tag added successfully, append it to the tag list
-                const tagElement = document.createElement('span');
-                const iconElement = document.createElement('i');
-                iconElement.classList.add('fa-solid', 'fa-circle-xmark');
-                tagElement.textContent = newTag;
-                tagElement.appendChild(iconElement);
-                tagList.appendChild(tagElement);
-
-                // Clear the input field
-                tagInput.value = '';
-              }
-            })
-            .catch(error => {
-              console.error('Error adding tag:', error);
-            });
-        }
-      }
-
-      const tagInput = document.getElementById('tag-input');
-      tagInput.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
-          addTagToStream(event);
-        }
-      });
-
-
-      function removeTag(tagElement, tagType, id, tagToRemove) {
-        const tagList = document.getElementById('tag-list');
-
-        fetch('/api/tags', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            tagType: tagType,
-            id: id,
-            tagToRemove: tagToRemove
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            if (data.success) {
-              // Tag removed successfully, remove it from the tag list
-              tagList.removeChild(tagElement);
-            }
-          })
-          .catch(error => {
-            console.error('Error removing tag:', error);
-          });
-      }
-
-      const tagList = document.getElementById('tag-list');
-      tagList.addEventListener('click', function (event) {
-        if (event.target.classList.contains('fa-circle-xmark')) {
-          const tagElement = event.target.parentNode;
-          const tagType = 'stream'; // Assuming the tag type is 'stream'
-          const id = streamId; // Replace with the actual stream ID
-          const tagToRemove = tagElement.textContent.trim();
-
-          removeTag(tagElement, tagType, id, tagToRemove);
-        }
       });
 
       function confirmDeleteStream() {
@@ -222,6 +169,165 @@
         confirmationWindow.style.display = 'none';
       }
       deleteStreamButton.addEventListener('click', confirmDeleteStream);
+
+
+      function displayFiles(input) {
+        var fileList = document.getElementById('fileList');
+        for (var i = 0; i < input.files.length; i++) {
+          var fileType = input.files[i].type;
+          if (['video/mp4', 'video/x-matroska', 'video/x-msvideo'].includes(fileType)) {
+            if (selectedFiles.findIndex(file => file.name === input.files[i].name) === -1) {
+              selectedFiles.push(input.files[i]);
+              var fileSpan = document.createElement('span');
+              fileSpan.textContent = input.files[i].name;
+              var closeIcon = document.createElement('i');
+              closeIcon.classList.add('fas', 'fa-times-circle');
+              closeIcon.addEventListener('click', function (e) {
+                const fileName = e.target.parentNode.textContent;
+                selectedFiles = selectedFiles.filter(file => file.name !== fileName);
+                e.target.parentNode.remove();
+              });
+              fileSpan.appendChild(closeIcon);
+              fileList.appendChild(fileSpan);
+            }
+          } else {
+            alert("Only .mp4, .mkv, and .avi files are accepted.");
+          }
+        }
+      }
+
+      document.querySelector('.upload-area').addEventListener('click', function () {
+        document.getElementById('fileUpload').value = "";
+      }, false);
+
+      document.querySelector('.upload-area').addEventListener('drop', function (e) {
+        e.preventDefault();
+        Array.from(e.dataTransfer.files).forEach(file => {
+          if (selectedFiles.findIndex(selectedFile => selectedFile.name === file.name) === -1) {
+            selectedFiles.push(file);
+          }
+        });
+        displayFiles({ files: selectedFiles });
+      }, false);
+
+      document.getElementById('fileUpload').addEventListener('change', function (e) {
+        e.preventDefault();
+        Array.from(e.target.files).forEach(file => {
+          if (selectedFiles.findIndex(selectedFile => selectedFile.name === file.name) === -1) {
+            selectedFiles.push(file);
+          }
+        });
+        displayFiles({ files: selectedFiles });
+      }, false);
+
+      document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        document.querySelector('.container').style.display = 'none';
+        document.querySelector('.loader-container').style.display = 'flex';
+        var formData = new FormData();
+        formData.append('streamCategory', document.getElementById('streamCategory').value);
+        formData.append('streamDate', document.getElementById('streamDate').value);
+        selectedFiles.forEach((file, i) => {
+          formData.append('fileUpload', file);
+        });
+        fetch('/api/stream', {
+          method: 'POST',
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log('Success:', data);
+            if (data.message === 'Upload successful') {
+              selectedFiles = [];
+              document.getElementById('fileList').innerHTML = '';
+              document.getElementById('streamCategory').value = '';
+              window.location.href = '/stream/' + data.streamId;
+            }
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      });
+
+      // Function to search for game box art from the server
+      async function getBoxArt(gameName) {
+        if (updatedImg) {
+          return;
+        };
+        console.log(gameName);
+        const response = await fetch('/api/categorysearch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            boxArt: true,
+            category: gameName
+          })
+        })
+        if (!response.ok) {
+          console.log('Error getting box art');
+          return;
+        } else {
+          updatedImg = true;
+          console.log('Success getting box art');
+          const data = await response.json();
+          console.log(data);
+          document.getElementById('stream-image').src = data;
+          return data;
+        }
+      }
+
+      // updatedImg.addEventListener('change', function () {
+      //   if (updatedImg) {
+      //     setTimeout(function () {
+      //       updatedImg = false;
+      //     }, 2000);
+      //   }
+      // });
+
+      var timeoutId;
+      document.getElementById('streamCategory').addEventListener('input', function (e) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function () {
+          fetch('/api/categorysearch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              category: e.target.value
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              const gameImg = document.getElementById('catImg');
+              var suggestions = document.getElementById('suggestions');
+              suggestions.innerHTML = '';
+              data.forEach(game => {
+                var suggestion = document.createElement('div');
+                suggestion.className = "suggestion-item";
+                var gameArt = document.createElement('img');
+                gameArt.src = game.art;
+                gameArt.className = "game-art";
+                var gameName = document.createElement('span');
+                gameName.textContent = game.name;
+                gameName.className = "game-name";
+                suggestion.appendChild(gameArt);
+                suggestion.appendChild(gameName);
+                suggestions.appendChild(suggestion);
+                suggestion.addEventListener('click', function () {
+                  document.getElementById('streamCategory').value = game.name;
+                  suggestions.style.display = 'none';
+                });
+              });
+              if (data.length > 0) {
+                suggestions.style.display = 'block';
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        }, 500);
+      });
     </script>
 </body>
 

@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
     return;
   }
   if (req.body.boxArt) {
-    const boxArt = getGameBoxArt(req.body.boxArt)
+    const boxArt = await getGameBoxArt(req.body.category)
     res.json(boxArt);
     return;
   } else {
