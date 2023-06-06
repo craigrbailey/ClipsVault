@@ -422,29 +422,30 @@ async function addNotification(notification) {
   }
 }
 
-// Function to mark a notification as read
-async function markNotificationAsRead(notificationId) {
-  const db = await connectToMongoDB();
-  try {
-    const collection = db.collection("notifications");
-    await collection.updateOne(
-      { _id: notificationId },
-      { $set: { read: true } }
-    );
-  } catch (error) {
-    writeToLogFile('error', `Error marking notification as read: ${error}`);
-  }
-}
-
 // Function to remove a notification by ID
 async function removeNotificationById(notificationId) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("notifications");
-    const result = await collection.deleteOne({ _id: notificationId });
+    const result = await collection.deleteOne({ _id: new ObjectId(notificationId) });
     return result.deletedCount > 0;
   } catch (error) {
     writeToLogFile('error', `Error removing notification by ID: ${error}`);
+  }
+}
+
+// Function to mark a notification as read
+async function markNotificationAsRead(notificationId) {
+  console.log('Marking notification as read')
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("notifications");
+    await collection.updateOne(
+      { _id: new ObjectId(notificationId) },
+      { $set: { read: true } }
+    );
+  } catch (error) {
+    writeToLogFile('error', `Error marking notification as read: ${error}`);
   }
 }
 
@@ -1181,5 +1182,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead
 }; 

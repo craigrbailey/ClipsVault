@@ -332,3 +332,74 @@ button {
     flex-direction: column;
     justify-content: flex-start;
 }
+
+#support {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 100%;
+}
+
+.coffee-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.coffee-link {
+    text-decoration: none;
+    color: #FFDD00;
+    background-color: #222222;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.coffee-link:hover {
+    background-color: #FFDD00;
+    color: #222222;
+}
+
+.twitch-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.twitch-link {
+    text-decoration: none;
+    color: #9147FF;
+    background-color: #EAEAEA;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.twitch-link:hover {
+    background-color: #9147FF;
+    color: #FFFFFF;
+}
+
+.github-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.github-link {
+    text-decoration: none;
+    color: #333333;
+    background-color: #F5F5F5;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.github-link:hover {
+    background-color: #333333;
+    color: #FFFFFF;
+}

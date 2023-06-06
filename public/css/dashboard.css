@@ -41,8 +41,10 @@ a {
 }
 
 #add-stream:hover {
-  background-color: #49b3d8;
-  outline-color: #49b3d8;
+  background-color: #f0f0f0;
+  outline-color: #f0f0f0;
+  transform: scale(1.02);
+  color: #333;
 }
 
 .stream {
@@ -58,10 +60,6 @@ a {
   transition: transform 0.2s;
   margin-bottom: 10px;
   text-decoration: none;
-}
-
-.stream:hover {
-  transform: scale(1.05);
 }
 
 .stream-img-container {
@@ -123,8 +121,9 @@ a {
   font-weight: bold;
   text-align: center;
   color: rgb(255, 255, 255);
-  background-color: #49b3d8;
+  background-color: #333;
   padding: 5px;
   border-radius: 5px;
   z-index: 1;
+  opacity: .8;
 }

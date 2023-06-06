@@ -42,15 +42,22 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-                        <form action="compress" id="compressOptions" <%= archiveSettings.archive ? 'style="display: flex;"' : '' %>>
+                        <form action="compress" id="compressOptions" <%=archiveSettings.archive
+                            ? 'style="display: flex;"' : '' %>>
                             <label for="">Older Than:</label>
                             <select name="" id="compressList">
-                                <option value="30" <%= archiveSettings.archiveTime === '30' ? 'selected' : '' %>>30 Days</option>
-                                <option value="60" <%= archiveSettings.archiveTime === '60' ? 'selected' : '' %>>60 Days</option>
-                                <option value="90" <%= archiveSettings.archiveTime === '90' ? 'selected' : '' %>>90 Days</option>
-                                <option value="120" <%= archiveSettings.archiveTime === '120' ? 'selected' : '' %>>120 Days</option>
-                                <option value="150" <%= archiveSettings.archiveTime === '150' ? 'selected' : '' %>>150 Days</option>
-                                <option value="180" <%= archiveSettings.archiveTime === '180' ? 'selected' : '' %>>180 Days</option>
+                                <option value="30" <%=archiveSettings.archiveTime==='30' ? 'selected' : '' %>>30 Days
+                                </option>
+                                <option value="60" <%=archiveSettings.archiveTime==='60' ? 'selected' : '' %>>60 Days
+                                </option>
+                                <option value="90" <%=archiveSettings.archiveTime==='90' ? 'selected' : '' %>>90 Days
+                                </option>
+                                <option value="120" <%=archiveSettings.archiveTime==='120' ? 'selected' : '' %>>120 Days
+                                </option>
+                                <option value="150" <%=archiveSettings.archiveTime==='150' ? 'selected' : '' %>>150 Days
+                                </option>
+                                <option value="180" <%=archiveSettings.archiveTime==='180' ? 'selected' : '' %>>180 Days
+                                </option>
                             </select>
                             <label for="">Compression Precentage:</label>
                             <select name="" id="compressPct">
@@ -68,30 +75,30 @@
                         </div>
                         <div id="cleanup-time">
                             <select id="maintenance-time">
-                                <option value="0000" <%= cleanUpTime === 'Midnight' ? 'selected' : '' %>>Midnight</option>
-                                <option value="0100" <%= cleanUpTime === '0100' ? 'selected' : '' %>>1 AM</option>
-                                <option value="0200" <%= cleanUpTime === '0200' ? 'selected' : '' %>>2 AM</option>
-                                <option value="0300" <%= cleanUpTime === '0300' ? 'selected' : '' %>>3 AM</option>
-                                <option value="0400" <%= cleanUpTime === '0400' ? 'selected' : '' %>>4 AM</option>
-                                <option value="0500" <%= cleanUpTime === '0500' ? 'selected' : '' %>>5 AM</option>
-                                <option value="0600" <%= cleanUpTime === '0600' ? 'selected' : '' %>>6 AM</option>
-                                <option value="0700" <%= cleanUpTime === '0700' ? 'selected' : '' %>>7 AM</option>
-                                <option value="0800" <%= cleanUpTime === '0800' ? 'selected' : '' %>>8 AM</option>
-                                <option value="0900" <%= cleanUpTime === '0900' ? 'selected' : '' %>>9 AM</option>
-                                <option value="1000" <%= cleanUpTime === '1000' ? 'selected' : '' %>>10 AM</option>
-                                <option value="1100" <%= cleanUpTime === '1100' ? 'selected' : '' %>>11 AM</option>
-                                <option value="1200" <%= cleanUpTime === '1200' ? 'selected' : '' %>>Noon</option>
-                                <option value="1300" <%= cleanUpTime === '1300' ? 'selected' : '' %>>1 PM</option>
-                                <option value="1400" <%= cleanUpTime === '1400' ? 'selected' : '' %>>2 PM</option>
-                                <option value="1500" <%= cleanUpTime === '1500' ? 'selected' : '' %>>3 PM</option>
-                                <option value="1600" <%= cleanUpTime === '1600' ? 'selected' : '' %>>4 PM</option>
-                                <option value="1700" <%= cleanUpTime === '1700' ? 'selected' : '' %>>5 PM</option>
-                                <option value="1800" <%= cleanUpTime === '1800' ? 'selected' : '' %>>6 PM</option>
-                                <option value="1900" <%= cleanUpTime === '1900' ? 'selected' : '' %>>7 PM</option>
-                                <option value="2000" <%= cleanUpTime === '2000' ? 'selected' : '' %>>8 PM</option>
-                                <option value="2100" <%= cleanUpTime === '2100' ? 'selected' : '' %>>9 PM</option>
-                                <option value="2200" <%= cleanUpTime === '2200' ? 'selected' : '' %>>10 PM</option>
-                                <option value="2300" <%= cleanUpTime === '2300' ? 'selected' : '' %>>11 PM</option>
+                                <option value="0000" <%=cleanUpTime==='Midnight' ? 'selected' : '' %>>Midnight</option>
+                                <option value="0100" <%=cleanUpTime==='0100' ? 'selected' : '' %>>1 AM</option>
+                                <option value="0200" <%=cleanUpTime==='0200' ? 'selected' : '' %>>2 AM</option>
+                                <option value="0300" <%=cleanUpTime==='0300' ? 'selected' : '' %>>3 AM</option>
+                                <option value="0400" <%=cleanUpTime==='0400' ? 'selected' : '' %>>4 AM</option>
+                                <option value="0500" <%=cleanUpTime==='0500' ? 'selected' : '' %>>5 AM</option>
+                                <option value="0600" <%=cleanUpTime==='0600' ? 'selected' : '' %>>6 AM</option>
+                                <option value="0700" <%=cleanUpTime==='0700' ? 'selected' : '' %>>7 AM</option>
+                                <option value="0800" <%=cleanUpTime==='0800' ? 'selected' : '' %>>8 AM</option>
+                                <option value="0900" <%=cleanUpTime==='0900' ? 'selected' : '' %>>9 AM</option>
+                                <option value="1000" <%=cleanUpTime==='1000' ? 'selected' : '' %>>10 AM</option>
+                                <option value="1100" <%=cleanUpTime==='1100' ? 'selected' : '' %>>11 AM</option>
+                                <option value="1200" <%=cleanUpTime==='1200' ? 'selected' : '' %>>Noon</option>
+                                <option value="1300" <%=cleanUpTime==='1300' ? 'selected' : '' %>>1 PM</option>
+                                <option value="1400" <%=cleanUpTime==='1400' ? 'selected' : '' %>>2 PM</option>
+                                <option value="1500" <%=cleanUpTime==='1500' ? 'selected' : '' %>>3 PM</option>
+                                <option value="1600" <%=cleanUpTime==='1600' ? 'selected' : '' %>>4 PM</option>
+                                <option value="1700" <%=cleanUpTime==='1700' ? 'selected' : '' %>>5 PM</option>
+                                <option value="1800" <%=cleanUpTime==='1800' ? 'selected' : '' %>>6 PM</option>
+                                <option value="1900" <%=cleanUpTime==='1900' ? 'selected' : '' %>>7 PM</option>
+                                <option value="2000" <%=cleanUpTime==='2000' ? 'selected' : '' %>>8 PM</option>
+                                <option value="2100" <%=cleanUpTime==='2100' ? 'selected' : '' %>>9 PM</option>
+                                <option value="2200" <%=cleanUpTime==='2200' ? 'selected' : '' %>>10 PM</option>
+                                <option value="2300" <%=cleanUpTime==='2300' ? 'selected' : '' %>>11 PM</option>
                             </select>
                         </div>
                     </div>
@@ -233,7 +240,22 @@
                 <div class="settings">
                     <h2>Support The Project</h2>
                     <span>Consider supporting the project</span>
-                    <div>
+                    <div id="support">
+                        <div class="twitch-container">
+                            <a href="https://www.twitch.tv/dadthegam3r" target="_blank" class="twitch-link">
+                                Follow Me on Twitch
+                            </a>
+                        </div>
+                        <div class="coffee-container">
+                            <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="coffee-link">
+                                Buy Me a Coffee
+                            </a>
+                        </div>
+                        <div class="github-container">
+                            <a href="https://github.com/dadthegamer/ClipsVault" target="_blank" class="github-link">
+                                Clips Vault
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

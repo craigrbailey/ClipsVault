@@ -13,12 +13,10 @@
             <div class="notification-container">
                 <div class="notification-bell">
                     <i class="fa fa-bell"></i>
-                    <span class="notification-count">15</span>
+                    <span class="notification-count"></span>
                 </div>
                 <ul class="notifications">
-                    <li>Notification 1</li>
-                    <li>Notification 2</li>
-                    <li>Notification 3</li>
+                    <button id="ack-btn">Acknowledge All</button>
                 </ul>
             </div>
             <div class="profile-settings">
@@ -32,4 +30,87 @@
     </div>
 </section>
 <script>
+    const acknowledgeButton = document.getElementById('ack-btn');
+    const notificationCount = document.querySelector('.notification-count');
+    const notificationContainer = document.querySelector('.notification-container');
+
+    async function toggleAcknowledgeButton() {
+        if (notificationContainer.childElementCount > 0) {
+            acknowledgeButton.style.display = 'block';
+        } else {
+            acknowledgeButton.style.display = 'none';
+        }
+    }
+
+    async function fetchNotifications() {
+        try {
+            const response = await fetch('/api/notifications', {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.ok) {
+                const notifications = await response.json();
+                const notificationsContainer = document.querySelector('.notifications');
+                notificationsContainer.innerHTML = '';
+                notifications.forEach(notification => {
+                    const notificationItem = createNotificationItem(notification);
+                    notificationsContainer.appendChild(notificationItem);
+                });
+                if (notifications.length > 0) {
+                    notificationCount.style.display = 'block';
+                }
+                notificationCount.textContent = notifications.length;
+            } else {
+                console.error('Error:', response.status);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    async function markNotificationAsRead(notificationId) {
+        fetch('/api/notifications', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: notificationId })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Notification marked as read:', notificationId);
+                    notificationElement.classList.add('read');
+                    const notificationCount = document.querySelector('.notification-count');
+                    if (notificationCount) {
+                        const count = parseInt(notificationCount.textContent, 10);
+                        notificationCount.textContent = count > 0 ? count - 1 : 0;
+                    }
+                } else {
+                    console.error('Error marking notification as read:', response.status);
+                }
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+            });
+    }
+
+    async function createNotificationItem(notification) {
+        const notificationItem = document.createElement('li');
+        notificationItem.dataset.id = notification._id;
+        notificationItem.textContent = notification.notification;
+
+        notificationItem.addEventListener('mouseenter', () => {
+            const notificationId = notificationItem.dataset.id;
+            markNotificationAsRead(notificationId);
+        });
+        return notificationItem;
+    }
+    
+    document.addEventListener('DOMContentLoaded', async () => {
+        await toggleAcknowledgeButton();
+        await fetchNotifications();
+        setInterval(await fetchNotifications, 5000);
+    });
+
 </script>

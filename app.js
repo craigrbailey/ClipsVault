@@ -15,8 +15,6 @@ import { validateAccessToken, refreshAccessToken } from './utilities/twitch.js';
 import cron from 'node-cron';
 import { notificationHandler } from './utilities/notificationHandler.js';
 
-await notificationHandler('Server started.');
-
 config();
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
@@ -109,7 +107,7 @@ import setupRouter from './routes/setup.js';
 import memoryUsageRouter from './routes/memory-usage.js';
 import statusRouter from './routes/api/status.js';
 import getQueueRouter from './routes/queue.js';
-import notificationsRouter from './routes/notifications.js';
+import notificationsRouter from './routes/api/notifications.js';
 import obsConnectionRouter from './routes/api/obs-connection.js';
 import obsConnectionSettings from './routes/obs-settings.js';
 import streamConnectionRouter from './routes/stream.js';
@@ -138,7 +136,7 @@ app.use('/setup', setupRouter);
 app.use('/memory-usage', memoryUsageRouter);
 app.use('/status', statusRouter);
 app.use('/get-queue', getQueueRouter);
-app.use('/notifications', notificationsRouter);
+app.use('/api/notifications', notificationsRouter);
 app.use('/api/obs-connection', obsConnectionRouter);
 app.use('/obs-settings', obsConnectionSettings);
 app.use('/stream/:streamId', streamConnectionRouter);

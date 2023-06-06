@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { getAllNotifications, removeNotificationById, addNotification } from '../db.js';
+import { getAllNotifications, removeNotificationById, addNotification, markNotificationAsRead } from '../../db.js';
+import { writeToLogFile } from '../../utilities/logging.js';
 
 const router = Router();
 
@@ -13,16 +14,13 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.delete('/:id', async (req, res) => {
-  console.log("Deleting notification:", req.params);
-  const { id } = req.params;
+router.delete('/', async (req, res) => {
+  console.log(req.body);
+  const { id } = req.body;
   try {
-    const result = await removeNotificationById(id);
-    if (result) {
-      res.json({ message: "Notification removed successfully." });
-    } else {
-      res.status(404).json({ error: "Notification not found." });
-    }
+    const result = await markNotificationAsRead(id);
+    console.log(`Notification ${id} marked as read.`);
+    res.json({ message: "Notification removed successfully." });
   } catch (error) {
     console.error("Error removing notification:", error);
     res.status(500).json({ error: "Internal Server Error" });
