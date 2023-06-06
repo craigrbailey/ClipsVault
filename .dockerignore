@@ -15,3 +15,4 @@ logs/
 ffmpeg/
 recordings/
 models/
+encoding/
