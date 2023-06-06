@@ -1,6 +1,7 @@
 import { existsSync, write } from 'fs';
-import { connectToMongoDB, deleteOldNotifications } from '../db.js';
-import { removeOldLogFiles } from './logging.js';
+import { connectToMongoDB, deleteOldNotifications, getVideosOlderThanDays, getArchiveSettings } from '../db.js';
+import { removeOldLogFiles, writeToLogFile } from './logging.js';
+import { shrinkVideoFileSize } from './archiveVideo.js';
 
 // Function to remove documents with missing files
 async function removeDocumentsWithMissingFiles() {
@@ -32,13 +33,29 @@ async function removeDocumentsWithMissingFiles() {
         console.log(`Removed ${files} files`)
         console.log('Processing complete.');
     } catch (error) {
+        writeToLogFile('error', 'Error removing documents with missing files:' + error);
         console.error('Error:', error);
+    }
+}
+
+// Function to shrink all videos that are older than the specified number of days
+async function archiveVideos() {
+    const settings = await getArchiveSettings();
+    if (!settings.archive) {
+        return;
+    }
+    const days = settings.archiveTime;
+    const videos = await getVideosOlderThanDays(days);
+    writeToLogFile('info', `Archiving ${videos.length} videos...`);
+    for (const video of videos) {
+        await shrinkVideoFileSize(video.file);
     }
 }
 
 // Function to run maintenance tasks
 async function maintenace() {
     writeLogMessage('info', 'Running maintenance tasks...');
+    await archiveVideos();
     await deleteOldNotifications();
     await removeDocumentsWithMissingFiles();
     await removeOldLogFiles();

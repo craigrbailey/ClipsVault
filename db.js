@@ -1207,6 +1207,19 @@ async function getVideosByCategory(category) {
   }
 }
 
+// Function to return al the videos that are older than a set number of days
+async function getVideosOlderThanDays(days) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ date: { $lt: new Date(Date.now() - days * 24 * 60 * 60 * 1000) } }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving videos older than days:', error);
+    return null;
+  }
+}
+
 // Export the functions
 export {
   connectToMongoDB, createCollection, initdb, storeTwitchAuthToken, storeTwitchUserData, getTwitchAccessToken,
@@ -1217,5 +1230,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays
 }; 

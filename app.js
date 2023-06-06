@@ -78,7 +78,7 @@ app.set('view engine', 'ejs');
 initdb();
 
 // Create directories if they don't exist
-const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models'];
+const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models', './encoding'];
 for (const folder of folders) {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);

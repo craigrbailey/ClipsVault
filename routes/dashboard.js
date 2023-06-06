@@ -18,7 +18,6 @@ router.get('/', checkSetup, async (req, res) => {
     stream.length = formatStreamLength(stream.length);
   });
   const userData = req.session.userData
-  console.log(userData);
   const memoryUsage = getMemoryUsage();
   res.render('dashboard', { userData, memoryUsage, streams });
 });

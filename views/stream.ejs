@@ -25,8 +25,10 @@
           <span class="label">Category:</span>
           <input class="edit-stream-input" id="streamCategory" type="text" value="<%= streamData.category %>" disabled>
           <div id="suggestions"></div>
-          <span class="label">Duration:</span>
-          <input class="edit-stream-input" id="streamDuration" type="text" value="<%= streamData.length %>" disabled>
+          <% if (streamData.length > 0) { %>
+            <span class="label">Duration:</span>
+            <input class="edit-stream-input" id="streamDuration" type="text" value="<%= streamData.length %>" disabled>
+          <% } %>
           <!-- <div class="stream-tags">
             <span class="label">Tags</span>
             <div class="tag-list" id="tag-list">
