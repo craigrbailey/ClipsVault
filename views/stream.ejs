@@ -75,6 +75,7 @@
           <a href="/video?streamId=<%= streamData._id %>&videoId=<%= videoData[i]._id %>">
             <div class="clip" data-id="<%= videoData[i]._id %>">
               <div class="video-container">
+                <img class="clip-image" src="<%= videoData[i].categoryImg %>" alt="">
                 <video src="<%= videoData[i].file %>"></video>
                 <span class="clip-duration">
                   <%= videoData[i].length %>

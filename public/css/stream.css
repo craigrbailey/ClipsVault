@@ -145,14 +145,31 @@
     margin-right: 10px;
     padding: 10px;
     transition: transform 0.2s;
+    overflow: hidden;
 }
 
 .clip:hover {
     transform: scale(1.05);
 }
 
+.clip:hover .clip-image {
+    opacity: 0;
+}
+
 .video-container {
     position: relative;
+}
+
+.clip-image {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    height: 80px;
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    opacity: 0.9;
+    transition: opacity 0.2s;
 }
 
 .clip-duration {
