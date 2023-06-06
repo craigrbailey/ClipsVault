@@ -5,7 +5,6 @@ import { length } from '../../utilities/obs.js';
 import { getAPIKey } from '../../db.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 
-let clipTags = [];
 const router = Router();
 
 router.post('/', async (req, res) => {
@@ -26,4 +25,4 @@ router.post('/', async (req, res) => {
     res.json({ message: 'Tags received successfully.' });
 });
 
-export { router as ClipRouter, clipTags };
+export { router as ClipRouter };

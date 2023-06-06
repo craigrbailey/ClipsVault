@@ -536,9 +536,9 @@ async function addVideoToStream(streamId, videoId) {
   try {
     const collection = dbConnection.collection('streams');
     await collection.updateOne(
-      { _id: streamId },
+      { _id: new ObjectId(streamId) },
       {
-        $push: { videos: videoId }
+        $push: { videos: new ObjectId(videoId) }
       }
     );
   } catch (err) {

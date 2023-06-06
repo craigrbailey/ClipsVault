@@ -115,6 +115,7 @@ import queueHandler from './routes/api/queue.js'
 import settingsApiRouter from './routes/api/settings.js';
 import addStreamView from './routes/addstream.js';
 import { writeToLogFile } from './utilities/logging.js';
+import videoHandlerRouter from './routes/api/clipHandler.js';
 
 // Create API router
 const apiRouter = express.Router();
@@ -124,12 +125,13 @@ apiRouter.use('/categorysearch', categorySearchRouter);
 apiRouter.use('/stream', StreamRouter);
 apiRouter.use('/getstreams', getStreamsRouter);
 apiRouter.use('/tags', TagRouter);
-apiRouter.use('/clip', ClipRouter);
+apiRouter.use('/clipit', ClipRouter);
 apiRouter.use('/favorite', favoriteRouter);
 apiRouter.use('/deletevideo', deleteVideoRouter);
 apiRouter.use('/searchclips', searchClipsRouter);
 apiRouter.use('/queue', queueHandler);
 apiRouter.use('/settings', settingsApiRouter);
+apiRouter.use('/clip', videoHandlerRouter);
 
 // Create regular router
 const regularRouter = express.Router();

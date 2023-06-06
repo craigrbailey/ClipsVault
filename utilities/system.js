@@ -26,7 +26,6 @@ function getVideoLength(filePath) {
         reject(err);
       } else {
         const durationInSeconds = Math.round(metadata.format.duration);
-        console.log(`Duration: ${durationInSeconds} seconds`);
         resolve(durationInSeconds);
       }
     });
