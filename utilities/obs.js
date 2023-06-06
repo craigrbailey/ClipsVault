@@ -153,9 +153,9 @@ function startTimer() {
     if (live) {
       length++;
     } else {
-      clearInterval(timer); // Stop the timer
+      clearInterval(timer);
     }
-  }, 1000); // Check every second
+  }, 1000); 
 }
 
 export { connectToOBS, obsConnection, entireStream, clipFile, length };

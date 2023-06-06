@@ -171,7 +171,7 @@ async function twitchLive() {
   const category = await getUserCategory();
   if (category === null) {
     data.category = 'Just Chatting';
-    data.img = './images/just-chatting.jpg';
+    data.img = await getGameBoxArt('Just Chatting');
     return data;
   } else {
     data.category = category;

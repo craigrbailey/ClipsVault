@@ -1,21 +1,20 @@
 import express from 'express';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
-import fs from 'fs';
+import fs, { write } from 'fs';
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import { initdb } from './db.js';
-import { connectToOBS, obsConnection } from './utilities/obs.js';
+import { connectToOBS } from './utilities/obs.js';
 import bodyParser from 'body-parser';
-import multer from 'multer';
 import { watcher } from './utilities/watcher.js'
-import { validateAccessToken, refreshAccessToken } from './utilities/twitch.js';
+import { validateAccessToken } from './utilities/twitch.js';
 import cron from 'node-cron';
-import { notificationHandler } from './utilities/notificationHandler.js';
 
 config();
+
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
   validateAccessToken();
@@ -75,19 +74,8 @@ app.use('/recordings', express.static(path.join(__dirname, 'recordings')));
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
+// Initialize database
 initdb();
-
-// Storage Configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
 
 // Create directories if they don't exist
 const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models'];
@@ -126,44 +114,52 @@ import searchClipsRouter from './routes/api/searchClips.js';
 import queueHandler from './routes/api/queue.js'
 import settingsApiRouter from './routes/api/settings.js';
 import addStreamView from './routes/addstream.js';
+import { writeToLogFile } from './utilities/logging.js';
 
-// Register routes
-app.use('/auth/twitch/callback', twitchCallBackRouter);
-app.use('/authorize', authorizeRouter);
-app.use('/', dashboardRouter);
-app.use('/settings', settingsRouter);
-app.use('/setup', setupRouter);
-app.use('/memory-usage', memoryUsageRouter);
-app.use('/status', statusRouter);
-app.use('/get-queue', getQueueRouter);
-app.use('/api/notifications', notificationsRouter);
-app.use('/api/obs-connection', obsConnectionRouter);
-app.use('/obs-settings', obsConnectionSettings);
-app.use('/stream/:streamId', streamConnectionRouter);
-app.use('/stream', streamConnectionRouter);
-app.use('/googlecallback', googleCallbackRouter);
-app.use('/googleauth', googleAuthRouter);
-app.use('/api/categorysearch', categorySearchRouter);
-app.use('/api/stream', addStreamRouter);
-app.use('/api/getstreams', getStreamsRouter);
-app.use('/api/tags', TagRouter);
-app.use('/api/clip', ClipRouter);
-app.use('/video', videoRouter);
-app.use('/api/favorite', favoriteRouter);
-app.use('/api/deletevideo', deleteVideoRouter);
-app.use('/allclips', clipsRouter);
-app.use('/api/searchclips', searchClipsRouter);
-app.use('/api/queue', queueHandler);
-app.use('/api/settings', settingsApiRouter);
-app.use('/addstream', addStreamView);
+// Create API router
+const apiRouter = express.Router();
+apiRouter.use('/notifications', notificationsRouter);
+apiRouter.use('/obs-connection', obsConnectionRouter);
+apiRouter.use('/categorysearch', categorySearchRouter);
+apiRouter.use('/stream', addStreamRouter);
+apiRouter.use('/getstreams', getStreamsRouter);
+apiRouter.use('/tags', TagRouter);
+apiRouter.use('/clip', ClipRouter);
+apiRouter.use('/favorite', favoriteRouter);
+apiRouter.use('/deletevideo', deleteVideoRouter);
+apiRouter.use('/searchclips', searchClipsRouter);
+apiRouter.use('/queue', queueHandler);
+apiRouter.use('/settings', settingsApiRouter);
+
+// Create regular router
+const regularRouter = express.Router();
+regularRouter.use('/twitch/callback', twitchCallBackRouter);
+regularRouter.use('/authorize', authorizeRouter);
+regularRouter.use('/', dashboardRouter);
+regularRouter.use('/settings', settingsRouter);
+regularRouter.use('/setup', setupRouter);
+regularRouter.use('/memory-usage', memoryUsageRouter);
+regularRouter.use('/status', statusRouter);
+regularRouter.use('/get-queue', getQueueRouter);
+regularRouter.use('/obs-settings', obsConnectionSettings);
+regularRouter.use('/stream/:streamId', streamConnectionRouter);
+regularRouter.use('/stream', streamConnectionRouter);
+regularRouter.use('/googlecallback', googleCallbackRouter);
+regularRouter.use('/googleauth', googleAuthRouter);
+regularRouter.use('/video', videoRouter);
+regularRouter.use('/allclips', clipsRouter);
+regularRouter.use('/addstream', addStreamView);
+
+// Register routers
+app.use('/api', apiRouter);
+app.use('/', regularRouter);
 
 // Connect to OBS
 await connectToOBS();
-// const obsConnectionStatus = obsConnection.status;
-
 
 // Start the server
 app.listen(port, () => {
+  writeToLogFile('info', `Server is running at http://localhost:${port}`);
   console.log(`Server is running at http://localhost:${port}`);
   console.log(`Visit http://localhost:${port}/authorize to start the authentication process.`);
 });
