@@ -18,51 +18,44 @@
   <%- include('menu.ejs') %>
     <div class="main-interface">
       <div class="video-interface">
-        <div class="clip">
-          <video id="video" src="<%= videoData.file %>" controls autoplay></video>
-          <span id="duration">
-            <%= videoData.length %>
-          </span>
-        </div>
         <div class="video-info">
-          <div class="video-img-title">
-            <img src="<%= videoData.categoryImg %>" alt="">
-            <div>
-              <span id="video-category">
-                <%= videoData.category %>
-              </span>
-              <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
-                <span>
-                  <%= videoData.date %>
-                </span>
-              </a>
-            </div>
-          </div>
-          <div class="video-actions">
-            <button class="action-button" id="delete-video">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-            <a class="action-button" id="download-video" href="<%= videoData.file %>" download>
-              <button class="action-button" id="download-video">
-                <i class="fa-solid fa-download"></i>
-              </button>
-            </a>
-            <% if (!videoData.favorite) { %>
-              <button class="action-button favorite-button" id="favorite-video">
-                <i class="fa-regular fa-heart"></i>
-              </button>
-              <% } else { %>
-                <button class="action-button favorite-button" id="unfavorite-video">
-                  <i class="fa-solid fa-heart"></i>
-                </button>
-                <% } %>
-                  <button class="action-button" id="add-queue">
-                    <i class="fa-solid fa-list-ol"></i>
-                  </button>
-          </div>
+          <span id="video-category">
+            <%= videoData.category %>
+          </span>
+          <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
+            <span id="video-date">
+              <%= videoData.date %>
+            </span>
+          </a>
         </div>
+        <div class="video-actions">
+          <button class="action-button" id="delete-video">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+          <a class="action-button" id="download-video" href="<%= videoData.file %>" download>
+            <button class="action-button" id="download-video">
+              <i class="fa-solid fa-download"></i>
+            </button>
+          </a>
+          <% if (!videoData.favorite) { %>
+            <button class="action-button favorite-button" id="favorite-video">
+              <i class="fa-regular fa-heart"></i>
+            </button>
+            <% } else { %>
+              <button class="action-button favorite-button" id="unfavorite-video">
+                <i class="fa-solid fa-heart"></i>
+              </button>
+              <% } %>
+                <button class="action-button" id="add-queue">
+                  <i class="fa-solid fa-list-ol"></i>
+                </button>
+        </div>
+        <div class="video-container">
+          <video id="video" src="<%= videoData.file %>" controls autoplay></video>
+          <img class="clip-image" src="<%= videoData.categoryImg %>" alt="">
+        </div>
+        <span id="label">Tags</span>
         <div class="video-tags-container">
-          <span>Tags</span>
           <div class="tag-list" id="tag-list">
             <% for (let i=0; i < videoData.tags.length; i++) { %>
               <span>
@@ -71,10 +64,12 @@
               <% } %>
           </div>
           <form class="tag-form">
+            <i class="fa-solid fa-tags"></i>
             <input type="text" id="tag-input" placeholder="Add a tag">
           </form>
         </div>
       </div>
+    </div>
     </div>
     </div>
     <script src="/js/base.js"></script>
@@ -173,9 +168,7 @@
 
       function addTagToVideo(event) {
         event.preventDefault();
-
         const newTag = tagInput.value.trim();
-
         if (newTag !== '') {
           const tagType = 'video';
           const id = videoId;
@@ -200,6 +193,9 @@
                 const iconElement = document.createElement('i');
                 iconElement.classList.add('fa-solid', 'fa-circle-xmark');
                 tagElement.textContent = newTag;
+                tagElement.addEventListener('click', function () {
+                  removeTag(tagElement, newTag);
+                });
                 tagElement.appendChild(iconElement);
                 tagList.appendChild(tagElement);
                 tagInput.value = '';

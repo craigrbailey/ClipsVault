@@ -187,11 +187,6 @@ form {
     margin-right: .5vh;
 }
 
-.fa-chevron-down {
-    cursor: pointer;
-    z-index: 1;
-}
-
 .tag-search-input input {
     border: none;
     background-color: #e9e9e9;
