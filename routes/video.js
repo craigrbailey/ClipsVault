@@ -12,7 +12,7 @@ router.get('/', checkSetup, async (req, res) => {
     const videoId = req.query.videoId;
     const videoData = await getVideoData(videoId);
     const userData = req.session.userData;
-    const apiKey = serverKey;
+    const apiKey = await serverKey;
     res.render('video', { userData, videoData, __dirname, apiKey });
 });
 

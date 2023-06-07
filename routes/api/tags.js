@@ -2,15 +2,12 @@ import { Router } from 'express';
 import { addTagToStream, addTagToVideo, removeTagFromStream, removeTagFromVideo } from '../../db.js';
 import { serverKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
+import { validateApiKey } from '../../utilities/middleware.js';
 
 const router = Router();
 
-router.post('/', async (req, res) => {
-    const requestApiKey = req.headers['x-api-key'];
-    if (requestApiKey !== serverKey) {
-        writeToLogFile('error', `Unauthorized request to /api/tags received from ${req.ip}`)
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+router.post('/', validateApiKey, async (req, res) => {
+    console.log(req.body);
     try {
         const { tagType, id, newTag } = req.body;
         if (!tagType || !id || !newTag) {

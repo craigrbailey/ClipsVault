@@ -81,6 +81,7 @@
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const apiKey = '<%= apiKey %>';
+      console.log(apiKey);
       const tagInput = document.getElementById('tag-input');
       const tagList = document.getElementById('tag-list');
       const videoId = urlParams.get('videoId');
