@@ -7,7 +7,6 @@ import { validateApiKey } from '../../utilities/middleware.js';
 const router = Router();
 
 router.post('/', validateApiKey, async (req, res) => {
-    console.log(req.body);
     try {
         const { tagType, id, newTag } = req.body;
         if (!tagType || !id || !newTag) {
@@ -34,12 +33,7 @@ router.post('/', validateApiKey, async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
-    const requestApiKey = req.headers['x-api-key'];
-    if (requestApiKey !== serverKey) {
-        writeToLogFile('error', `Unauthorized request to /api/tags received from ${req.ip}`)
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+router.delete('/', validateApiKey, async (req, res) => {
     try {
         const { tagType, id, tagToRemove } = req.body;
         if (!tagType || !id || !tagToRemove) {

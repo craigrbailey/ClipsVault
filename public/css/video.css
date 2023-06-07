@@ -26,6 +26,10 @@
     position: relative;
 }
 
+.video-container:hover .clip-image {
+    opacity: 0;
+}
+
 .clip-image {
     position: absolute;
     top: 5px;
@@ -52,14 +56,6 @@ video {
     background-color: #f0f0f0;
 }
 
-.video-img-title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    width: 75%;
-}
-
 .video-info {
     display: flex;
     width: 100%;
@@ -69,9 +65,14 @@ video {
 }
 
 #video-category {
+    height: 50px;
+    border-radius: 5px;
+    border: none;
     font-size: 1.5rem;
-    color: #333;
     font-weight: 600;
+    color: #333;
+    background-color: transparent;
+    text-align: center;
 }
 
 #video-date {
@@ -79,6 +80,10 @@ video {
     color: #333;
     font-weight: 200;
     text-decoration: none;
+}
+
+#video-date:hover {
+    text-decoration: underline;
 }
 
 .video-actions {

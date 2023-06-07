@@ -269,21 +269,11 @@
           return;
         } else {
           updatedImg = true;
-          console.log('Success getting box art');
           const data = await response.json();
-          console.log(data);
           document.getElementById('stream-image').src = data;
           return data;
         }
       }
-
-      // updatedImg.addEventListener('change', function () {
-      //   if (updatedImg) {
-      //     setTimeout(function () {
-      //       updatedImg = false;
-      //     }, 2000);
-      //   }
-      // });
 
       var timeoutId;
       document.getElementById('streamCategory').addEventListener('input', function (e) {

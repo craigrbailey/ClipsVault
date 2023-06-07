@@ -19,9 +19,7 @@
     <div class="main-interface">
       <div class="video-interface">
         <div class="video-info">
-          <span id="video-category">
-            <%= videoData.category %>
-          </span>
+          <input id="video-category" type="text" value="<%= videoData.category %>" disabled>
           <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
             <span id="video-date">
               <%= videoData.date %>
@@ -49,10 +47,13 @@
                 <button class="action-button" id="add-queue">
                   <i class="fa-solid fa-list-ol"></i>
                 </button>
+                <button class="action-button" id="edit-video">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
         </div>
         <div class="video-container">
           <video id="video" src="<%= videoData.file %>" controls autoplay></video>
-          <img class="clip-image" src="<%= videoData.categoryImg %>" alt="">
+          <img class="clip-image" id="clip-image" src="<%= videoData.categoryImg %>" alt="">
         </div>
         <span id="label">Tags</span>
         <div class="video-tags-container">
@@ -83,32 +84,76 @@
       const favoriteButton = document.querySelector('.favorite-button');
       const deleteButton = document.getElementById('delete-video');
       const addButton = document.getElementById('add-queue');
+      const video = document.querySelector('video-container video');
+      const editVideobtn = document.getElementById('edit-video');
+      const videoCategory = document.getElementById('video-category');
       let isFavorite = '<%= videoData.favorite %>';
+      let editMode = false;
+      let updatedImg = false;
 
-      addButton.addEventListener('click', () => {
-        console.log('Adding video to queue');
-        const body = {
-          id: videoId
-        };
-        fetch('/api/queue', {
-          method: 'POST',
+      editVideobtn.addEventListener('click', () => {
+        if (editMode) {
+          // Exiting edit mode
+          videoCategory.disabled = true;
+          videoCategory.style.border = 'none';
+          getBoxArt(videoCategory.value);
+        } else {
+          // Entering edit mode
+          videoCategory.disabled = false;
+          videoCategory.style.border = 'solid 1px #dadada';
+        }
+        editMode = !editMode;
+      });
+
+      // Function to update the category of the video
+      async function updateStream() {
+        const streamCategory = document.getElementById('video-category').value;
+        const response = await fetch('/api/clip', {
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': apiKey
           },
-          body: JSON.stringify(body)
-        })
-          .then(response => {
-            if (response.ok) {
-              console.log('Video added to queue successfully');
-            } else {
-              console.error('Failed to add video to queue');
-            }
+          body: JSON.stringify({
+            videoId,
+            videoCategory,
           })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-      });
+        });
+        if (!response.ok) {
+          console.log('Error updating stream');
+          return;
+        } else {
+          console.log('Success updating stream');
+          return;
+        }
+      }
+
+      async function getBoxArt(gameName) {
+        if (updatedImg) {
+          return;
+        };
+        console.log(gameName);
+        const response = await fetch('/api/categorysearch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            boxArt: true,
+            category: gameName
+          })
+        })
+        if (!response.ok) {
+          console.log('Error getting box art');
+          return;
+        } else {
+          updatedImg = true;
+          const data = await response.json();
+          console.log(data);
+          document.getElementById('clip-image').src = data;
+          return data;
+        }
+      }
 
       favoriteButton.addEventListener('click', () => {
         if (isFavorite) {

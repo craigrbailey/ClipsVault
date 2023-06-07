@@ -2,9 +2,11 @@ import { Router } from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
-import { getStreamById, insertVideo, addVideoToStream, removeStream } from '../../db.js';
+import { getStreamById, insertVideo, addVideoToStream, removeStream, updateVideoCategory } from '../../db.js';
 import { createFolder, getVideoLength } from '../../utilities/system.js';
 import { ObjectId } from 'mongodb';
+import { validateApiKey } from '../../utilities/middleware.js';
+import { writeToLogFile } from '../../utilities/logging.js';
 
 const router = Router();
 
@@ -45,14 +47,26 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
     }
 });
 
-router.delete('/:streamId', async (req, res) => {
+router.delete('/', async (req, res) => {
     try {
-        const streamId = req.params.streamId;
+        const streamId = req.body.streamId;
         console.log(streamId);
         removeStream(streamId);
         res.json({ success: true, message: 'Stream removed successfully' });
     } catch (error) {
         console.error('Error removing stream:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.put('/', validateApiKey, async (req, res) => {
+    try {
+        const { videoId, videoCategory } = req.body;
+        console.log(req.body);
+        updateVideoCategory(videoId, videoCategory)
+        res.json({ success: true, message: 'Video category updated successfully' });
+    } catch (error) {
+        writeToLogFile('error', 'Error updating video category:', error)
         res.status(500).json({ error: 'Internal server error' });
     }
 });

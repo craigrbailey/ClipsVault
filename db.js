@@ -377,6 +377,29 @@ async function updateStream(streamId, date, category) {
   }
 }
 
+// Function to update a video category
+async function updateVideoCategory(videoId, category) {
+  const db = await connectToMongoDB();
+  const img = await getGameBoxArt(category);
+  try {
+    const collection = db.collection("videos");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(videoId) },
+      { 
+        $set: { 
+          category: category,
+          categoryImg: img,
+        },
+      }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'No matching document found');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error updating video category: ${error}`);
+  }
+}
+
 // Function to add a category to the database if it doesn't exist
 async function addCategory(category) {
   const db = await connectToMongoDB();
@@ -709,7 +732,6 @@ async function addTagToVideo(videoId, newTag) {
       { _id: objectId },
       { $push: { tags: newTag } }
     );
-    writeToLogFile('info', `Tag added to video document: ${newTag}`);
     return result.modifiedCount > 0;
   } catch (error) {
     writeToLogFile('error', `Error adding tag to video document: ${error}`);
@@ -1252,5 +1274,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
-  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived
+  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory
 }; 
