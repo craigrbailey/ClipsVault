@@ -82,20 +82,23 @@
                     </form>
                 </div>
                 <div class="clips-interface">
-                    <div class="searching">
-                        <svg viewBox="25 25 50 50">
-                            <circle r="20" cy="50" cx="50"></circle>
-                        </svg>
-                        <p>Searching...</p>
-                    </div>
                     <% for (let i=0; i < videos.length; i++) { %>
-                        <div class="clip" data-id="<%= videos[i]._id %>">
-                            <video src="<%= videos[i].file %>" controls></video>
-                        </div>
+                        <a href="/video?videoId=<%= videos[i]._id %>">
+                            <div class="clip" data-id="<%= videos[i]._id %>">
+                                <div class="video-container">
+                                    <img class="clip-image" src="<%= videos[i].categoryImg %>" alt="">
+                                    <video src="<%= videos[i].file %>"></video>
+                                    <span class="clip-duration">
+                                        <%= videos[i].length %>
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
                         <% } %>
                 </div>
         </section>
         <script>
+            const videos = document.querySelectorAll('.clip video');
             const chevronDown = document.getElementById('chevron-down');
             const categoryDropdown = document.querySelector('.category-dropdown-menu');
             const dropdownSelectorText = document.querySelector('.category-dropdown-selector-text');
@@ -114,6 +117,19 @@
                     link.classList.add('selected');
                 }
             }
+
+            videos.forEach(video => {
+                video.addEventListener('mouseenter', () => {
+                    video.setAttribute('controls', 'controls');
+                    video.play();
+                });
+
+                video.addEventListener('mouseleave', () => {
+                    video.removeAttribute('controls');
+                    video.pause();
+                });
+            });
+
             dropdownOptions.forEach((option) => {
                 option.addEventListener('click', () => {
                     const selectedOptionText = option.textContent;

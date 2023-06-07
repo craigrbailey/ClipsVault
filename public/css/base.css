@@ -23,6 +23,7 @@ body {
     height: 50px;
     width: 100%;
     padding: 20px;
+    z-index: 1000;
 }
 
 .menu-text {
@@ -97,7 +98,7 @@ body {
 
 .notification-container {
     position: relative;
-    z-index: 999;
+    z-index: 99;
 }
 
 .read {

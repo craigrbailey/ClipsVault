@@ -13,13 +13,11 @@ function formatDuration(durationInSeconds) {
     const hours = Math.floor(durationInSeconds / 3600);
     const minutes = Math.floor((durationInSeconds % 3600) / 60);
     const seconds = durationInSeconds % 60;
-
     let formattedDuration = '';
     if (hours > 0) {
         formattedDuration += hours.toString().padStart(2, '0') + ':';
     }
     formattedDuration += minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-
     return formattedDuration;
 }
 
@@ -30,8 +28,6 @@ router.get('/', checkSetup, async (req, res) => {
     const date = streamData ? formatDate(streamData.date) : null;
     const userData = req.session.userData;
     const apiKey = serverKey;
-
-    // Format the duration of each video
     videoData.map((video) => {
         console.log(video);
         const durationInSeconds = video.length;
