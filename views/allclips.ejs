@@ -58,13 +58,6 @@
                             <label for="to-date">To:</label>
                             <input type="date" name="to-date" id="to-date" />
                         </div>
-                        <div id="time-filter">
-                            <select name="" id="">
-                                <option value="all">Greater Than</option>
-                                <option value="favorite">Less Than</option>
-                            </select>
-                            <input type="text" name="seconds" id="seconds" placeholder="In seconds..." />
-                        </div>
                         <div class="favorite-selector toggle-switch">
                             <label for="switch">Favorite</label>
                             <label class="switch">
@@ -158,6 +151,7 @@
             });
 
             form.addEventListener('change', searchClips);
+            console.log('form')
             console.log(document.querySelector('form'));
             function createVideoClipDiv(video) {
                 console.log(video.file)

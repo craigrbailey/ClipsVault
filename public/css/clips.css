@@ -1,8 +1,4 @@
 .main-interface {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
     padding: 10px;
 }
 
@@ -10,13 +6,14 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    margin-left: 350px;
 }
 
 .clips-interface a {
     flex: 0 0 25%;
     box-sizing: border-box;
     position: relative;
-    display: flex;
+    display: inline-flex;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
@@ -25,6 +22,10 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
     overflow: hidden;
+}
+
+.clip {
+    box-sizing: border-box;
 }
 
 .video-container {
@@ -58,12 +59,6 @@
     opacity: 0;
 }
 
-.clip video {
-    width: 100%;
-    height: auto;
-}
-
-
 video {
     width: 100%;
     height: auto;
@@ -73,11 +68,11 @@ video {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: fixed;
     align-items: center;
     background-color: #f0f0f0;
     padding: 10px;
     animation: slideIn 0.25s ease-in;
-    min-height: 50vh;
     max-width: 25vh;
     min-width: 25vh;
     color: black;

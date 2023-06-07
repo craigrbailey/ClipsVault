@@ -324,7 +324,8 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
       length: length,
       favorite: false,
       tags: tags,
-      captions: captions
+      captions: captions,
+      archived: false,
     };
     const result = await collection.insertOne(document);
     await addCategory(category);
@@ -332,6 +333,23 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error inserting video: ${error}`);
+  }
+}
+
+// Function to set a video as archived
+async function setVideoAsArchived(videoId) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("videos");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(videoId) },
+      { $set: { archived: true } }
+    );
+    if (result.modifiedCount === 0) {
+      writeToLogFile('error', 'Could not mark video as archived. No matching document found.');
+    }
+  } catch (error) {
+    writeToLogFile('error', `Error setting video as archived: ${error}`);
   }
 }
 
@@ -1218,6 +1236,19 @@ async function getVideosOlderThanDays(days) {
   }
 }
 
+// Function to retrun all videos that are older than a set number of days that are not marked as archived
+async function getVideosOlderThanDaysNotArchived(days) {
+  const db = await connectToMongoDB();
+  try {
+    const videosCollection = db.collection('videos');
+    const result = await videosCollection.find({ date: { $lt: new Date(Date.now() - days * 24 * 60 * 60 * 1000) }, archived: false }).toArray();
+    return result;
+  } catch (error) {
+    writeToLogFile('Error retrieving videos older than days:', error);
+    return null;
+  }
+}
+
 // Function to  remove categories from the database if there are no videos with that category
 async function removeCategoriesIfNoVideos() {
   const db = await connectToMongoDB();
@@ -1247,5 +1278,6 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
   getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
-  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, removeCategoriesIfNoVideos
+  updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
+  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived
 }; 

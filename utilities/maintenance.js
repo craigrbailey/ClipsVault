@@ -1,5 +1,5 @@
 import { existsSync, write } from 'fs';
-import { connectToMongoDB, deleteOldNotifications, getVideosOlderThanDays, getArchiveSettings, removeCategoriesIfNoVideos } from '../db.js';
+import { connectToMongoDB, deleteOldNotifications, getArchiveSettings, removeCategoriesIfNoVideos, getVideosOlderThanDaysNotArchived } from '../db.js';
 import { removeOldLogFiles, writeToLogFile } from './logging.js';
 import { shrinkVideoFileSize } from './archiveVideo.js';
 
@@ -45,7 +45,7 @@ async function archiveVideos() {
         return;
     }
     const days = settings.archiveTime;
-    const videos = await getVideosOlderThanDays(days);
+    const videos = await getVideosOlderThanDaysNotArchived(days);
     writeToLogFile('info', `Archiving ${videos.length} videos...`);
     for (const video of videos) {
         await shrinkVideoFileSize(video.file);
