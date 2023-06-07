@@ -11,14 +11,16 @@ function formatStreamLength(lengthInSeconds) {
 }
 
 router.post('/', checkSetup, async (req, res) => {
-    console.log('Searching for clips...');
     let videos = [];
     const { tags, category, from, to, favorite } = req.body;
+    console.log(`Searching for clips with tags: ${tags}, category: ${category}, from: ${from}, to: ${to}, favorite: ${favorite}`);
     if (tags.length > 0) {
         videos.push(...(await getVideosByTag(tags)));
     }
     if (category !== 'All') {
         videos.push(...(await getVideosByCategory(category)));
+    } else if (category === 'All') {
+        videos.push(...(await getAllVideos()));
     }
     if (from !== '' && to !== '') {
         videos.push(...(await getVideosByDateRange(from, to)));
@@ -49,6 +51,7 @@ router.post('/', checkSetup, async (req, res) => {
     videos.forEach((video) => {
         video.length = formatStreamLength(video.length);
     });
+    console.log(`Found ${videos.length} clips.`);
     return res.json(videos);
 });
 

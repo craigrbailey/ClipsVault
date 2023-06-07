@@ -19,7 +19,15 @@
     <%- include('menu.ejs') %>
         <section>
             <div class="main-interface">
-                <div class="search-form" id="search-form">
+                <div class="wrapper">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="shadow"></div>
+                    <div class="shadow"></div>
+                    <div class="shadow"></div>
+                </div>
+                <div class="search-form">
                     <form action="search">
                         <h1>Search</h1>
                         <div class="tags-search">
@@ -37,17 +45,14 @@
                         <div class="category-search">
                             <label for="from-date">Category:</label>
                             <div class="category-dropdown">
-                                <span class="category-dropdown-selector">
-                                    <span class="category-dropdown-selector-text">All</span>
-                                    <i class="fa-solid fa-chevron-down" id="chevron-down"></i>
-                                </span>
-                                <ul class="category-dropdown-menu">
+                                <select name="" id="">
+                                    <option value="All">All</option>
                                     <% categories.forEach(category=> { %>
-                                        <li>
+                                        <option value="<%= category %>">
                                             <%= category %>
-                                        </li>
+                                        </option>
                                         <% }) %>
-                                </ul>
+                                </select>
                             </div>
                         </div>
                         <div class="date-search">
@@ -92,14 +97,13 @@
         </section>
         <script>
             const videos = document.querySelectorAll('.clip video');
-            const chevronDown = document.getElementById('chevron-down');
             const categoryDropdown = document.querySelector('.category-dropdown-menu');
             const dropdownSelectorText = document.querySelector('.category-dropdown-selector-text');
             const dropdownOptions = document.querySelectorAll('.category-dropdown-menu li');
-            const searchDiv = document.querySelector('.searching');
+            const searchDiv = document.querySelector('.wrapper');
             const clips = document.querySelectorAll('.clip');
             const closeIcons = document.querySelectorAll('.fa-circle-xmark');
-            const form = document.getElementById('search-form');
+            const form = document.querySelector('.search-form');
             const toDateInput = document.getElementById('to-date');
             const today = new Date().toISOString().split('T')[0];
             toDateInput.value = today;
@@ -123,14 +127,6 @@
                 });
             });
 
-            dropdownOptions.forEach((option) => {
-                option.addEventListener('click', () => {
-                    const selectedOptionText = option.textContent;
-                    dropdownSelectorText.textContent = selectedOptionText;
-                    categoryDropdown.classList.toggle('show');
-                    chevronDown.classList.toggle('rotate');
-                });
-            });
             closeIcons.forEach((icon) => {
                 icon.addEventListener('click', (event) => {
                     const span = event.target.parentNode;
@@ -145,35 +141,22 @@
                 });
             });
 
-            chevronDown.addEventListener('click', () => {
-                categoryDropdown.classList.toggle('show');
-                chevronDown.classList.toggle('rotate');
-            });
-
             form.addEventListener('change', searchClips);
-            console.log('form')
-            console.log(document.querySelector('form'));
+
             function createVideoClipDiv(video) {
-                console.log(video.file)
                 const div = document.createElement('div');
                 div.classList.add('clip');
                 div.dataset.id = video._id;
-
                 const link = document.createElement('a');
                 link.href = `/video?videoId=${video._id}`;
                 div.appendChild(link);
-
                 const videoContainer = document.createElement('div');
                 videoContainer.classList.add('video-container');
                 link.appendChild(videoContainer);
-
                 const videoElement = document.createElement('video');
-                // const filePath = encodeURIComponent(video.file);
-                const filePath = video.file.replace(/\\/g, '/');
-                videoElement.src = `/${filePath}`;
+                videoElement.src = video.file;
                 videoElement.controls = true;
                 videoContainer.appendChild(videoElement);
-
                 const durationSpan = document.createElement('span');
                 durationSpan.classList.add('clip-duration');
                 durationSpan.textContent = video.length;
@@ -181,13 +164,14 @@
                 return div;
             }
 
+
             function searchClips() {
                 const tags = Array.from(document.querySelectorAll('.tags-list span')).map(span => {
                     const tagText = span.textContent.replace(span.querySelector('i').outerHTML, '');
                     return tagText.trim();
                 });
                 console.log(tags);
-                const category = document.querySelector('.category-dropdown-selector-text').textContent;
+                const category = document.querySelector('.category-dropdown select').value;
                 const from = document.getElementById('from-date').value;
                 const to = document.getElementById('to-date').value;
                 const favorite = document.getElementById('favorite').checked;
@@ -199,7 +183,6 @@
                     to: to,
                     favorite: favorite
                 };
-
                 fetch('/api/searchclips', {
                     method: 'POST',
                     headers: {
