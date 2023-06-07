@@ -11,39 +11,25 @@ function formatStreamLength(lengthInSeconds) {
 }
 
 router.post('/', checkSetup, async (req, res) => {
-    let videos = [];
+    let videos = await getAllVideos();
     const { tags, category, from, to, favorite } = req.body;
     console.log(`Searching for clips with tags: ${tags}, category: ${category}, from: ${from}, to: ${to}, favorite: ${favorite}`);
-    if (tags.length > 0) {
-        videos.push(...(await getVideosByTag(tags)));
-    }
-    if (category !== 'All') {
-        videos.push(...(await getVideosByCategory(category)));
-    } else if (category === 'All') {
-        videos.push(...(await getAllVideos()));
-    }
-    if (from !== '' && to !== '') {
-        videos.push(...(await getVideosByDateRange(from, to)));
-    }
-    if (favorite) {
-        videos.push(...(await getAllFavoriteVideos()));
-    }
     videos = videos.filter((video, index) => {
         let meetsCriteria = true;
         if (tags.length > 0 && !video.tags.some(tag => tags.includes(tag))) {
+            console.log(`Video ${video._id} does not contain all tags: ${tags}`);
             meetsCriteria = false;
         }
         if (category !== 'All' && video.category !== category) {
+            console.log(`Video ${video._id} does not match category: ${category}`);
             meetsCriteria = false;
         }
         if (from !== '' && to !== '' && (video.date < from || video.date > to)) {
+            console.log(`Video ${video._id} does not match date range: ${from} - ${to}`);
             meetsCriteria = false;
         }
         if (favorite && !video.favorite) {
-            meetsCriteria = false;
-        }
-        const duplicateIndex = videos.findIndex(item => item._id.toString() === video._id.toString());
-        if (duplicateIndex !== index) {
+            console.log(`Video ${video._id} is not a favorite`);
             meetsCriteria = false;
         }
         return meetsCriteria;
