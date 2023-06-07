@@ -122,17 +122,23 @@
                 </div>
                 <div class="settings" id="obs-settings">
                     <h2>OBS Connection</h2>
-                    <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
+                    <span>Connection To OBS or Streamlabs OBS WebSocket Server</span>
                     <form id="obs-settings-form">
-                        <label for="host">Host:</label>
-                        <input class="settings-input" type="text" id="host" name="host"
-                            value="<%= obsSettings.ip !== null ? obsSettings.ip : '' %>"><br><br>
-                        <label for="port">Port:</label>
-                        <input class="settings-input" type="text" id="port" name="port"
-                            value="<%= obsSettings.port !== null ? obsSettings.port : '' %>"><br><br>
-                        <label for="password">Password:</label>
-                        <input class="settings-input" type="password" id="password" name="password"
-                            value="<%= obsSettings.password !== null ? obsSettings.password : '' %>"><br><br>
+                        <div>
+                            <label for="host">Host:</label>
+                            <input class="settings-input" type="text" id="host" name="host"
+                                value="<%= obsSettings.ip !== null ? obsSettings.ip : '' %>">
+                        </div>
+                        <div>
+                            <label for="port">Port:</label>
+                            <input class="settings-input" type="text" id="port" name="port"
+                                value="<%= obsSettings.port !== null ? obsSettings.port : '' %>">
+                        </div>
+                        <div>
+                            <label for="password">Password:</label>
+                            <input class="settings-input" type="password" id="password" name="password"
+                                value="<%= obsSettings.password !== null ? obsSettings.password : '' %>">
+                        </div>
                         <button id="obs-button" type="submit">Connect</button>
                     </form>
                 </div>
@@ -153,7 +159,7 @@
                             <form id="discord-form">
                                 <h3 class="notification-app">Discord Webhook</h3>
                                 <input class="settings-input" type="text" id="webhook" name="webhook"
-                                    placeholder="Paste webhook here..." value="<%= discordWebhookURL %>"><br><br>
+                                    placeholder="Paste webhook here..." value="<%= discordWebhookURL %>" required> <br>
                                 <button id="submit-button" type="submit">Submit</button>
                             </form>
                         </div>
@@ -291,6 +297,15 @@
             const archiveToggle = document.getElementById('archiveSwitch');
             const compressForm = document.getElementById('compressOptions');
             const selectElement = document.getElementById('compressList');
+
+            
+            webhookInput.addEventListener('invalid', function () {
+                if (webhookInput.validity.valueMissing) {
+                    webhookInput.setCustomValidity('Please enter a webhook URL.');
+                } else {
+                    webhookInput.setCustomValidity('');
+                }
+            });
 
             if (archiveStatus) {
                 compressForm.style.display = 'flex';

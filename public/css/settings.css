@@ -198,6 +198,7 @@ input:checked+.slider:before {
     width: 35%;
     display: flex;
     flex-direction: row;
+    gap: 5px;
 }
 
 button {
@@ -206,7 +207,6 @@ button {
     border: none;
     border-radius: 5px;
     padding: 5px;
-    margin-left: 5px;
     cursor: pointer;
 }
 
@@ -219,7 +219,7 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
 }
 
@@ -231,8 +231,13 @@ button {
 #obs-settings form {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: space-around;
     align-items: flex-start;
+    width: 100%;
+    gap: 1em;
+}
+
+#obs-settings-form div {
     width: 100%;
 }
 
