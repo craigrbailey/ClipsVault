@@ -3,11 +3,16 @@ import { checkSetup, getVideosByDateRange, getAllVideos, getVideosByTag, getAllF
 
 const router = Router();
 
-function formatStreamLength(lengthInSeconds) {
-    const hours = Math.floor(lengthInSeconds / 3600);
-    const minutes = Math.floor((lengthInSeconds % 3600) / 60);
-    const seconds = lengthInSeconds % 60;
-    return `${hours}h ${minutes}m ${seconds}s`;
+function formatDuration(durationInSeconds) {
+    const hours = Math.floor(durationInSeconds / 3600);
+    const minutes = Math.floor((durationInSeconds % 3600) / 60);
+    const seconds = durationInSeconds % 60;
+    let formattedDuration = '';
+    if (hours > 0) {
+        formattedDuration += hours.toString().padStart(2, '0') + ':';
+    }
+    formattedDuration += minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+    return formattedDuration;
 }
 
 router.post('/', checkSetup, async (req, res) => {
@@ -35,7 +40,7 @@ router.post('/', checkSetup, async (req, res) => {
         return meetsCriteria;
     });
     videos.forEach((video) => {
-        video.length = formatStreamLength(video.length);
+        video.length = formatDuration(video.length);
     });
     console.log(`Found ${videos.length} clips.`);
     return res.json(videos);

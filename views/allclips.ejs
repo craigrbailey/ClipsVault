@@ -34,11 +34,10 @@
                             <label for="from-date">Tags:</label>
                             <div class="tags-search-container">
                                 <div class="tags-list">
-                                    <!-- <span>Tag<i class="fa-solid fa-circle-xmark"></i></span> -->
                                 </div>
                                 <div class="tag-search-input">
                                     <i class="fa-solid fa-search"></i>
-                                    <input type="text" name="search" id="search" placeholder="Search tags..." />
+                                    <input type="text" name="search" id="searchTagInput" placeholder="Search tags..." />
                                 </div>
                             </div>
                         </div>
@@ -81,17 +80,15 @@
                 </div>
                 <div class="clips-interface">
                     <% for (let i=0; i < videos.length; i++) { %>
-                        <a href="/video?videoId=<%= videos[i]._id %>">
-                            <div class="clip" data-id="<%= videos[i]._id %>">
-                                <div class="video-container">
-                                    <img class="clip-image" src="<%= videos[i].categoryImg %>" alt="">
-                                    <video src="<%= videos[i].file %>"></video>
-                                    <span class="clip-duration">
-                                        <%= videos[i].length %>
-                                    </span>
-                                </div>
+                        <div class="clip" data-id="<%= videos[i]._id %>">
+                            <div class="video-container">
+                                <img class="clip-image" src="<%= videos[i].categoryImg %>" alt="">
+                                <video src="<%= videos[i].file %>"></video>
+                                <span class="clip-duration">
+                                    <%= videos[i].length %>
+                                </span>
                             </div>
-                        </a>
+                        </div>
                         <% } %>
                 </div>
         </section>
@@ -106,6 +103,8 @@
             const form = document.querySelector('.search-form');
             const toDateInput = document.getElementById('to-date');
             const today = new Date().toISOString().split('T')[0];
+            const searchTagInput = document.getElementById('searchTagInput');
+            const tagsList = document.querySelector('.tags-list');
             toDateInput.value = today;
             var menuLinks = document.getElementsByClassName('menu-link');
             for (var i = 0; i < menuLinks.length; i++) {
@@ -114,6 +113,14 @@
                     link.classList.add('selected');
                 }
             }
+
+            tagsList.addEventListener('click', (event) => {
+                if (event.target.classList.contains('fa-circle-xmark')) {
+                    const span = event.target.parentNode;
+                    span.remove();
+                    searchClips();
+                }
+            });
 
             videos.forEach(video => {
                 video.addEventListener('mouseenter', () => {
@@ -127,14 +134,19 @@
                 });
             });
 
-            closeIcons.forEach((icon) => {
-                icon.addEventListener('click', (event) => {
-                    const span = event.target.parentNode;
-                    span.remove();
-                });
+            searchTagInput.addEventListener('keydown', (event) => {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    const newTag = searchTagInput.value.trim();
+                    if (newTag !== '') {
+                        addTag(newTag);
+                        searchTagInput.value = '';
+                        searchClips();
+                    }
+                }
             });
 
-            clips.forEach((clip) => {
+            clips.forEach(clip => {
                 clip.addEventListener('click', () => {
                     const videoId = clip.dataset.id;
                     window.location.href = `/video?videoId=${videoId}`;
@@ -147,6 +159,9 @@
                 const div = document.createElement('div');
                 div.classList.add('clip');
                 div.dataset.id = video._id;
+                div.addEventListener('click', () => {
+                    window.location.href = `/video?videoId=${video._id}`;
+                });
                 const link = document.createElement('a');
                 link.href = `/video?videoId=${video._id}`;
                 div.appendChild(link);
@@ -156,21 +171,45 @@
                 const videoElement = document.createElement('video');
                 videoElement.src = video.file;
                 videoElement.controls = true;
+                videoElement.addEventListener('mouseenter', () => {
+                    videoElement.setAttribute('controls', 'controls');
+                    videoElement.play();
+                });
+                videoElement.addEventListener('mouseleave', () => {
+                    videoElement.removeAttribute('controls');
+                    videoElement.pause();
+                });
                 videoContainer.appendChild(videoElement);
                 const durationSpan = document.createElement('span');
                 durationSpan.classList.add('clip-duration');
                 durationSpan.textContent = video.length;
                 videoContainer.appendChild(durationSpan);
+                const image = document.createElement('img');
+                image.classList.add('clip-image');
+                image.src = video.categoryImg;
+                videoContainer.appendChild(image);
                 return div;
             }
 
+            function addTag(tag) {
+                const tagsList = document.querySelector('.tags-list');
+                const tagSpan = document.createElement('span');
+                tagSpan.textContent = tag;
+                const closeIcon = document.createElement('i');
+                closeIcon.classList.add('fa-solid', 'fa-circle-xmark');
+                tagSpan.appendChild(closeIcon);
+                tagsList.appendChild(tagSpan);
+
+                closeIcon.addEventListener('click', () => {
+                    tagSpan.remove();
+                });
+            }
 
             function searchClips() {
                 const tags = Array.from(document.querySelectorAll('.tags-list span')).map(span => {
                     const tagText = span.textContent.replace(span.querySelector('i').outerHTML, '');
                     return tagText.trim();
                 });
-                console.log(tags);
                 const category = document.querySelector('.category-dropdown select').value;
                 const from = document.getElementById('from-date').value;
                 const to = document.getElementById('to-date').value;

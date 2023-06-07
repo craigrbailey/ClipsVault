@@ -29,7 +29,6 @@ router.get('/', checkSetup, async (req, res) => {
     const userData = req.session.userData;
     const apiKey = serverKey;
     videoData.map((video) => {
-        console.log(video);
         const durationInSeconds = video.length;
         const formattedDuration = formatDuration(durationInSeconds);
         video.length = formattedDuration;
