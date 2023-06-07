@@ -275,6 +275,7 @@
             const discordForm = document.getElementById('discord-form');
             const webhookInput = document.getElementById('webhook');
             const serverapiKey = '<%= serverKey %>';
+            const archiveStatus = '<%= archiveSettings.archive %>';
             const newApiKeyButton = document.getElementById('new-api-key');
             const discordToggle = document.getElementById('discord-toggle');
             const obsSettingsForm = document.getElementById('obs-settings-form');
@@ -288,6 +289,12 @@
             const archiveToggle = document.getElementById('archiveSwitch');
             const compressForm = document.getElementById('compressOptions');
             const selectElement = document.getElementById('compressList');
+
+            if (archiveStatus) {
+                compressForm.style.display = 'flex';
+            } else {
+                compressForm.style.display = 'none';
+            }
 
             selectElement.addEventListener('change', () => {
                 const selectedValue = selectElement.value;

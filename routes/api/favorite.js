@@ -2,15 +2,11 @@ import { Router } from 'express';
 import { updateVideoFavoriteStatus } from '../../db.js';
 import { serverKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
+import { validateApiKey } from '../../utilities/middleware.js';
 
 const router = Router();
 
-router.post('/', async (req, res) => {
-    const requestApiKey = req.headers['x-api-key'];
-    if (requestApiKey !== serverKey) {
-        writeToLogFile('error', `Unauthorized request to /api/favorite received from ${req.ip}`)
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+router.post('/', validateApiKey, async (req, res) => {
     try {
         const { favoriteType, id, status } = req.body;
         if (favoriteType === 'video') {

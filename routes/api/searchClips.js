@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { checkSetup, getVideosByDateRange, getAllVideos, getVideosByTag, getAllFavoriteVideos, getVideosByCategory } from '../../db.js';
+import { checkSetup, getAllVideos } from '../../db.js';
 
 const router = Router();
 
@@ -18,7 +18,6 @@ function formatDuration(durationInSeconds) {
 router.post('/', checkSetup, async (req, res) => {
     let videos = await getAllVideos();
     const { tags, category, from, to, favorite } = req.body;
-    console.log(`Searching for clips with tags: ${tags}, category: ${category}, from: ${from}, to: ${to}, favorite: ${favorite}`);
     videos = videos.filter((video, index) => {
         let meetsCriteria = true;
         if (tags.length > 0 && !video.tags.some(tag => tags.includes(tag))) {
@@ -38,7 +37,6 @@ router.post('/', checkSetup, async (req, res) => {
     videos.forEach((video) => {
         video.length = formatDuration(video.length);
     });
-    console.log(`Found ${videos.length} clips.`);
     return res.json(videos);
 });
 

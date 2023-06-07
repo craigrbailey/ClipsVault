@@ -1197,32 +1197,6 @@ async function getVideosByTag(tag) {
   }
 }
 
-// Function to search for all videos from a date range
-async function getVideosByDateRange(startDate, endDate) {
-  const db = await connectToMongoDB();
-  try {
-    const videosCollection = db.collection('videos');
-    const result = await videosCollection.find({ date: { $gte: startDate, $lte: endDate } }).toArray();
-    return result;
-  } catch (error) {
-    writeToLogFile('Error retrieving videos by date range:', error);
-    return null;
-  }
-}
-
-// Function to search for all videos with a speicifc category
-async function getVideosByCategory(category) {
-  const db = await connectToMongoDB();
-  try {
-    const videosCollection = db.collection('videos');
-    const result = await videosCollection.find({ category: category }).toArray();
-    return result;
-  } catch (error) {
-    writeToLogFile('Error retrieving videos by category:', error);
-    return null;
-  }
-}
-
 // Function to return al the videos that are older than a set number of days
 async function getVideosOlderThanDays(days) {
   const db = await connectToMongoDB();
@@ -1275,8 +1249,7 @@ export {
   removeTagFromVideo, addTagToVideo, insertStream, insertQueue, insertVideo, removeQueueItemById, checkSetup, getOBSSettings,
   completeSetup, getGoogleAccessToken, addVideoToStream, getAllStreams, getLatestStreams, getVideosByStreamId,
   addTagToStream, removeTagFromStream, getStreamById, retrieveUserData, updateStreamLength, removeStream, getRefreshToken, insertClip, storeAPIKey,
-  getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos,
-  getVideosByDateRange, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, getVideosByCategory, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
+  getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
   removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived
