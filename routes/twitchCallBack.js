@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
     await storeTwitchAuthToken(access_token, refresh_token, expires_in);
     const userData = await getUserData();
     await storeTwitchUserData(userData);
+    console.log(req.session)
     if (!req.session.userData) {
       req.session.userData = userData;
     }
