@@ -2,13 +2,13 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-Clips Vault is a powerful application designed to help you sort and manage clips from your favorite streamers' streams. With Clips Vault, you can easily organize, categorize, and treasure the most memorable moments, ensuring that you never miss a highlight.
+Clips Vault is a powerful application designed to help you sort and manage clips from all your streams. With Clips Vault, you can easily organize, categorize, and catalogue the best moments from your stream.
 
 ## Features
 
 ### 1. Tags
 
-Tags allow you to categorize your clips based on various themes, streamers, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
+Tags allow you to categorize your clips based on various themes, events or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
 
 ### 2. Queue
 
@@ -17,6 +17,15 @@ The queue feature enables you to create a playlist of clips to watch in a specif
 ### 3. Notifications
 
 Stay up to date with the latest highlights from your favorite streamers with the notifications feature. Clips Vault will send you notifications whenever new clips are available, ensuring that you never miss out on the most exciting moments.
+
+### 3. ClipIt
+Send a POST request to the application, providing the clip duration and any relevant tags. The application will process the request and create a clip based on the provided parameters. Automatically create clips every time you get raided, or a gifted bomb of over 10 or when a channel point is redeemed. Having the ability to store the
+```
+{
+  "length": 20,
+  "tags": ["gaming", "funny", "raid"]
+}
+```
 
 ## Getting Started
 
