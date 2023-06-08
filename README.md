@@ -67,6 +67,11 @@ Lastly, the search feature allows users to search by categories, providing an ad
 
 The Search Functionality in Clips Vault ensures that streamers can effortlessly navigate through their vast collection of clips, saving time and enhancing the overall experience of managing and sharing their content.
 
+### 7. Edit Stream Details
+
+![Edit Stream Details](https://img.shields.io/badge/feature-Edit%20Stream%20Details-green.svg)
+
+Effortlessly customize stream categories, dates, and video categories. Optimize organization, enhance discoverability, and provide a seamless experience for viewers navigating your content.
 
 ## Getting Started
 
