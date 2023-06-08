@@ -12,7 +12,7 @@ Clips Vault is a powerful application designed to help you sort and manage clips
 ### 1. Tags
 [![Tags](https://img.shields.io/badge/feature-Tags-green.svg)]()
 
-Tags allow you to categorize your clips based on various themes, events or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
+Stay informed and updated with the Notifications. Receive notifications directly from the application, keeping you in the loop about important events such as new stream additions, added clips, and deleted clips. Curerntly Discord and Gmail are the two supported platforms.
 
 ### 2. Queue
 [![Queue](https://img.shields.io/badge/feature-Queue-blue.svg)]()
