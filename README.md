@@ -37,7 +37,7 @@ headers: {
     'Content-Type': 'application/json',
     'x-api-key': 'your-api-key'
 },
-{
+ body: {
   "length": 20,
   "tags": ["gaming", "funny", "raid"]
 }
