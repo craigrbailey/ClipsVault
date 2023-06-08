@@ -13,12 +13,13 @@ Clips Vault is a powerful application designed to help you sort and manage clips
 
 [![Tags](https://img.shields.io/badge/feature-Tags-green.svg)]()
 
-Tags allow you to categorize your clips based on various themes, events, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
+Tags allow you to categorize your clips based on various themes, events, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them or maybe create montages of every funny moment. 
 
 ### 2. Queue
 
 [![Queue](https://img.shields.io/badge/feature-Queue-blue.svg)]()
-The queue feature enables you to create a playlist of clips to watch in a specific order. As you come across interesting clips, simply add them to your queue and enjoy a seamless playback experience as Clips Vault automatically plays through your selected clips one by one.
+
+Keep track of which clips you still need to edit. By adding clips to the queue, streamers can easily prioritize and manage their editing tasks.
 
 ### 3. Notifications
 
@@ -42,6 +43,30 @@ body: {
   "tags": ["gaming", "funny", "raid"]
 }
 ```
+
+
+### 4. Favorite Clips
+
+[![Favorite Clips](https://img.shields.io/badge/feature-Favorite%20Clips-purple.svg)]()
+
+Mark your most memorable clips as favorites. Easily access and revisit your favorite clips whenever you want, all within the Clips Vault application.
+
+### 6. Search Functionality
+
+![Search Functionality](https://img.shields.io/badge/feature-Search%20Functionality-yellow.svg)
+
+The Search Functionality in Clips Vault offers streamers a powerful tool to quickly locate specific clips within their extensive library. Search through all your clips using various search criteria:
+
+Users can search by tags, enabling them to find clips associated with specific themes, events, or other relevant criteria. By simply entering a tag, streamers can effortlessly retrieve all clips associated with that tag, making it easier to create personalized collections and thematic montages.
+
+In addition to tags, users can also search by dates, allowing them to locate clips from specific time periods or streaming sessions. 
+
+Furthermore, the search functionality extends to filtering by whether a video is marked as a favorite. Users can narrow down their search to find all their favorite clips, providing a convenient way to compile highlight reels or share top moments with their audience.
+
+Lastly, the search feature allows users to search by categories, providing an additional level of organization to their clips. By assigning categories to clips, streamers can create logical groupings based on topics, games, or any other classification that suits their needs.
+
+The Search Functionality in Clips Vault ensures that streamers can effortlessly navigate through their vast collection of clips, saving time and enhancing the overall experience of managing and sharing their content.
+
 
 ## Getting Started
 
