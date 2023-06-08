@@ -10,6 +10,7 @@ Clips Vault is a powerful application designed to help you sort and manage clips
 ## Features
 
 ### 1. Tags
+[![Tags](https://img.shields.io/badge/feature-Tags-green.svg)]()
 
 Tags allow you to categorize your clips based on various themes, events or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
 
