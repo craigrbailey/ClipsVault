@@ -13,7 +13,7 @@ Clips Vault is a powerful application designed to help you sort and manage clips
 
 [![Tags](https://img.shields.io/badge/feature-Tags-green.svg)]()
 
-Stay informed and updated with the Notifications. Receive notifications directly from the application, keeping you in the loop about important events such as new stream additions, added clips, and deleted clips. Curerntly Discord and Gmail are the two supported platforms.
+Tags allow you to categorize your clips based on various themes, events, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them.
 
 ### 2. Queue
 
@@ -24,13 +24,13 @@ The queue feature enables you to create a playlist of clips to watch in a specif
 
 [![Notifications](https://img.shields.io/badge/feature-Notifications-yellow.svg)]()
 
-Stay up to date with the latest highlights from your favorite streamers with the notifications feature. Clips Vault will send you notifications whenever new clips are available, ensuring that you never miss out on the most exciting moments.
+Stay informed and updated with the Notifications. Receive notifications directly from the application, keeping you in the loop about important events such as new stream additions, added clips, and deleted clips. Curerntly Discord and Gmail are the two supported platforms.
 
 ### 3. ClipIt
 
 [![ClipIt](https://img.shields.io/badge/feature-ClipIt-red.svg)]()
 
-Send a POST request to the application, providing the clip duration and any relevant tags. The application will process the request and create a clip based on the provided parameters. Automatically create clips every time you get raided, or a gifted bomb of over 10 or when a channel point is redeemed. Having the ability to store the
+Send a POST request to the application, providing the clip duration and any relevant tags. The application will process the request and create a clip based on the provided parameters. Automatically create clips every time you get raided, or a gifted bomb of over 10 or when a channel point is redeemed. 
 
 ```
 headers: {
