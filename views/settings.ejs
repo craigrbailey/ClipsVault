@@ -299,13 +299,13 @@
             const selectElement = document.getElementById('compressList');
 
             
-            webhookInput.addEventListener('invalid', function () {
-                if (webhookInput.validity.valueMissing) {
-                    webhookInput.setCustomValidity('Please enter a webhook URL.');
-                } else {
-                    webhookInput.setCustomValidity('');
-                }
-            });
+            // webhookInput.addEventListener('invalid', function () {
+            //     if (webhookInput.validity.valueMissing) {
+            //         webhookInput.setCustomValidity('Please enter a webhook URL.');
+            //     } else {
+            //         webhookInput.setCustomValidity('');
+            //     }
+            // });
 
             if (archiveStatus) {
                 compressForm.style.display = 'flex';

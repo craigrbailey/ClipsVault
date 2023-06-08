@@ -310,7 +310,7 @@ async function getRefreshToken() {
 }
 
 // Function to insert a video into the database
-async function insertVideo(streamId, file, date, category, img, size, length, tags, captions) {
+async function insertVideo(streamId, file, date, category, img, size, length, tags) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("videos");
@@ -324,7 +324,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
       length: length,
       favorite: false,
       tags: tags,
-      captions: captions,
+      captions: null,
       archived: false,
     };
     const result = await collection.insertOne(document);
@@ -668,6 +668,18 @@ async function getSettings() {
     return settings;
   } catch (error) {
     writeToLogFile('error', `Error retrieving settings: ${error}`);
+  }
+}
+
+// Function to retrieve the OBS settings from the database
+async function getGeneralSettings() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    const settings = await collection.findOne({ _id: "settings" });
+    return settings;
+  } catch (error) {
+    writeToLogFile('error', `Error retrieving general settings: ${error}`);
   }
 }
 
@@ -1037,14 +1049,10 @@ async function retrieveUserData() {
   try {
     const collection = db.collection("userdata");
     const query = { type: "twitch" };
-
     const userData = await collection.findOne(query);
-
     if (userData) {
-      console.log("User data retrieved successfully.");
       return userData;
     } else {
-      console.log("User data not found.");
       return null;
     }
   } catch (error) {
@@ -1274,5 +1282,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
-  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory
+  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings
 }; 

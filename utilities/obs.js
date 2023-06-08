@@ -1,5 +1,5 @@
 import OBSWebSocket from 'obs-websocket-js';
-import { getOBSSettings, insertStream, updateStreamLength, insertVideo } from '../db.js';
+import { getOBSSettings, insertStream, updateStreamLength, insertVideo, getGeneralSettings } from '../db.js';
 import path from 'path';
 import { getCurrentDate, createFolder, getFileSize } from './system.js';
 import { twitchLive } from './twitch.js';
@@ -18,6 +18,7 @@ let streamFolder;
 let entireStream;
 let clipFile;
 
+// Function to conntect to OBS
 async function connectToOBS() {
   obs = new OBSWebSocket();
 
@@ -28,45 +29,44 @@ async function connectToOBS() {
       if (obsSettings && obsSettings.ip !== 'none') {
         const { ip, password, port } = obsSettings;
         await obs.connect(`ws://${ip}:${port}`, password);
-        console.log('Connected to OBS');
+        writeToLogFile('info', 'Connected to OBS');
         obsConnection.status = true;
-        registerEventListeners(); // Register event listeners on successful connection
+        registerEventListeners();
       } else {
-        console.log('OBS settings not found or IP address is set to none.');
+        writeToLogFile('error', 'OBS settings not found or IP address is set to none.');
         obsConnection.status = false;
-        // Handle the case when OBS settings are not available or IP address is 'none'
       }
     } catch (error) {
       if (error instanceof ReferenceError && error.message.includes('getOBSSettings is not defined')) {
-        console.error('OBS Connection Failed: getOBSSettings is not defined');
-        return; // Break the connect function if getOBSSettings is not defined
+        writeToLogFile('error', 'OBS Connection Failed: getOBSSettings is not defined');
+        return; 
       } else if (
         error instanceof SyntaxError &&
         error.message.includes('Invalid URL: ws://undefined:undefined')
       ) {
+        writeToLogFile('error', 'OBS Connection Failed: Invalid URL');
         console.error('OBS Connection Failed: Invalid URL');
-        return; // Break the connect function if the URL is invalid
+        return;
       }
 
       obsConnection.status = false;
       setTimeout(connect, 10000);
     }
   };
-
   await connect();
   return obs;
 }
 
+// Functio to register event listeners
 function registerEventListeners() {
   obs.on('ConnectionClosed', () => {
-    console.log('Connection lost, retrying in 10 seconds...');
+    writeToLogFile('error', 'Connection to OBS lost');
     obsConnection.status = false;
     setTimeout(connectToOBS, 10000);
   });
 
   obs.on('RecordStateChanged', (event) => {
-    if (event.outputActive == true) {
-      console.log('Recroding Started');
+    if (event.outputState == 'OBS_WEBSOCKET_OUTPUT_STARTED') {
       const fileName = path.basename(event.outputPath);
       startRecording(fileName);
     } else if (event.outputState == 'OBS_WEBSOCKET_OUTPUT_STOPPED') {
@@ -94,27 +94,36 @@ function registerEventListeners() {
 }
 
 async function startRecording(filename, count = 0) {
+  const settings = await getGeneralSettings();
+  const liveRequired = settings.live_required;
   if (count >= 10) {
     console.log('Maximum check limit reached');
     return;
   }
-
-  if (live !== false) {
-    console.log(`Recording Started: ${await filename}`)
+  if (liveRequired) {
+    if (live) {
+      streamFolder = await createFolder(livedata.date);
+      entireStream = filename;
+      return;
+    } else {
+      setTimeout(() => {
+        startRecording(count + 1);
+      }, 1000);
+    }
+  } else if (!liveRequired) {
+    await startStream();
     streamFolder = await createFolder(livedata.date);
     entireStream = filename;
-    return
+    return;
   }
-
-  setTimeout(() => {
-    startRecording(count + 1);
-  }, 1000);
 }
 
 async function stopRecording() {
+  const settings = await getGeneralSettings();
+  const liveRequired = settings.live_required;
   const size = await getFileSize(`${process.cwd()}\\recordings\\${entireStream}`);
   await createClips(`${process.cwd()}\\recordings\\${entireStream}`);
-  insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, size, length, '')
+  await insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, livedata.backgroundimg, size, length, '')
   const oldPath = path.join('recordings', entireStream);
   const newPath = path.join(streamFolder, entireStream);
   fs.rename(oldPath, newPath, (err) => {
@@ -122,17 +131,23 @@ async function stopRecording() {
       console.error(err);
     }
   });
-  entireStream = '';
-  streamFolder = '';
+  entireStream = null;
+  streamFolder = null;
+  if (!liveRequired) {
+    await endStream();
+  }
 }
 
 async function endStream() {
   writeToLogFile('info', 'Stream Ended');
   live = false;
-  await updateStreamData(streamId, length);
+  await updateStreamLength(streamId, length);
 }
 
 async function startStream() {
+  if (live) {
+    return;
+  }
   live = true;
   writeToLogFile('info', 'Stream Started');
   startTimer();

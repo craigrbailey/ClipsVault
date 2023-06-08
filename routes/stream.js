@@ -21,9 +21,19 @@ function formatDuration(durationInSeconds) {
     return formattedDuration;
 }
 
+function formatStreamLength(lengthInSeconds) {
+    const hours = Math.floor(lengthInSeconds / 3600);
+    const minutes = Math.floor((lengthInSeconds % 3600) / 60);
+    const seconds = lengthInSeconds % 60;
+    return `${hours}h ${minutes}m ${seconds}s`;
+}
+
 router.get('/', checkSetup, async (req, res) => {
     const streamId = req.query.streamId;
     const streamData = await getStreamById(streamId);
+    if (streamData.length > 0) {
+        streamData.length = formatStreamLength(streamData.length);
+    }
     const videoData = await getVideosByStreamId(streamId);
     const date = streamData ? formatDate(streamData.date) : null;
     const userData = req.session.userData;

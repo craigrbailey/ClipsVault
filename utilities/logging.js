@@ -13,7 +13,6 @@ if (!existsSync(logsDirectory)) {
 function writeToLogFile(level, message) {
     const logFilePath = join(logsDirectory, `${getCurrentDate()}.log`);
     const logMessage = `[${new Date().toISOString()}] [${level.toUpperCase()}] ${message}\n`;
-
     appendFile(logFilePath, logMessage, (err) => {
         if (err) {
             console.error('Error writing to log file:', err);
