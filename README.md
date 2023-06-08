@@ -1,7 +1,9 @@
 # Clips Vault
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)]()
+<div style="text-align: center;">
+  [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+  [![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)]()
+</div>
 
 Clips Vault is a powerful application designed to help you sort and manage clips from all your streams. With Clips Vault, you can easily organize, categorize, and catalogue the best moments from your stream.
 
