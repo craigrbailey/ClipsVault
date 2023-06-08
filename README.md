@@ -55,17 +55,7 @@ Mark your most memorable clips as favorites. Easily access and revisit your favo
 
 ![Search Functionality](https://img.shields.io/badge/feature-Search%20Functionality-yellow.svg)
 
-The Search Functionality in Clips Vault offers streamers a powerful tool to quickly locate specific clips within their extensive library. Search through all your clips using various search criteria:
-
-Users can search by tags, enabling them to find clips associated with specific themes, events, or other relevant criteria. By simply entering a tag, streamers can effortlessly retrieve all clips associated with that tag, making it easier to create personalized collections and thematic montages.
-
-In addition to tags, users can also search by dates, allowing them to locate clips from specific time periods or streaming sessions. 
-
-Furthermore, the search functionality extends to filtering by whether a video is marked as a favorite. Users can narrow down their search to find all their favorite clips, providing a convenient way to compile highlight reels or share top moments with their audience.
-
-Lastly, the search feature allows users to search by categories, providing an additional level of organization to their clips. By assigning categories to clips, streamers can create logical groupings based on topics, games, or any other classification that suits their needs.
-
-The Search Functionality in Clips Vault ensures that streamers can effortlessly navigate through their vast collection of clips, saving time and enhancing the overall experience of managing and sharing their content.
+The Search Functionality in Clips Vault empowers streamers to quickly locate clips based on tags, dates, favorites, and categories. Effortlessly navigate through your clip library, create personalized collections, and compile highlight reels, enhancing the overall content management experience.
 
 ### 7. Edit Stream Details
 
