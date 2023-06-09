@@ -1,18 +1,32 @@
 import { Router } from 'express';
-import { insertQueue } from '../../db.js';
-import { serverKey } from '../../utilities/api-key.js';
-import { writeToLogFile } from '../../utilities/logging.js';
+import { removeQueueItemById, insertQueue } from '../../db.js';
 
 const router = Router();
 
 router.post('/', async (req, res) => {
-    const requestApiKey = req.headers['x-api-key'];
-    if (requestApiKey !== serverKey) {
-        writeToLogFile('error', `Unauthorized request to /api/tags received from ${req.ip}`)
-        return res.status(401).json({ error: 'Unauthorized' });
+    const { item } = req.body;
+    try {
+        await insertQueue(item);
+        res.json({ success: true, message: "Clip added ton queue." });
+    } catch (error) {
+        console.error("Error adding item to queue:", error);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
     }
-    const { id } = req.body;
-    insertQueue(id);
+});
+
+router.delete('/', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await removeQueueItemById(id);
+        if (result) {
+            res.json({ success: true, message: "Queue item removed successfully." });
+        } else {
+            res.status(404).json({ error: "Queue item not found." });
+        }
+    } catch (error) {
+        console.error("Error removing queue item:", error);
+        res.status(500).json({ success: false, error: "Internal Server Error" });
+    }
 });
 
 export default router;
