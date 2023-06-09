@@ -1,7 +1,9 @@
 import { existsSync, write } from 'fs';
-import { connectToMongoDB, deleteOldNotifications, getArchiveSettings, removeCategoriesIfNoVideos, getVideosOlderThanDaysNotArchived } from '../db.js';
+import { connectToMongoDB, deleteOldNotifications, getArchiveSettings, removeCategoriesIfNoVideos, getVideosOlderThanDaysNotArchived, getCleanupTime } from '../db.js';
 import { removeOldLogFiles, writeToLogFile } from './logging.js';
 import { shrinkVideoFileSize } from './archiveVideo.js';
+import { convertMilitaryTimeToCron } from './system.js';
+import cron from 'node-cron';
 
 // Function to remove documents with missing files
 async function removeDocumentsWithMissingFiles() {
@@ -62,5 +64,12 @@ async function maintenace() {
     await removeCategoriesIfNoVideos();
 }
 
+async function initiateMatinencance() {
+    const maintenaceSchedule = await getCleanupTime();
+    const cronSchedule = convertMilitaryTimeToCron(maintenaceSchedule);
+    cron.schedule(String(cronSchedule), () => {
+        maintenace();
+    });
+}
 
-export { maintenace }
+export { initiateMatinencance }

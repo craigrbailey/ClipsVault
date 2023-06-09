@@ -178,7 +178,6 @@ async function twitchLive() {
   }
 }
 
-
 // Export functions
 export {
   getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory,

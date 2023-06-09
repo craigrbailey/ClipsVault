@@ -246,6 +246,14 @@
                             </div>
                 </div>
                 <div class="settings">
+                    <h2>Application Connections</h2>
+                    <span>Connect Clips Vault to 3rd party applications</span>
+                    <div id="connection-links">
+                        <a id="connect-with-twitch" href="/authorize" target="_blank">Authorize with Twitch</a>
+                        <a id="connect-to-youtube" href="/googleauth" target="_blank">Authorize with Google</a>
+                    </div>
+                </div>
+                <div class="settings">
                     <h2>Support The Project</h2>
                     <span>Consider supporting the project</span>
                     <div id="support">
@@ -298,14 +306,17 @@
             const compressForm = document.getElementById('compressOptions');
             const selectElement = document.getElementById('compressList');
 
-            
-            // webhookInput.addEventListener('invalid', function () {
-            //     if (webhookInput.validity.valueMissing) {
-            //         webhookInput.setCustomValidity('Please enter a webhook URL.');
-            //     } else {
-            //         webhookInput.setCustomValidity('');
-            //     }
-            // });
+            try {
+                webhookInput.addEventListener('invalid', function () {
+                    if (webhookInput.validity.valueMissing) {
+                        webhookInput.setCustomValidity('Please enter a webhook URL.');
+                    } else {
+                        webhookInput.setCustomValidity('');
+                    }
+                });
+            } catch (error) {
+                console.error('Error:', error);
+            }
 
             if (archiveStatus) {
                 compressForm.style.display = 'flex';

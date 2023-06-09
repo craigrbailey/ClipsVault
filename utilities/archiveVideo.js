@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
-import { getArchiveSettings } from './archiveSettings.js';
+import { getArchiveSettings } from '../db.js';
 
 async function shrinkVideoFileSize(file) {
     const settings = await getArchiveSettings();

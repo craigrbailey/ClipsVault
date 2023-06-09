@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import moment from 'moment';
 import os from 'os';
+import exec from 'child_process';
 import { writeToLogFile } from './logging.js';
 const ffmpegPath = 'ffmpeg/bin/ffmpeg.exe'
 const ffprobePath = 'ffmpeg/bin/ffprobe.exe'
@@ -127,7 +128,6 @@ function moveFileToTrash(filePath) {
   }
   fs.renameSync(filePath, trashFilePath);
   writeToLogFile('info', `Moved file to trash: ${trashFilePath}`);
-
   return trashFilePath;
 }
 
@@ -153,8 +153,30 @@ async function convertToStandardTime(militaryTime) {
   }
 }
 
+// Function to convert from military time to cron format
+function convertMilitaryTimeToCron(time) {
+  const hour = time.slice(0, 2);
+  const minute = time.slice(2);
+  return `0 ${minute} ${hour} * * *`;
+}
+
+// Function to restart the application
+function restartApplication() {
+  writeToLogFile('info', 'Restarting application...');
+  const command = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const args = ['restart'];
+  exec(`${command} ${args.join(' ')}`, (error, stdout, stderr) => {
+    if (error) {
+      writeToLogFile('error', `Error restarting application: ${error}`);
+      console.error(`Error restarting application: ${error}`);
+    } else {
+      writeToLogFile('info', 'Application restarted');
+    }
+  });
+}
+
 // Export functions
 export {
   getVideoLength, getFileSize, createFolder, generateDateFolderStructure, getMemoryUsage, checkSetup,
-  formatDate, moveFileToTrash, getCurrentDate, convertToStandardTime
+  formatDate, moveFileToTrash, getCurrentDate, convertToStandardTime, convertMilitaryTimeToCron, restartApplication
 };

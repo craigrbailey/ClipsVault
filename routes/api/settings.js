@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { updateLiveRequired, storeDiscordWebhookURL,storeAPIKey, updateDiscordToggle, updateOBSSettings, updateCleanupTime, 
-    updateGmailToggle, updateNotificationToggle, updateArchiveSettings} from '../../db.js';
+    updateGmailToggle, updateNotificationToggle, updateArchiveSettings, getSettings } from '../../db.js';
 import { sendMessageToDiscord } from '../../utilities/discord-message.js';
-import { serverKey, generateApiKey } from '../../utilities/api-key.js';
+import { generateApiKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 
 const router = Router();
@@ -52,6 +52,11 @@ router.post('/', async (req, res) => {
         updateArchiveSettings(archive, archiveTime);
         res.status(200).send('Archive Settings updated successfully.');
     }
+});
+
+router.get('/', async (req, res) => {
+    const settings = await getSettings();
+    res.status(200).json(settings);
 });
 
 export default router;

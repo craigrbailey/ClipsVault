@@ -12,14 +12,20 @@ async function getChannelData(channelId) {
     return response.data.items[0];
 }
 
-async function getVideoData(videoId) {
-    const youtube = google.youtube({
-        version: 'v3',
-        auth: 'YOUR_API_KEY'
-    });
-    const response = await youtube.videos.list({
-        part: 'snippet,contentDetails,statistics',
-        id: videoId
-    });
-    return response.data.items[0];
+async function refreshAccessToken() {
+    try {
+        const refreshToken = await getRefreshToken();
+        const oAuth2Client = new google.auth.OAuth2(
+            process.env.GOOGLE_CLIENT_ID,
+            process.env.GOOGLE_CLIENT_SECRET,
+            process.env.GOOGLE_REDIRECT_URI
+        );
+        oAuth2Client.setCredentials({
+            refresh_token: refreshToken
+        });
+        const { token } = await oAuth2Client.getAccessToken();
+        await storeGoogleAccessToken(token);
+    } catch (error) {
+        writeToLogFile('error', `Error refreshing google access token: ${error.message}`);
+    }
 }

@@ -19,13 +19,12 @@ router.get('/', async (req, res) => {
     await storeTwitchAuthToken(access_token, refresh_token, expires_in);
     const userData = await getUserData();
     await storeTwitchUserData(userData);
-    console.log(req.session)
     if (!req.session.userData) {
       req.session.userData = userData;
     }
     updateStreamer('twitch', true);
     writeToLogFile('info', `Tokens and user data successfully stored in the database. User data: ${JSON.stringify(userData)}`);
-    res.redirect('/');
+    res.send('Authorization successful. You may close this window');
   } catch (error) {
     writeToLogFile('error', `Error retrieving access token from Twitch. ${error.message}`);
     updateStreamer('twitch', false);

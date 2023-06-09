@@ -1,42 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <link rel="stylesheet" href="/css/setup.css">
 </head>
+
 <body>
   <div class="container">
     <h1>Setup</h1>
-    <div class="slides">
-      <div class="slide active">
-        <div id="connection-links">
-          <a id="connect-with-twitch" href="/authorize" target="_blank">Authorize with Twitch</a>
-          <a id="connect-to-youtube" href="/googleauth" target="_blank">Connect with Google</a>
-        </div>
-      </div>
-      <div class="slide">
-        <div class="obs-settings">
-          <span>Connection To OBS or Streamlabs OBS is WebSocket Server</span>
-          <form>
-              <label for="host">Host:</label>
-              <input class="settings-input" type="text" id="host" name="host"><br><br>
-              <label for="port">Port:</label>
-              <input class="settings-input" type="text" id="port" name="port"><br><br>
-              <label for="password">Password:</label>
-              <input class="settings-input" type="password" id="password" name="password"><br><br>
-              <button id="obs-button" type="submit">Connect</button>
-          </form>
-        </div>
-      </div>
-      <div class="slide">
-        <h1>Slide 3</h1>
-      </div>
+    <div id="connection-links">
+      <a id="connect-with-twitch" href="/authorize" target="_blank">Authorize with Twitch</a>
+      <a id="connect-to-youtube" href="/googleauth" target="_blank">Authorize with Google</a>
+    </div>
+    <div class="obs-settings" id="obsSettings">
+      <h2>Connection To OBS or Streamlabs OBS is WebSocket Server</h2>
+      <form>
+        <label for="host">Host:</label>
+        <input class="settings-input" type="text" id="host" name="host"><br><br>
+        <label for="port">Port:</label>
+        <input class="settings-input" type="text" id="port" name="port"><br><br>
+        <label for="password">Password:</label>
+        <input class="settings-input" type="password" id="password" name="password"><br><br>
+        <button id="obs-button" type="submit">Connect</button>
+      </form>
     </div>
     <div class="button-container">
-      <button class="button previous" disabled>Previous</button>
-      <button class="button next">Next</button>
+      <button class="button" id="finish-button">Finish</button>
     </div>
   </div>
-
   <script src="/js/setup.js"></script>
 </body>
+
 </html>

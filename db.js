@@ -5,6 +5,7 @@ import { dirname } from 'path';
 import { writeToLogFile } from './utilities/logging.js';
 import { generateApiKey } from './utilities/api-key.js';
 import { getGameBoxArt } from './utilities/twitch.js';
+import { restartApplication } from './utilities/system.js';
 
 const uri = 'mongodb://192.168.1.31:27017';
 const client = new MongoClient(uri);
@@ -254,6 +255,7 @@ async function updateCleanupTime(time) {
     const options = { upsert: true };
     await collection.updateOne(filter, update, options);
     writeToLogFile('info', `Cleanup time updated to: ${time}`);
+    restartApplication();
   } catch (error) {
     writeToLogFile('error', `Error updating cleanup time: ${error}`);
   }
@@ -875,6 +877,7 @@ async function InitializeSetup() {
         setup_complete: false,
         live_required: false,
         cleanup_time: "0500",
+        platform: null,
         twitch: null,
         youtube: null,
         discord: null
@@ -915,6 +918,21 @@ async function InitializeSetup() {
     }
   } catch (error) {
     writeToLogFile('error', `Error initializing setup: ${error}`);
+  }
+}
+
+// Function to set the platform
+async function setPlatform(platform) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("settings");
+    await collection.updateOne(
+      { _id: "settings" },
+      { $set: { platform: platform } }
+    );
+    writeToLogFile('info', `Platform set to: ${platform}`);
+  } catch (error) {
+    writeToLogFile('error', `Error setting platform: ${error}`);
   }
 }
 
@@ -1271,6 +1289,7 @@ async function removeCategoriesIfNoVideos() {
     writeToLogFile('Error removing categories if no videos:', error);
   }
 }
+
 
 // Export the functions
 export {

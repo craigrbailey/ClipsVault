@@ -11,9 +11,13 @@ import { connectToOBS } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import { watcher } from './utilities/watcher.js'
 import { validateAccessToken } from './utilities/twitch.js';
+import { initiateMatinencance } from './utilities/maintenance.js';
 import cron from 'node-cron';
 
 config();
+initdb();
+initiateMatinencance();
+
 
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
@@ -52,8 +56,10 @@ const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
   uri: 'mongodb://192.168.1.31:27017/data',
   collection: 'sessions',
+  ttl: 365 * 24 * 60 * 60,
 });
 
+// Configure sessions
 store.on('error', (error) => {
   console.error('Session store error:', error);
 });
@@ -64,7 +70,7 @@ app.use(
     saveUninitialized: false,
     store: store,
     cookie: {
-      maxAge: null,
+      maxAge: 365 * 24 * 60 * 60 * 1000, 
     },
   })
 );
@@ -76,9 +82,6 @@ app.use('/clips', express.static(path.join(__dirname, 'clips')));
 app.use('/recordings', express.static(path.join(__dirname, 'recordings')));
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
-
-// Initialize database
-initdb();
 
 // Create directories if they don't exist
 const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models', './encoding'];
@@ -119,6 +122,7 @@ import settingsApiRouter from './routes/api/settings.js';
 import addStreamView from './routes/addstream.js';
 import { writeToLogFile } from './utilities/logging.js';
 import videoHandlerRouter from './routes/api/clipHandler.js';
+import userDataRouter from './routes/api/userData.js';
 
 // Create API router
 const apiRouter = express.Router();
@@ -135,6 +139,7 @@ apiRouter.use('/searchclips', searchClipsRouter);
 apiRouter.use('/queue', queueHandler);
 apiRouter.use('/settings', settingsApiRouter);
 apiRouter.use('/clip', videoHandlerRouter);
+apiRouter.use('/userdata', userDataRouter);
 
 // Create regular router
 const regularRouter = express.Router();

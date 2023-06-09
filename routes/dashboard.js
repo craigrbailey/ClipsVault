@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getMemoryUsage } from '../utilities/system.js';
-import { checkSetup, getAllStreams } from '../db.js';
+import { checkSetup, getAllStreams, retrieveUserData } from '../db.js';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.get('/', checkSetup, async (req, res) => {
   streams.forEach((stream) => {
     stream.length = formatStreamLength(stream.length);
   });
-  console.log(req.session)
+  const twitchData = await retrieveUserData();
   const userData = req.session.userData
   const memoryUsage = getMemoryUsage();
   res.render('dashboard', { userData, memoryUsage, streams });
