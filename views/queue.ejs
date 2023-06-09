@@ -8,13 +8,25 @@
   <title>Clips Vault - Dahsboard</title>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
   <link rel="stylesheet" href="/css/base.css" />
+  <link rel="stylesheet" href="/css/queue.css" />
   <link rel="icon" href="/images/iconLogo.png" />
 </head>
 
 <body>
   <%- include('menu.ejs') %>
     <section>
-      <div class="main-interface">
+      <div class="clips-interface">
+        <% for (let i=0; i < videos.length; i++) { %>
+          <div class="clip" data-id="<%= videos[i]._id %>">
+            <div class="video-container">
+              <img class="clip-image" src="<%= videos[i].categoryImg %>" alt="">
+              <video src="<%= videos[i].file %>"></video>
+              <span class="clip-duration">
+                <%= videos[i].length %>
+              </span>
+            </div>
+          </div>
+          <% } %>
       </div>
     </section>
     <script src="/js/dashboard.js"></script>

@@ -447,13 +447,11 @@ async function getAllCategories() {
 // Function to add a queue item to the database
 async function insertQueue(videoId) {
   const db = await connectToMongoDB();
+  const videoData = await getVideoData(videoId);
+  console.log(videoData);
   try {
-    const objectId = new ObjectId(videoId);
-    const document = {
-      video_id: objectId
-    };
     const queueCollection = db.collection("queue");
-    await queueCollection.insertOne(document);
+    await queueCollection.insertOne(videoData);
     writeToLogFile('info', `Queue item created successfully. ID: ${videoId}`)
   } catch (error) {
     writeToLogFile('error', `Error inserting queue item: ${error}`);

@@ -13,8 +13,8 @@ function formatStreamLength(lengthInSeconds) {
 
 router.get('/', checkSetup, async (req, res) => {
   const videos = await getAllQueueItems();
-  videos.forEach((stream) => {
-    videos.length = formatStreamLength(videos.length);
+  videos.forEach((video) => {
+    video.length = formatStreamLength(video.length);
   });
   const userData = req.session.userData
   res.render('queue', { userData, videos });

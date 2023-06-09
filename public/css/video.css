@@ -82,8 +82,8 @@ video {
 }
 
 #suggestions::-webkit-scrollbar-thumb {
-    background: #888; 
-    border-radius: 20px; 
+    background: #888;
+    border-radius: 20px;
 }
 
 #suggestions::-webkit-scrollbar-thumb:hover {
@@ -151,6 +151,24 @@ video {
     color: #dadada;
     font-size: 1.5rem;
     cursor: pointer;
+}
+
+.action-button::after {
+    content: attr(title);
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px;
+    background-color: #000;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 12px;
+    white-space: nowrap;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s ease-in-out;
+    z-index: 9999;
 }
 
 .video-tags-container {

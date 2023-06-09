@@ -4,9 +4,9 @@ import { removeQueueItemById, insertQueue } from '../../db.js';
 const router = Router();
 
 router.post('/', async (req, res) => {
-    const { item } = req.body;
+    const { videoId } = req.body;
     try {
-        await insertQueue(item);
+        await insertQueue(videoId);
         res.json({ success: true, message: "Clip added ton queue." });
     } catch (error) {
         console.error("Error adding item to queue:", error);

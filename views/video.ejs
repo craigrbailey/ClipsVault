@@ -29,27 +29,27 @@
           </a>
         </div>
         <div class="video-actions">
-          <button class="action-button" id="delete-video">
+          <button class="action-button" id="delete-video" title="Delete Video">
             <i class="fa-solid fa-trash"></i>
           </button>
-          <a class="action-button" id="download-video" href="<%= videoData.file %>" download>
+          <a class="action-button" id="download-video" title="Download Video" href="<%= videoData.file %>" download>
             <button class="action-button" id="download-video">
               <i class="fa-solid fa-download"></i>
             </button>
           </a>
           <% if (!videoData.favorite) { %>
-            <button class="action-button favorite-button" id="favorite-video">
+            <button class="action-button favorite-button" title="Favorite Video" id="favorite-video">
               <i class="fa-regular fa-heart"></i>
             </button>
             <% } else { %>
-              <button class="action-button favorite-button" id="unfavorite-video">
+              <button class="action-button favorite-button" title="Unfavorite Video" id="unfavorite-video">
                 <i class="fa-solid fa-heart"></i>
               </button>
               <% } %>
-                <button class="action-button" id="add-queue">
+                <button class="action-button" title="Add To The Queue" id="addQueue">
                   <i class="fa-solid fa-list-ol"></i>
                 </button>
-                <button class="action-button" id="edit-video">
+                <button class="action-button" id="edit-video" title="Edit Video Details">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
         </div>
@@ -89,9 +89,38 @@
       const video = document.querySelector('video-container video');
       const editVideobtn = document.getElementById('edit-video');
       const videoCategory = document.getElementById('videoCategory');
+      const addQueuebtn = document.getElementById('addQueue');
       let isFavorite = '<%= videoData.favorite %>';
       let editMode = false;
       let updatedImg = false;
+
+      addQueuebtn.addEventListener('click', () => {
+        addVideoToQueue(event);
+      });
+
+      // Function to add a video to the queue
+      async function addVideoToQueue(event) {
+        event.preventDefault();
+        // const videoId = '<%= videoData.id %>';
+        const response = await fetch('/api/queue', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey
+          },
+          body: JSON.stringify({
+            videoId: videoId
+          })
+        });
+        console.log(response);
+        if (!response.ok) {
+          console.log('Error updating stream category');
+          return;
+        } else {
+          console.log('Success updating stream category');
+          return;
+        }
+      }
 
       // Function to update the category of the video
       async function updateStream() {
@@ -271,6 +300,8 @@
           });
       }
 
+
+      // Function to delete a video
       function deleteVideo() {
         fetch('/api/deletevideo', {
           method: 'DELETE',
