@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-GNU%20GPL%20v3-green.svg" alt="License"></a>
+  <a href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img src="https://img.shields.io/badge/license-CC%BY-NC%4.0-green.svg" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/version-1.0.0-orange.svg" alt="Version"></a>
 </div>
 
