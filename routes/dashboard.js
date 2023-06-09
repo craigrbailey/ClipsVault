@@ -8,7 +8,6 @@ function formatStreamLength(lengthInSeconds) {
   const hours = Math.floor(lengthInSeconds / 3600);
   const minutes = Math.floor((lengthInSeconds % 3600) / 60);
   const seconds = lengthInSeconds % 60;
-
   return `${hours}h ${minutes}m ${seconds}s`;
 }
 
@@ -17,7 +16,6 @@ router.get('/', checkSetup, async (req, res) => {
   streams.forEach((stream) => {
     stream.length = formatStreamLength(stream.length);
   });
-  const twitchData = await retrieveUserData();
   const userData = req.session.userData
   const memoryUsage = getMemoryUsage();
   res.render('dashboard', { userData, memoryUsage, streams });

@@ -1258,12 +1258,16 @@ async function getVideosOlderThanDays(days) {
   }
 }
 
-// Function to retrun all videos that are older than a set number of days that are not marked as archived
+// Function to retrun all videos that are older than a set number of days that are not marked as archived and not favorite
 async function getVideosOlderThanDaysNotArchived(days) {
   const db = await connectToMongoDB();
   try {
     const videosCollection = db.collection('videos');
-    const result = await videosCollection.find({ date: { $lt: new Date(Date.now() - days * 24 * 60 * 60 * 1000) }, archived: false }).toArray();
+    const result = await videosCollection.find({ 
+      date: { $lt: new Date(Date.now() - days * 24 * 60 * 60 * 1000) },
+      archived: false,
+      favorite: false
+    }).toArray();
     return result;
   } catch (error) {
     writeToLogFile('Error retrieving videos older than days:', error);
