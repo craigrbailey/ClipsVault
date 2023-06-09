@@ -13,12 +13,12 @@ router.post('/', validateApiKey, async (req, res) => {
             if (id === null) {
                 return res.status(400).json({ error: 'invalid ID' });
             } else {
-                if (status === true) {
+                if (status) {
                     updateVideoFavoriteStatus(id, true);
-                    return res.json({ success: true, message: 'Updated favorite status successfully' });
-                } else if (status === false) {
+                    return res.json({ success: true, message: 'Updated favorite status successfully:', status: true });
+                } else {
                     updateVideoFavoriteStatus(id, false);
-                    return res.json({ success: true, message: 'Updated favorite status successfully' });
+                    return res.json({ success: true, message: 'Updated favorite status successfully', status: false });
                 }
             }
         } else if (favoriteType === 'stream') {

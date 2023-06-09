@@ -616,6 +616,7 @@ async function updateVideoFavoriteStatus(videoId, favorite) {
     );
     if (result.modifiedCount === 1) {
       writeToLogFile('info', 'Video favorite status updated successfully');
+      return favorite;
     } else {
       writeToLogFile('error', 'Video not found');
     }
