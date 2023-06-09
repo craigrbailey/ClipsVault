@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+  <a href="https://creativecommons.org/licenses/by-nc/4.0/"><img src="https://img.shields.io/badge/license-CC BY-NC 4.0%20GPL%20v3-green.svg" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/version-1.0.0-orange.svg" alt="Version"></a>
 </div>
 
@@ -100,7 +100,7 @@ Please make sure to update tests as appropriate.
 
 ## License
 
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT). Feel free to use, modify, and distribute this code as permitted by the license.
+This project is licensed under the Creative Commons Attribution-NonCommercial (CC BY-NC) License. You are free to use, modify, and distribute this code for non-commercial purposes, as long as you provide attribution to the original creator.
 
 ## Contact
 
