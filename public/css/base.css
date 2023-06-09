@@ -15,6 +15,11 @@ body {
     flex-direction: column;
 }
 
+#logo {
+    width: 50px;
+    object-fit: contain;
+}
+
 .top-menu {
     display: flex;
     align-items: center;
@@ -56,6 +61,12 @@ body {
 }
 
 .right-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.left-section {
     display: flex;
     align-items: center;
     gap: 10px;
