@@ -75,6 +75,9 @@
 
     // Function to increase notification count
     function increaseNotificationCount() {
+        if (notificationCount.style.display === 'none') {
+            notificationCount.style.display = 'block';
+        }
         const count = parseInt(notificationCount.textContent);
         notificationCount.textContent = count + 1;
         notificationCount.style.display = 'block';
@@ -160,10 +163,7 @@
                         if (!data[i].read) {
                             increaseNotificationCount();
                         }
-                    } if (notificationCount > 0) {
-                        notificationCount.style.display = 'none';
                     }
-                    notificationCount.style.display = 'block';
                 } else {
                     notificationCount.style.display = 'none';
                 }

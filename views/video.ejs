@@ -20,7 +20,8 @@
     <div class="main-interface">
       <div class="video-interface">
         <div class="video-info">
-          <input id="video-category" type="text" value="<%= videoData.category %>" disabled>
+          <input id="videoCategory" type="text" value="<%= videoData.category %>" disabled>
+          <div id="suggestions"></div>
           <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
             <span id="video-date">
               <%= videoData.date %>
@@ -74,7 +75,7 @@
     </div>
     </div>
     </div>
-    <script src="/js/base.js"></script>
+    <script src="/js/base.js"></script>gory
     <script>
       const urlParams = new URLSearchParams(window.location.search);
       const apiKey = '<%= apiKey %>';
@@ -87,14 +88,14 @@
       const addButton = document.getElementById('add-queue');
       const video = document.querySelector('video-container video');
       const editVideobtn = document.getElementById('edit-video');
-      const videoCategory = document.getElementById('video-category');
+      const videoCategory = document.getElementById('videoCategory');
       let isFavorite = '<%= videoData.favorite %>';
       let editMode = false;
       let updatedImg = false;
 
       // Function to update the category of the video
       async function updateStream() {
-        const streamCategory = document.getElementById('video-category').value;
+        const streamCategory = document.getElementById('videoCategory').value;
         const response = await fetch('/api/clip', {
           method: 'PUT',
           headers: {
@@ -137,7 +138,6 @@
         } else {
           updatedImg = true;
           const data = await response.json();
-          console.log(data);
           document.getElementById('clip-image').src = data;
           return data;
         }
@@ -346,6 +346,50 @@
           videoCategory.style.border = 'solid 1px #dadada';
         }
         editMode = !editMode;
+      });
+
+      // Function to suggess titles based on user input
+      var timeoutId;
+      document.getElementById('videoCategory').addEventListener('input', function (e) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(function () {
+          fetch('/api/categorysearch', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              category: e.target.value
+            })
+          })
+            .then(response => response.json())
+            .then(data => {
+              const gameImg = document.getElementById('catImg');
+              var suggestions = document.getElementById('suggestions');
+              suggestions.innerHTML = '';
+              data.forEach(game => {
+                var suggestion = document.createElement('div');
+                suggestion.className = "suggestion-item";
+                var gameArt = document.createElement('img');
+                gameArt.src = game.art;
+                gameArt.className = "game-art";
+                var gameName = document.createElement('span');
+                gameName.textContent = game.name;
+                gameName.className = "game-name";
+                suggestion.appendChild(gameArt);
+                suggestion.appendChild(gameName);
+                suggestions.appendChild(suggestion);
+                suggestion.addEventListener('click', function () {
+                  document.getElementById('videoCategory').value = game.name;
+                  suggestions.style.display = 'none';
+                });
+              });
+              if (data.length > 0) {
+                suggestions.style.display = 'block';
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        }, 500);
       });
     </script>
 </body>

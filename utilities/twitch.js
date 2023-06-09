@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getTwitchAccessToken, storeTwitchAuthToken, getRefreshToken, retrieveUserData } from '../db.js';
 import { writeToLogFile } from './logging.js';
 
+
 // Function to get the box art of a game
 async function getGameBoxArt(gameName) {
   const width = 272 * 5;
@@ -12,15 +13,23 @@ async function getGameBoxArt(gameName) {
     'Client-ID': process.env.TWITCH_CLIENT_ID,
   };
   const gameUrl = `https://api.twitch.tv/helix/games?name=${encodeURIComponent(gameName)}`;
-  const gameResponse = await axios.get(gameUrl, { headers });
-  const gameData = gameResponse.data;
-  if (!gameData.data || gameData.data.length === 0) {
-    return null;
+  try {
+    const gameResponse = await axios.get(gameUrl, { headers });
+    const gameData = gameResponse.data;
+    if (!gameData.data || gameData.data.length === 0) {
+      return null;
+    }
+    const gameId = gameData.data[0].id;
+    const boxArtUrl = `https://static-cdn.jtvnw.net/ttv-boxart/${gameId}-${width}x${height}.jpg`;
+    return boxArtUrl;
+  } catch (error) {
+    if (error.response && error.response.status === 401) {
+      await refreshAccessToken();
+      return getGameBoxArt(gameName);
+    }
   }
-  const gameId = gameData.data[0].id;
-  const boxArtUrl = `https://static-cdn.jtvnw.net/ttv-boxart/${gameId}-${width}x${height}.jpg`;
-  return boxArtUrl;
 }
+
 
 // Function to get the user's data from Twitch
 async function getUserData() {
@@ -66,7 +75,6 @@ async function searchGameCategories(query) {
       await refreshAccessToken();
       return searchGameCategories(query);
     }
-    writeToLogFile('error', `Error searching game categories: ${error.message}`);
   }
 }
 
