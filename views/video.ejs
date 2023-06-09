@@ -92,20 +92,6 @@
       let editMode = false;
       let updatedImg = false;
 
-      editVideobtn.addEventListener('click', () => {
-        if (editMode) {
-          // Exiting edit mode
-          videoCategory.disabled = true;
-          videoCategory.style.border = 'none';
-          getBoxArt(videoCategory.value);
-        } else {
-          // Entering edit mode
-          videoCategory.disabled = false;
-          videoCategory.style.border = 'solid 1px #dadada';
-        }
-        editMode = !editMode;
-      });
-
       // Function to update the category of the video
       async function updateStream() {
         const streamCategory = document.getElementById('video-category').value;
@@ -121,14 +107,15 @@
           })
         });
         if (!response.ok) {
-          console.log('Error updating stream');
+          console.log('Error updating stream category');
           return;
         } else {
-          console.log('Success updating stream');
+          console.log('Success updating stream category');
           return;
         }
       }
 
+      // Function to get the box art for a game
       async function getBoxArt(gameName) {
         if (updatedImg) {
           return;
@@ -156,6 +143,7 @@
         }
       }
 
+      // Function to favorite a video
       favoriteButton.addEventListener('click', () => {
         if (isFavorite) {
           fetch('/api/favorite', {
@@ -212,6 +200,7 @@
         }
       });
 
+      // Function to add a tag to a video
       function addTagToVideo(event) {
         event.preventDefault();
         const newTag = tagInput.value.trim();
@@ -253,6 +242,7 @@
         }
       }
 
+      // Function to remove a tag from a video
       function removeTag(tagElement, tagToRemove) {
         fetch('/api/tags', {
           method: 'DELETE',
@@ -306,6 +296,7 @@
           });
       }
 
+      // Functio to delete a video
       function handleDeleteVideo() {
         if (deleteButton.classList.contains('confirm')) {
           deleteVideo();
@@ -326,8 +317,8 @@
         }, 3000);
       }
 
+      // Register event listeners
       deleteButton.addEventListener('click', handleDeleteVideo);
-
       tagList.addEventListener('click', function (event) {
         if (event.target.classList.contains('fa-circle-xmark')) {
           const tagElement = event.target.parentNode;
@@ -335,11 +326,23 @@
           removeTag(tagElement, tagToRemove);
         }
       });
-
       tagInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
           addTagToVideo(event);
         }
+      });
+      editVideobtn.addEventListener('click', () => {
+        if (editMode) {
+          // Exiting edit mode
+          videoCategory.disabled = true;
+          videoCategory.style.border = 'none';
+          getBoxArt(videoCategory.value);
+        } else {
+          // Entering edit mode
+          videoCategory.disabled = false;
+          videoCategory.style.border = 'solid 1px #dadada';
+        }
+        editMode = !editMode;
       });
     </script>
 </body>

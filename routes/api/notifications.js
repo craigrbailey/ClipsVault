@@ -1,6 +1,5 @@
 import { Router } from 'express';
-import { getAllNotifications, removeNotificationById, addNotification, markNotificationAsRead } from '../../db.js';
-import { writeToLogFile } from '../../utilities/logging.js';
+import { getAllNotifications, removeNotificationById, addNotification, markNotificationAsRead, markAllNotificationsAsRead } from '../../db.js';
 
 const router = Router();
 
@@ -18,7 +17,6 @@ router.delete('/', async (req, res) => {
   console.log(req.body);
   const { id } = req.body;
   try {
-    const result = await markNotificationAsRead(id);
     console.log(`Notification ${id} marked as read.`);
     res.json({ message: "Notification removed successfully." });
   } catch (error) {
@@ -35,6 +33,18 @@ router.post('/', async (req, res) => {
   } catch (error) {
     console.error("Error adding notification:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.put('/', async (req, res) => {
+  const { id } = req.body;
+  if (id === 'all') {
+    try {
+      await markAllNotificationsAsRead();
+      res.status(200).json({ success: true, message: "All notifications marked as read" });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
   }
 });
 

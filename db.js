@@ -6,6 +6,8 @@ import { writeToLogFile } from './utilities/logging.js';
 import { generateApiKey } from './utilities/api-key.js';
 import { getGameBoxArt } from './utilities/twitch.js';
 import { restartApplication } from './utilities/system.js';
+import { notificationHandler } from './utilities/notificationHandler.js';
+
 
 const uri = 'mongodb://192.168.1.31:27017';
 const client = new MongoClient(uri);
@@ -471,7 +473,7 @@ async function removeQueueItemById(itemId) {
 }
 
 // Function to add a notification to the database
-async function addNotification(notification) {
+async function addNotification(notification, level) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("notifications");
@@ -479,6 +481,7 @@ async function addNotification(notification) {
       notification: notification,
       read: false,
       date: new Date(),
+      level: level,
     };
     const result = await collection.insertOne(document);
     return result.insertedId;
@@ -511,6 +514,20 @@ async function markNotificationAsRead(notificationId) {
     );
   } catch (error) {
     writeToLogFile('error', `Error marking notification as read: ${error}`);
+  }
+}
+
+// Function to mark all notifications as read
+async function markAllNotificationsAsRead() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("notifications");
+    await collection.updateMany(
+      { read: false },
+      { $set: { read: true } }
+    );
+  } catch (error) {
+    writeToLogFile('error', `Error marking all notifications as read: ${error}`);
   }
 }
 
@@ -858,6 +875,7 @@ async function completeSetup() {
       { $set: { setup_complete: true } },
       { upsert: true }
     );
+    notificationHandler('info', 'Setup completed successfully. Welcome to Clips Vault.')
     writeToLogFile('info', 'Setup completed successfully.');
   } catch (error) {
     writeToLogFile('error', `Error completing setup: ${error}`);
@@ -1305,5 +1323,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
-  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings
+  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings, markAllNotificationsAsRead
 }; 

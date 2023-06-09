@@ -40,6 +40,10 @@
     const notifications = document.querySelector('.notifications');
     let hideTimeout;
 
+    acknowledgeButton.addEventListener('click', () => {
+        acknowledgeAll();
+    });
+
     notificationContainer.addEventListener('mouseleave', () => {
         hideTimeout = setTimeout(() => {
             notifications.style.opacity = '0';
@@ -62,6 +66,7 @@
         return date.toLocaleDateString(undefined, options);
     }
 
+    // Function to format time
     function formatTime(timeString) {
         const options = { hour: 'numeric', minute: 'numeric' };
         const time = new Date(timeString);
@@ -75,8 +80,10 @@
         notificationCount.style.display = 'block';
     }
 
+    // Function to create notification item
     function createNotificationItem(notification) {
-        const { _id, notification: text, read, date } = notification;
+        console.log(notification);
+        const { _id, notification: text, read, date, level } = notification;
         const notificationItem = document.createElement('div');
         notificationItem.classList.add('notification-item');
         notificationItem.setAttribute('data-id', _id);
@@ -101,13 +108,13 @@
         return notificationItem;
     }
 
+    // Function to delete notification
     function deleteNotification(notificationId) {
         const requestOptions = {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: notificationId })
         };
-
         fetch('/api/notifications', requestOptions)
             .then(response => response.json())
             .then(data => {
@@ -120,10 +127,11 @@
 
     // Function to acknowledge all notifications
     function acknowledgeAll() {
+        console.log('Acknowledging all notifications');
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ all: true })
+            body: JSON.stringify({ id: 'all' })
         };
 
         fetch('/api/notifications', requestOptions)
@@ -140,16 +148,20 @@
             });
     }
 
+    // Function to get all notifications
     async function getNotifications() {
         fetch('/api/notifications')
             .then(response => response.json())
             .then(data => {
                 const notificationsContainer = document.querySelector('.notifications');
                 if (data.length > 0) {
+                    let notificationCount = 0;
                     for (let i = 0; i < data.length; i++) {
                         if (!data[i].read) {
                             increaseNotificationCount();
                         }
+                    } if (notificationCount > 0) {
+                        notificationCount.style.display = 'none';
                     }
                     notificationCount.style.display = 'block';
                 } else {
