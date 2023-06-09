@@ -1,6 +1,10 @@
 # Clips Vault
 
 <div align="center">
+  <img src="./public/images/croppedLogo.png" alt="Image Description">
+</div>
+
+<div align="center">
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
   <a href="#"><img src="https://img.shields.io/badge/version-1.0.0-orange.svg" alt="Version"></a>
 </div>
