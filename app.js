@@ -9,41 +9,17 @@ import path from 'path';
 import { initdb } from './db.js';
 import { connectToOBS } from './utilities/obs.js';
 import bodyParser from 'body-parser';
-import { watcher } from './utilities/watcher.js'
 import { validateAccessToken } from './utilities/twitch.js';
-import { initiateMatinencance } from './utilities/maintenance.js';
+import { initiateMaintenance } from './utilities/maintenance.js';
 import cron from 'node-cron';
 
 config();
 initdb();
-initiateMatinencance();
-
+initiateMaintenance();
 
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
   validateAccessToken();
-});
-
-let initialFilename = '';
-watcher.on('add', (filePath) => {
-  initialFilename = filePath;
-});
-
-watcher.on('change', (filePath) => {
-  if (filePath !== initialFilename) {
-    console.log(`File ${initialFilename} has been renamed to ${filePath}.`);
-    // Perform actions you want when the file is renamed
-  }
-  initialFilename = '';
-});
-
-watcher.on('unlink', (filePath) => {
-  console.log(`File ${filePath} has been removed.`);
-  // Perform actions you want when a file is removed
-});
-
-watcher.on('error', (error) => {
-  console.error(`Watcher error: ${error}`);
 });
 
 
@@ -169,7 +145,7 @@ await connectToOBS();
 
 // Start the server
 app.listen(port, () => {
-  writeToLogFile('info', `Server is running at http://localhost:${port}`);
+  writeToLogFile('info', `Application started`);
   console.log(`Server is running at http://localhost:${port}`);
   console.log(`Visit http://localhost:${port}/authorize to start the authentication process.`);
 });

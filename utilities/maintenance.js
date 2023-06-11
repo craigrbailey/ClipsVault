@@ -64,7 +64,7 @@ async function maintenace() {
     await removeCategoriesIfNoVideos();
 }
 
-async function initiateMatinencance() {
+async function initiateMaintenance() {
     const maintenaceSchedule = await getCleanupTime();
     const cronSchedule = convertMilitaryTimeToCron(maintenaceSchedule);
     cron.schedule(String(cronSchedule), () => {
@@ -72,4 +72,4 @@ async function initiateMatinencance() {
     });
 }
 
-export { initiateMatinencance }
+export { initiateMaintenance }

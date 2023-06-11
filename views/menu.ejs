@@ -20,7 +20,8 @@
                     <span class="notification-count">0</span>
                 </div>
                 <ul class="notifications">
-                    <button id="ack-btn">Acknowledge All</button>
+                    <button class="noti-button" id="ackBtn">Acknowledge All</button>
+                    <button class="noti-button" id="deleteAllBtn">Remove All</button>
                 </ul>
             </div>
             <div class="profile-settings">
@@ -35,13 +36,18 @@
     </div>
 </section>
 <script>
-    const acknowledgeButton = document.getElementById('ack-btn');
+    const acknowledgeButton = document.getElementById('ackBtn');
+    const removeButton = document.getElementById('deleteAllBtn');
     const notificationCount = document.querySelector('.notification-count');
     const notificationContainer = document.querySelector('.notification-container');
     const notifications = document.querySelector('.notifications');
     let hideTimeout;
 
     // Register event listeners
+    removeButton.addEventListener('click', () => {
+        deleteAllNotifications();
+    });
+
     acknowledgeButton.addEventListener('click', () => {
         acknowledgeAll();
     });
@@ -114,6 +120,27 @@
         notificationItem.appendChild(notificationElement);
         notificationItem.appendChild(notificationDateTime);
         return notificationItem;
+    }
+
+    // Function to delete all notifications
+    function deleteAllNotifications() {
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: 'all' })
+        };
+        fetch('/api/notifications', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                const notificationItems = document.querySelectorAll('.notification-item');
+                notificationItems.forEach(item => {
+                    item.remove();
+                });
+                notificationCount.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error deleting notifications:', error);
+            });
     }
 
     // Function to delete notification

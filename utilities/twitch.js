@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getTwitchAccessToken, storeTwitchAuthToken, getRefreshToken, retrieveUserData } from '../db.js';
 import { writeToLogFile } from './logging.js';
+import { notificationHandler } from './notificationHandler.js';
 
 
 // Function to get the box art of a game
@@ -87,28 +88,24 @@ async function validateAccessToken() {
   }
   const response = await axios.get('https://id.twitch.tv/oauth2/validate', {
     headers: {
-      'Authorization': `OAuth ${accessToken}`,
-      'Client-ID': process.env.TWITCH_CLIENT_ID,
-      'Client-Secret': process.env.TWITCH_CLIENT_SECRET
+      'Authorization': `OAuth ${accessToken}`
     }
   });
-  if (response.message === 'undefined') {
-    writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
-    return
-  }
-  if (response.status === 200) {
-    return
-  } else if (response.status === 400) {
-    writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
-    return
-  } else if (response.status === 401) {
+  if (response.status === 401) {
     await refreshAccessToken();
-    await validateAccessToken();
+    return;
+  } else if (response.status === 200) {
+    return;
+  } else if (response.status === 400) {
+    await storeTwitchAuthToken(null, null, null);
+    writeToLogFile('error', 'Access token not found, reauthenticate with Twitch.');
+    return;
   }
 }
 
 // Function to refresh the access token
 async function refreshAccessToken() {
+  writeToLogFile('info', 'Refreshing access token.');
   try {
     const refreshToken = await getRefreshToken();
     const params = new URLSearchParams();

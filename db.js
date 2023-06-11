@@ -129,9 +129,9 @@ async function storeTwitchAuthToken(token, refreshToken, expiresIn) {
     const options = { upsert: true };
     const result = await collection.updateOne(filter, update, options);
     if (result.upsertedCount === 1) {
-      writeToLogFile("New Twitch auth token data stored successfully.");
+      writeToLogFile("info", "New Twitch auth token data stored successfully.");
     } else {
-      writeToLogFile("Existing Twitch auth token data updated successfully.");
+      writeToLogFile("info", "Existing Twitch auth token data updated successfully.")
     }
   } catch (error) {
     writeToLogFile('error', `Error storing Twitch auth token data: ${error}`);
@@ -525,6 +525,17 @@ async function markAllNotificationsAsRead() {
     );
   } catch (error) {
     writeToLogFile('error', `Error marking all notifications as read: ${error}`);
+  }
+}
+
+// Function to delete all notifications
+async function deleteAllNotifications() {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection("notifications");
+    await collection.deleteMany({});
+  } catch (error) {
+    writeToLogFile('error', `Error deleting all notifications: ${error}`);
   }
 }
 
@@ -1333,5 +1344,5 @@ export {
   getAPIKey, getSettings, updateStreamer, updateLiveRequired, updateVideoFavoriteStatus, deleteVideo, getAllVideos, getVideosByTag, getAllFavoriteVideos, deleteFilesByStreamId, storeDiscordWebhookURL, getDiscordWebhookURL, updateDiscordToggle,
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
-  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings, markAllNotificationsAsRead
+  removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings, markAllNotificationsAsRead, deleteAllNotifications
 }; 
