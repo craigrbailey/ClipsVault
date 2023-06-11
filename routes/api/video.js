@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {removeTagFromStream, removeTagFromVideo } from '../../db.js';
+import {removeTagFromStream, removeTagFromVideo, getVideosPaginated } from '../../db.js';
 import { serverKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 import { validateApiKey } from '../../utilities/middleware.js';
@@ -24,6 +24,19 @@ router.delete('/', validateApiKey, async (req, res) => {
     } catch (error) {
         writeToLogFile('info', 'Error removing tag:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/', async (req, res) => {
+    console.log('get request received');
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 10;
+        const videos = await getVideosPaginated(page, size);
+        res.json(videos);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+        console.error('Error:', error);
     }
 });
 

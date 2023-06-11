@@ -14,7 +14,7 @@
     flex: 0 0 20%;
     box-sizing: border-box;
     position: relative;
-    display: inline-flex;
+    display: hidden;
     flex-direction: column;
     align-items: center;
     cursor: pointer;
@@ -24,7 +24,25 @@
     transition: transform 0.2s;
     overflow: hidden;
     z-index: 50;
+    transition: all 0.2s;
+    opacity: 0; /* Start invisible */
+    animation-name: fade-in;
+    animation-duration: 1s; /* Adjust this value to change the speed of the animation */
+    animation-fill-mode: forwards; /* Ensures the final state of the animation (opacity: 1) persists */
+    animation-delay: 1s;
 }
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        display: inline-flex;
+    }
+}
+
 
 .video-container {
     position: relative;

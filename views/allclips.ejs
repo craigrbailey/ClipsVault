@@ -80,20 +80,11 @@
                     </form>
                 </div>
                 <div class="clips-interface">
-                    <% for (let i=0; i < videos.length; i++) { %>
-                        <div class="clip" data-id="<%= videos[i]._id %>">
-                            <div class="video-container">
-                                <img class="clip-image" src="<%= videos[i].categoryImg %>" alt="">
-                                <video src="<%= videos[i].file %>"></video>
-                                <span class="clip-duration">
-                                    <%= videos[i].length %>
-                                </span>
-                            </div>
-                        </div>
-                        <% } %>
                 </div>
         </section>
         <script>
+            let currentPageNumber = 1;
+            const pageSize = 20;
             const videos = document.querySelectorAll('.clip video');
             const categoryDropdown = document.querySelector('.category-dropdown-menu');
             const dropdownSelectorText = document.querySelector('.category-dropdown-selector-text');
@@ -114,6 +105,65 @@
                     link.classList.add('selected');
                 }
             }
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                let currentPageNumber = 1;
+                const pageSize = 10;
+                loadMoreData();
+            });
+
+            window.onscroll = function () {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                    loadMoreData();
+                }
+            };
+
+            function loadMoreData() {
+                fetch(`/api/clip?page=${currentPageNumber}&size=${pageSize}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        let clipsInterface = document.querySelector('.clips-interface');
+                        console.log(clipsInterface);
+                        data.forEach((video, index) => {
+                            // Check if an element with the same video id exists in the DOM
+                            if (!document.querySelector(`.clip[data-id='${video._id}']`)) {
+                                let div = document.createElement('div');
+                                div.classList.add('clip');
+                                div.dataset.id = video._id;
+                                div.style.animationDelay = `${index * 0.2}s`;
+                                let innerHTML = `
+                        <div class="video-container">
+                            <img class="clip-image" src="${video.categoryImg}" alt="">
+                            <video src="${video.file}"></video>
+                            <span class="clip-duration">
+                                ${video.length}
+                            </span>
+                        </div>`;
+
+                                div.innerHTML = innerHTML;
+
+                                // Add an event listener to go to /video${videoId} page
+                                div.addEventListener('click', function () {
+                                    window.location.href = `/video?videoId=${video._id}`;
+                                });
+                                div.addEventListener('mouseenter', () => {
+                                    div.querySelector('video').setAttribute('controls', 'controls');
+                                    div.querySelector('video').play();
+                                });
+                                div.addEventListener('mouseleave', () => {
+                                    div.querySelector('video').removeAttribute('controls');
+                                    div.querySelector('video').pause();
+                                });
+                                clipsInterface.appendChild(div);
+                            }
+                        });
+                        currentPageNumber++;
+                    });
+            }
+
+
+
 
             tagsList.addEventListener('click', (event) => {
                 if (event.target.classList.contains('fa-circle-xmark')) {

@@ -1094,6 +1094,20 @@ async function getStreamsPaginated(page, size) {
   }
 }
 
+async function getVideosPaginated(page, size) {
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('videos');
+    const skip = (page - 1) * size; 
+    const documents = await collection.find().sort({ _id: -1 }).skip(skip).limit(size).toArray();
+    return documents;
+  } catch (err) {
+    writeToLogFile('error', `Error retrieving streams: ${err}`);
+    return [];
+  }
+}
+
+
 // Function to get all streams
 async function getAllVideos() {
   const db = await connectToMongoDB();
@@ -1365,5 +1379,5 @@ export {
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
   removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings, markAllNotificationsAsRead, deleteAllNotifications,
-  getStreamsPaginated
+  getStreamsPaginated, getVideosPaginated
 }; 

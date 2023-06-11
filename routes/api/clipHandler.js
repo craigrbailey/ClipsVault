@@ -2,7 +2,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
-import { getStreamById, insertVideo, addVideoToStream, deleteVideo, updateVideoCategory } from '../../db.js';
+import { getStreamById, insertVideo, addVideoToStream, deleteVideo, updateVideoCategory, getVideosPaginated } from '../../db.js';
 import { createFolder, getVideoLength } from '../../utilities/system.js';
 import { ObjectId } from 'mongodb';
 import { validateApiKey } from '../../utilities/middleware.js';
@@ -69,4 +69,15 @@ router.put('/', validateApiKey, async (req, res) => {
     }
 });
 
+router.get('/', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 10;
+        const videos = await getVideosPaginated(page, size);
+        res.json(videos);
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error' });
+        console.error('Error:', error);
+    }
+});
 export default router;
