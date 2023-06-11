@@ -117,7 +117,6 @@
                     .then(data => {
                         console.log(data);
                         let clipsInterface = document.querySelector('.clips-interface');
-                        console.log(clipsInterface);
                         data.forEach((video, index) => {
                             // Check if an element with the same video id exists in the DOM
                             if (!document.querySelector(`.clip[data-id='${video._id}']`)) {
@@ -154,9 +153,6 @@
                         currentPageNumber++;
                     });
             }
-
-
-
 
             tagsList.addEventListener('click', (event) => {
                 if (event.target.classList.contains('fa-circle-xmark')) {

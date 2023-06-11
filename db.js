@@ -1094,12 +1094,13 @@ async function getStreamsPaginated(page, size) {
   }
 }
 
+// Function to get videos paginated
 async function getVideosPaginated(page, size) {
   const db = await connectToMongoDB();
   try {
     const collection = db.collection('videos');
     const skip = (page - 1) * size; 
-    const documents = await collection.find().sort({ _id: -1 }).skip(skip).limit(size).toArray();
+    const documents = await collection.find({ _id: { $ne: 'categories' } }).sort({ _id: -1 }).skip(skip).limit(size).toArray();
     return documents;
   } catch (err) {
     writeToLogFile('error', `Error retrieving streams: ${err}`);

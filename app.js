@@ -54,13 +54,13 @@ app.use(
 const __dirname = dirname(fileURLToPath(import.meta.url));
 export { __dirname };
 app.use(express.static(path.join(__dirname, './public')));
-app.use('/clips', express.static(path.join(__dirname, 'clips')));
-app.use('/recordings', express.static(path.join(__dirname, 'recordings')));
+app.use('/clips', express.static(path.join(__dirname, '../recordings/clips')));
+app.use('/recordings', express.static(path.join(__dirname, '../recordings')));
 app.set('views', path.join(__dirname, './views'));
 app.set('view engine', 'ejs');
 
 // Create directories if they don't exist
-const folders = ['./uploads', './clips', './trash', './logs', './recordings', './models', './encoding'];
+const folders = ['../recordings', './uploads', './trash', './logs', '../recordings/clips', './encoding'];
 for (const folder of folders) {
   if (!fs.existsSync(folder)) {
     fs.mkdirSync(folder);

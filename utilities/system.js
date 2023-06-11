@@ -40,7 +40,7 @@ async function createFolder(dateString) {
   const month = momentObj.format('MMMM');
   const day = momentObj.date();
   const dayOfWeek = momentObj.format('dddd');
-  const yearFolder = path.join('clips', year.toString());
+  const yearFolder = path.join('../recordings/clips', year.toString());
   const monthFolder = path.join(yearFolder, month);
   const dayFolder = path.join(monthFolder, `${day} - ${dayOfWeek}`);
   if (!fs.existsSync(yearFolder)) {
