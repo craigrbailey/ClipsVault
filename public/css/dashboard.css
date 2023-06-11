@@ -1,3 +1,13 @@
+.main-interface {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+}
+
 .latest-container {
   text-align: center;
   color: white;
@@ -6,6 +16,11 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .latest-container h3 {
@@ -14,6 +29,7 @@
   font-size: 24px;
   font-weight: bold;
   text-align: center;
+  width: 100%;
 }
 
 .latest-streams-container {

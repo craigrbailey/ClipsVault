@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-  uri: 'mongodb://192.168.1.31:27017/data',
+  uri: `mongodb://192.168.1.31:27017/${process.env.MONGO_INITDB_DATABASE}`,
   collection: 'sessions',
   ttl: 365 * 24 * 60 * 60,
 });
@@ -41,7 +41,7 @@ store.on('error', (error) => {
 });
 app.use(
   session({
-    secret: 'your-secret-key',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: store,

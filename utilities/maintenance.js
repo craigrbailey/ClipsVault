@@ -65,11 +65,18 @@ async function maintenace() {
 }
 
 async function initiateMaintenance() {
-    const maintenaceSchedule = await getCleanupTime();
-    const cronSchedule = convertMilitaryTimeToCron(maintenaceSchedule);
-    cron.schedule(String(cronSchedule), () => {
-        maintenace();
-    });
+    try {
+        const maintenaceSchedule = await getCleanupTime();
+        if (maintenaceSchedule === 'undefined') {
+            return;
+        }
+        const cronSchedule = convertMilitaryTimeToCron(maintenaceSchedule);
+        cron.schedule(String(cronSchedule), () => {
+            maintenace();
+        });
+    } catch (error) {
+        console.error(`Error in initiateMaintenance: ${error}`);
+    }
 }
 
 export { initiateMaintenance }
