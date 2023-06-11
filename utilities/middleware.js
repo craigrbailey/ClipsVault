@@ -11,7 +11,7 @@ async function validateApiKey(req, res, next) {
     if (apiKey === userApiKey || apiKey === serverApiKey) {
         next();
     } else {
-        notificationHandler('warining', `Unauthorized request received from ${req.ip}, 'warning`)
+        notificationHandler('warining', `Unauthorized request received from ${req.ip}`, 'warning')
         writeToLogFile('error', `Unauthorized request received from ${req.ip}`)
         return res.status(401).json({ error: 'Unauthorized' });
     }

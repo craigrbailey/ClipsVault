@@ -1229,7 +1229,7 @@ async function insertClip(length, start, tags, category, categoryImg) {
     const clipsCollection = db.collection('clips');
     const clipDocument = {
       length: length,
-      start: start,
+      start: (start-5),
       tags: tags,
       category: category,
       categoryImg: categoryImg,
