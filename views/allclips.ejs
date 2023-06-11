@@ -99,6 +99,12 @@
                 }
             }
 
+            function formatStreamLength(lengthInSeconds) {
+                const hours = Math.floor(lengthInSeconds / 3600);
+                const minutes = Math.floor((lengthInSeconds % 3600) / 60);
+                const seconds = lengthInSeconds % 60;
+                return `${hours}h ${minutes}m ${seconds}s`;
+            }
             document.addEventListener('DOMContentLoaded', async () => {
                 let currentPageNumber = 1;
                 const pageSize = 10;
@@ -111,6 +117,7 @@
                 }
             };
 
+            // Load more data
             function loadMoreData() {
                 fetch(`/api/clip?page=${currentPageNumber}&size=${pageSize}`)
                     .then(response => response.json())
@@ -118,12 +125,12 @@
                         console.log(data);
                         let clipsInterface = document.querySelector('.clips-interface');
                         data.forEach((video, index) => {
-                            // Check if an element with the same video id exists in the DOM
                             if (!document.querySelector(`.clip[data-id='${video._id}']`)) {
                                 let div = document.createElement('div');
                                 div.classList.add('clip');
                                 div.dataset.id = video._id;
                                 div.style.animationDelay = `${index * 0.2}s`;
+                                video.length = formatStreamLength(video.length);
                                 let innerHTML = `
                         <div class="video-container">
                             <img class="clip-image" src="${video.categoryImg}" alt="">
@@ -132,10 +139,7 @@
                                 ${video.length}
                             </span>
                         </div>`;
-
                                 div.innerHTML = innerHTML;
-
-                                // Add an event listener to go to /video${videoId} page
                                 div.addEventListener('click', function () {
                                     window.location.href = `/video?videoId=${video._id}`;
                                 });
@@ -195,6 +199,7 @@
 
             form.addEventListener('change', searchClips);
 
+            // Create a video clip div
             function createVideoClipDiv(video) {
                 const div = document.createElement('div');
                 div.classList.add('clip');
@@ -231,6 +236,7 @@
                 return div;
             }
 
+            // Add tag to the list
             function addTag(tag) {
                 const tagsList = document.querySelector('.tags-list');
                 const tagSpan = document.createElement('span');
@@ -245,6 +251,7 @@
                 });
             }
 
+            // Search clips
             function searchClips() {
                 const tags = Array.from(document.querySelectorAll('.tags-list span')).map(span => {
                     const tagText = span.textContent.replace(span.querySelector('i').outerHTML, '');

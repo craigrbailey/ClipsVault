@@ -1108,7 +1108,6 @@ async function getVideosPaginated(page, size) {
   }
 }
 
-
 // Function to get all streams
 async function getAllVideos() {
   const db = await connectToMongoDB();
