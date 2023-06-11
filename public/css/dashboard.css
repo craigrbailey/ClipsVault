@@ -2,6 +2,10 @@
   text-align: center;
   color: white;
   margin-bottom: 20px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .latest-container h3 {
@@ -16,7 +20,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: start;
   width: 100%;
   max-width: 100%;
   gap: 10px;
@@ -53,7 +57,7 @@ a {
   display: flex;
   flex: 0 0 15vh;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   width: 15vh;
   border-radius: 10px;
@@ -61,6 +65,11 @@ a {
   transition: transform 0.2s;
   margin-bottom: 10px;
   text-decoration: none;
+  text-align: center;
+}
+
+.stream:hover {
+  transform: scale(1.05);
 }
 
 .stream-img-container {
@@ -80,12 +89,12 @@ a {
 
 #stream-duration {
   position: absolute;
-  bottom: -30px;
-  right: 50%;
-  transform: translateX(50%);
-  min-width: 100%;
-  max-width: 100%;
+  bottom: 5px;
+  right: 5px;
   font-size: 12px;
+  min-width: 35px;
+  font-weight: bold;
+  border-radius: 5px;
   text-align: center;
   color: rgb(255, 255, 255);
   background-color: rgb(0, 0, 0, 0.5);
@@ -94,24 +103,25 @@ a {
   transition: bottom 0.2s;
 }
 
-.stream:hover #stream-duration {
-  bottom: 0;
-}
-
 #game-title {
   font-size: 16px;
   font-weight: bold;
-  text-align: center;
   text-decoration: none;
   color: white;
+  width: 100%;
+  flex-grow: 1;
+  /* min-height: 3.2em; */
+  text-align: center; 
 }
 
 #stream-date {
   font-size: 12px;
-  text-align: center;
+  text-align: center; 
   color: rgb(124, 124, 124);
   max-width: 175px;
+  width: 100%;
 }
+
 
 #clips-amount {
   position: absolute;

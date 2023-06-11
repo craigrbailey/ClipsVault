@@ -10,6 +10,7 @@ import { notificationHandler } from './utilities/notificationHandler.js';
 
 
 const uri = 'mongodb://192.168.1.31:27017';
+// const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${encodeURIComponent(process.env.MONGO_INITDB_ROOT_PASSWORD)}@192.168.1.31:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`;
 const client = new MongoClient(uri);
 let dbConnection = null;
 
@@ -18,8 +19,7 @@ async function connectToMongoDB() {
   try {
     if (!dbConnection) {
       await client.connect();
-      const databaseName = 'data';
-      const db = client.db(databaseName);
+      const db = client.db(process.env.MONGO_INITDB_DATABASE);
       dbConnection = db;
     }
 
