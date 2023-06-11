@@ -56,6 +56,13 @@
         }
       };
 
+      function formatStreamLength(lengthInSeconds) {
+        const hours = Math.floor(lengthInSeconds / 3600);
+        const minutes = Math.floor((lengthInSeconds % 3600) / 60);
+        const seconds = lengthInSeconds % 60;
+        return `${hours}h ${minutes}m ${seconds}s`;
+      }
+
       function loadMoreData() {
         fetch(`/api/streams?page=${currentPageNumber}&size=${pageSize}`)
           .then(response => response.json())
@@ -64,6 +71,7 @@
             let clipsInterface = document.querySelector('.latest-streams-container');
             console.log(clipsInterface);
             data.forEach(video => {
+              video.length = formatStreamLength(video.length);
               let streamElement = `
                     <a class="stream" href="/stream?streamId=${video._id}">
                       <div class="stream-img-container">
