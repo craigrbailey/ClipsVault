@@ -53,6 +53,10 @@
     opacity: 0.6;
 }
 
+.clip:hover .clip-duration {
+    display: none;
+}
+
 .clip:hover .clip-image {
     opacity: 0;
 }
