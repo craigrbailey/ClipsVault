@@ -129,7 +129,6 @@ document.querySelector('form').addEventListener('submit', function (e) {
 });
 
 window.onload = function () {
-    console.log('Page loaded');
     var dateInput = document.getElementById('streamDate');
     var date = new Date();
     var day = ("0" + date.getDate()).slice(-2);

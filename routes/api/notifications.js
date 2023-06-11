@@ -45,6 +45,13 @@ router.put('/', async (req, res) => {
     } catch (error) {
       res.status(500).json({ success: false, message: "Internal Server Error" });
     }
+  } else {
+    try {
+      await markNotificationAsRead(id);
+      res.status(200).json({ success: true, message: "Notification marked as read" });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
   }
 });
 

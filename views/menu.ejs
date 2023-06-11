@@ -26,6 +26,7 @@
             <div class="profile-settings">
                 <% if (userData) { %>
                     <img src="<%= userData.profile_image_url %>" alt="" />
+                    <h4><%= userData.display_name %></h4>
                     <% } else { %>
                         <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg" />
                         <% } %>
@@ -86,7 +87,6 @@
 
     // Function to create notification item
     function createNotificationItem(notification) {
-        console.log(notification);
         const { _id, notification: text, read, date, level } = notification;
         const notificationItem = document.createElement('div');
         notificationItem.classList.add('notification-item');
@@ -106,9 +106,13 @@
         if (read) {
             notificationItem.classList.add('read');
         }
+        if (!read) {
+            notificationItem.addEventListener('mouseenter', () => {
+                acknowledgeNotification(_id);
+            });
+        }
         notificationItem.appendChild(notificationElement);
         notificationItem.appendChild(notificationDateTime);
-
         return notificationItem;
     }
 
@@ -122,10 +126,32 @@
         fetch('/api/notifications', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log('Notification deleted successfully:', data);
             })
             .catch(error => {
                 console.error('Error deleting notification:', error);
+            });
+    }
+
+    // Function to acknowledge notification
+    function acknowledgeNotification(notificationId) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: notificationId })
+        };
+        fetch('/api/notifications', requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                const notificationItem = document.querySelector(`[data-id="${notificationId}"]`);
+                notificationItem.classList.add('read');
+                const count = parseInt(notificationCount.textContent);
+                notificationCount.textContent = count - 1;
+                if (count === 1) {
+                    notificationCount.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error acknowledging notification:', error);
             });
     }
 

@@ -502,7 +502,6 @@ async function removeNotificationById(notificationId) {
 
 // Function to mark a notification as read
 async function markNotificationAsRead(notificationId) {
-  console.log('Marking notification as read')
   const db = await connectToMongoDB();
   try {
     const collection = db.collection("notifications");
@@ -535,11 +534,25 @@ async function getAllNotifications() {
   try {
     const collection = db.collection("notifications");
     const notifications = await collection.find().toArray();
+    
+    // Sort the notifications based on level and date/time
+    notifications.sort((a, b) => {
+      if (a.level === 'warning' && b.level !== 'warning') {
+        return -1; // Place 'warning' level first
+      } else if (a.level !== 'warning' && b.level === 'warning') {
+        return 1;
+      } else {
+        // Sort by date/time in descending order (newest first)
+        return new Date(b.date) - new Date(a.date);
+      }
+    });
+    
     return notifications;
   } catch (error) {
     writeToLogFile('error', `Error retrieving notifications: ${error}`);
   }
 }
+
 
 //Function to delete all notifications from the database that are older than a set argument
 async function deleteOldNotifications(days) {
@@ -566,7 +579,7 @@ async function getAllQueueItems() {
 }
 
 // Functiont to create a new stream document
-async function insertStream(date, category, backgroundImg, captions) {
+async function insertStream(date, category, backgroundImg) {
   try {
     const collection = dbConnection.collection("streams");
     const document = {
@@ -576,11 +589,10 @@ async function insertStream(date, category, backgroundImg, captions) {
       category: category,
       background_img: backgroundImg,
       tags: [],
-      captions: captions,
-      entire_stream: 'none',
+      entire_stream: null,
     };
     const result = await collection.insertOne(document);
-    writeToLogFile('info', `Stream document created successfully. ID: ${result.insertedId}`);
+    writeToLogFile('info', `Created stream successfully. ID: ${result.insertedId}`);
     return result.insertedId;
   } catch (error) {
     writeToLogFile('error', `Error creating stream in database: ${error}`);
@@ -1127,6 +1139,7 @@ async function deleteVideo(videoId) {
       { _id: video.stream_id },
       { $pull: { videos: objectId } }
     );
+    notificationHandler('info', `Video deleted successfully. ID: ${videoId}`);
     writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
   } catch (error) {
     writeToLogFile('error', `Error removing stream: ${error}`);

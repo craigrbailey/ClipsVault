@@ -182,6 +182,14 @@ body {
     opacity: 1;
 }
 
+.profile-settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
 .profile-settings img {
     width: 40px;
     border-radius: 50%;

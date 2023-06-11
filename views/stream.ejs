@@ -26,11 +26,11 @@
           <span class="label">Category:</span>
           <input class="edit-stream-input" id="streamCategory" type="text" value="<%= streamData.category %>" disabled>
           <div id="suggestions"></div>
-          <% if (streamData.length !== 0) { %>
+          <% if (streamData.length !==0) { %>
             <span class="label">Duration:</span>
             <input class="edit-stream-input" id="streamDuration" type="text" value="<%= streamData.length %>" disabled>
-          <% } %>
-          <!-- <div class="stream-tags">
+            <% } %>
+              <!-- <div class="stream-tags">
             <span class="label">Tags</span>
             <div class="tag-list" id="tag-list">
               <% for (let i=0; i < streamData.tags.length; i++) { %>
@@ -43,32 +43,32 @@
               <input type="text" id="tag-input" placeholder="Add a tag">
             </form>
           </div> -->
-          <div class="stream-actions">
-            <button class="action-button" id="delete-stream">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-            <button class="action-button" id="download-stream">
-              <i class="fa-solid fa-download"></i>
-            </button>
-            <button class="action-button" id="add-video">
-              <i class="fa-solid fa-plus"></i>
-            </button>
-            <button class="action-button" id="edit-stream">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
-          </div>
-          <form action="">
-            <h2>Add A Video</h2>
-            <div class="form-group upload-area" onclick="document.getElementById('fileUpload').click()">
-              <label>Upload Files (Click or Drag and Drop)</label>
-              <input type="file" id="fileUpload" name="fileUpload" multiple required style="display: none"
-                onchange="displayFiles(this)">
-            </div>
-            <div class="fileList">
-              <span></span>
-            </div>
-            <button type="submit" class="btn btn-success">Add</button>
-          </form>
+              <div class="stream-actions">
+                <button class="action-button" id="delete-stream">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+                <button class="action-button" id="download-stream">
+                  <i class="fa-solid fa-download"></i>
+                </button>
+                <button class="action-button" id="add-video">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+                <button class="action-button" id="edit-stream">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </button>
+              </div>
+              <form action="">
+                <h2>Add A Video</h2>
+                <div class="form-group upload-area" onclick="document.getElementById('fileUpload').click()">
+                  <label>Upload Files (Click or Drag and Drop)</label>
+                  <input type="file" id="fileUpload" name="fileUpload" multiple required style="display: none"
+                    onchange="displayFiles(this)">
+                </div>
+                <div class="fileList" id="fileList">
+                  <span></span>
+                </div>
+                <button type="submit" class="btn btn-success">Add</button>
+              </form>
         </div>
       </div>
       <div class="clips-interface">
@@ -86,7 +86,6 @@
           </a>
           <% } %>
       </div>
-
     </div>
 
     <script src="/js/base.js"></script>
@@ -155,13 +154,11 @@
       }
 
       function handleConfirm() {
-        console.log('Sending Form');
         fetch(`/api/stream/${streamId}`, {
           method: 'DELETE'
         })
           .then(response => response.json())
           .then(data => {
-            console.log(data.success);
             if (data.success === true) {
               window.location.href = '/';
             }
@@ -173,7 +170,6 @@
         confirmationWindow.style.display = 'none';
       }
       deleteStreamButton.addEventListener('click', confirmDeleteStream);
-
 
       function displayFiles(input) {
         var fileList = document.getElementById('fileList');
@@ -237,7 +233,6 @@
         })
           .then(response => response.json())
           .then(data => {
-            console.log('Success:', data);
             if (data.success) {
               window.location.reload();
               selectedFiles = [];
@@ -254,7 +249,6 @@
         if (updatedImg) {
           return;
         };
-        console.log(gameName);
         const response = await fetch('/api/categorysearch', {
           method: 'POST',
           headers: {
@@ -339,7 +333,6 @@
           console.log('Error updating stream');
           return;
         } else {
-          console.log('Success updating stream');
           return;
         }
       }
