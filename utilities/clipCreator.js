@@ -5,12 +5,15 @@ import { connectToMongoDB } from '../db.js';
 
 ffmpeg.setFfmpegPath('ffmpeg/bin/ffmpeg.exe');
 
+// Function to create clips
 async function createClips(streamFile) {
     const db = await connectToMongoDB();
     const clipsCollection = db.collection('clips');
     try {
         const cursor = clipsCollection.find();
-        const count = 0;
+        if (clipsCollection.countDocuments === 0) {
+            return;
+        }
         while (await cursor.hasNext()) {
             const clip = await cursor.next();
 

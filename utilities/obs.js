@@ -5,14 +5,13 @@ import { getCurrentDate, createFolder, getFileSize } from './system.js';
 import { twitchLive } from './twitch.js';
 import { writeToLogFile } from './logging.js';
 import fs from 'fs';
-import { createClips } from './clip-creator.js';
+import { createClips } from './clipCreator.js';
 
 let obs;
 const obsConnection = { status: false };
 let live = false;
-let livedata;
+let livedata = null;
 let streamId;
-let videos = [];
 let length = 0;
 let streamFolder;
 let entireStream;
@@ -25,7 +24,6 @@ async function connectToOBS() {
   const connect = async () => {
     try {
       const obsSettings = await getOBSSettings();
-
       if (obsSettings && obsSettings.ip !== 'none') {
         const { ip, password, port } = obsSettings;
         await obs.connect(`ws://${ip}:${port}`, password);
@@ -48,7 +46,6 @@ async function connectToOBS() {
         console.error('OBS Connection Failed: Invalid URL');
         return;
       }
-
       obsConnection.status = false;
       setTimeout(connect, 10000);
     }
@@ -70,7 +67,6 @@ function registerEventListeners() {
       const fileName = path.basename(event.outputPath);
       startRecording(fileName);
     } else if (event.outputState == 'OBS_WEBSOCKET_OUTPUT_STOPPED') {
-      const fileName = path.basename(event.outputPath);
       setTimeout(stopRecording(),
       5000);
     }
@@ -92,7 +88,7 @@ function registerEventListeners() {
     }
   });
 }
-
+// Function to start recording
 async function startRecording(filename, count = 0) {
   const settings = await getGeneralSettings();
   const liveRequired = settings.live_required;
@@ -118,7 +114,11 @@ async function startRecording(filename, count = 0) {
   }
 }
 
+// Function to stop recording
 async function stopRecording() {
+  if (livedata === null) {
+    return;
+  }
   const settings = await getGeneralSettings();
   const liveRequired = settings.live_required;
   const size = await getFileSize(`${process.cwd()}\\recordings\\${entireStream}`);
@@ -138,12 +138,14 @@ async function stopRecording() {
   }
 }
 
+// Function to end stream
 async function endStream() {
   writeToLogFile('info', 'Stream Ended');
   live = false;
   await updateStreamLength(streamId, length);
 }
 
+// Function to start stream
 async function startStream() {
   if (live) {
     return;
@@ -159,10 +161,10 @@ async function startStream() {
     captions: 'none'
   }
   streamId = await insertStream(livedata.date, livedata.category, livedata.backgroundimg, livedata.captions);
-  videos = [];
   length = 0;
 }
 
+// Function to start timer
 function startTimer() {
   let timer = setInterval(() => {
     if (live) {
@@ -173,4 +175,5 @@ function startTimer() {
   }, 1000); 
 }
 
+// Export functions
 export { connectToOBS, obsConnection, entireStream, clipFile, length };
