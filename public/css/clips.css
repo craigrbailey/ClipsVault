@@ -7,10 +7,11 @@
     flex-wrap: wrap;
     gap: 10px;
     margin-left: 350px;
+    width: 100%;
 }
 
 .clip {
-    flex: 0 0 25%;
+    flex: 0 0 20%;
     box-sizing: border-box;
     position: relative;
     display: inline-flex;
