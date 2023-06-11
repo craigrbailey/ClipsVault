@@ -17,13 +17,7 @@ Clips Vault is a powerful application designed to help you sort and manage clips
 
 [![Tags](https://img.shields.io/badge/feature-Tags-green.svg)]()
 
-Tags allow you to categorize your clips based on various themes, events, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them or maybe create montages of every funny moment. 
-
-### 2. Queue
-
-[![Queue](https://img.shields.io/badge/feature-Queue-blue.svg)]()
-
-Keep track of which clips you still need to edit. By adding clips to the queue, streamers can easily prioritize and manage their editing tasks.
+Tags allow you to categorize your clips based on various themes, events, or any other criteria you find relevant. Easily assign tags to your clips to create personalized collections and quickly locate specific clips whenever you want to revisit them or maybe create montages of every funny moment.
 
 ### 3. Notifications
 
@@ -35,19 +29,19 @@ Stay informed and updated with the Notifications. Receive notifications directly
 
 [![ClipIt](https://img.shields.io/badge/feature-ClipIt-red.svg)]()
 
-Send a POST request to the application, providing the clip duration and any relevant tags. The application will process the request and create a clip based on the provided parameters. Automatically create clips every time you get raided, or a gifted bomb of over 10 or when a channel point is redeemed. 
+Send a POST request to the application, providing the clip duration and any relevant tags. The application will process the request and create a clip based on the provided parameters. Automatically create clips every time you get raided, or a gifted bomb of over 10 or when a channel point is redeemed.
 
 ```
 headers: {
     'Content-Type': 'application/json',
     'x-api-key': 'your-api-key'
-},
+}
+
 body: {
-  "length": 20,
-  "tags": ["gaming", "funny", "raid"]
+    "clipLength": 20,
+    "tags": ["gaming", "funny", "raid"]
 }
 ```
-
 
 ### 4. Favorite Clips
 
@@ -61,7 +55,7 @@ Mark your most memorable clips as favorites. Easily access and revisit your favo
 
 The Search Functionality in Clips Vault empowers streamers to quickly locate clips based on tags, dates, favorites, and categories. Effortlessly navigate through your clip library, create personalized collections, and compile highlight reels, enhancing the overall content management experience.
 
-### 7. Edit Stream Details
+### 7. Edit Stream and Clip Details
 
 ![Edit Stream Details](https://img.shields.io/badge/feature-Edit%20Stream%20Details-green.svg)
 
