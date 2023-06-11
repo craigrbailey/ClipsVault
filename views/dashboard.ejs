@@ -17,51 +17,77 @@
 
 <body>
   <%- include('menu.ejs') %>
-  <section>
-    <div class="main-interface">
-      <div class="latest-container">
-        <h3>Latest Streams</h3>
-        <div class="latest-streams-container">
-          <a href="/addstream">
-            <div class="stream" id="add-stream">
-              <i class="fa-solid fa-plus"></i>
-              <span>Add A Stream</span>
-            </div>
-          </a>
-          <% for (let i=0; i < streams.length; i++) { %>
-            <a class="stream" href="/stream?streamId=<%= streams[i]._id %>">
-              <div class="stream-img-container">
-                <img src="<%= streams[i].background_img %>" alt="" />
-                <span id="clips-amount">
-                  <%= streams[i].videos.length %>
-                </span>
-                <span id="stream-duration">
-                  <%= streams[i].length %>
-                </span>
+    <section>
+      <div class="main-interface">
+        <div class="latest-container">
+          <h3>Latest Streams</h3>
+          <div class="latest-streams-container">
+            <a href="/addstream">
+              <div class="stream" id="add-stream">
+                <i class="fa-solid fa-plus"></i>
+                <span>Add A Stream</span>
               </div>
-              <span id="game-title">
-                <%= streams[i].category %>
-              </span>
-              <span id="stream-date">
-                <%= streams[i].date %>
-              </span>
-            </a>
-            <% } %>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
-  <script src="/js/dashboard.js"></script>
-  <script>
-    var currentPage = window.location.href;
-    var menuLinks = document.getElementsByClassName('menu-link');
-    for (var i = 0; i < menuLinks.length; i++) {
-      var link = menuLinks[i];
-      if (currentPage.includes('localhost') && link.textContent === 'Dashboard') {
-        link.classList.add('selected');
+    </section>
+    <script src="/js/dashboard.js"></script>
+    <script>
+      let currentPageNumber = 1;
+      const pageSize = 30;
+      var currentPage = window.location.href;
+      var menuLinks = document.getElementsByClassName('menu-link');
+      for (var i = 0; i < menuLinks.length; i++) {
+        var link = menuLinks[i];
+        if (currentPage.includes('localhost') && link.textContent === 'Dashboard') {
+          link.classList.add('selected');
+        }
       }
-    }
-  </script>
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        let currentPageNumber = 1;
+        const pageSize = 10;
+        loadMoreData();
+      });
+
+      window.onscroll = function () {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          loadMoreData();
+        }
+      };
+
+      function loadMoreData() {
+        fetch(`/api/streams?page=${currentPageNumber}&size=${pageSize}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            let clipsInterface = document.querySelector('.latest-streams-container');
+            console.log(clipsInterface);
+            data.forEach(video => {
+              let streamElement = `
+                    <a class="stream" href="/stream?streamId=${video._id}">
+                      <div class="stream-img-container">
+                        <img src="${video.background_img}" alt="" />
+                        <span id="clips-amount">
+                          ${video.videos.length}
+                        </span>
+                        <span id="stream-duration">
+                          ${video.length}
+                        </span>
+                      </div>
+                      <span id="game-title">
+                        ${video.category}
+                      </span>
+                      <span id="stream-date">
+                        ${video.date}
+                      </span>
+                    </a>`;
+              clipsInterface.insertAdjacentHTML('beforeend', streamElement);
+            });
+            currentPageNumber++;
+          });
+      }
+    </script>
 </body>
 
 </html>

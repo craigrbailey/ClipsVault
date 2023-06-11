@@ -99,6 +99,7 @@ import addStreamView from './routes/addstream.js';
 import { writeToLogFile } from './utilities/logging.js';
 import videoHandlerRouter from './routes/api/clipHandler.js';
 import userDataRouter from './routes/api/userData.js';
+import streamRouter from './routes/api/streams.js';
 
 // Create API router
 const apiRouter = express.Router();
@@ -116,6 +117,7 @@ apiRouter.use('/queue', queueApiRouter);
 apiRouter.use('/settings', settingsApiRouter);
 apiRouter.use('/clip', videoHandlerRouter);
 apiRouter.use('/userdata', userDataRouter);
+apiRouter.use('/streams', streamRouter);
 
 // Create regular router
 const regularRouter = express.Router();
