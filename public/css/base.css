@@ -115,8 +115,8 @@ body {
     z-index: 99;
 }
 
-.read {
-    color: #c2c2c2;
+.notifications .read {
+    opacity: 0.5;
 }
 
 .notifications {
@@ -179,6 +179,7 @@ body {
 .notification-item:hover {
     background-color: #333;
     color: #fff;
+    opacity: 1;
 }
 
 .profile-settings img {

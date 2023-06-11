@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import {, removeTagFromStream, removeTagFromVideo } from '../../db.js';
+import {removeTagFromStream, removeTagFromVideo } from '../../db.js';
 import { serverKey } from '../../utilities/api-key.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 import { validateApiKey } from '../../utilities/middleware.js';

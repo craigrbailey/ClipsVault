@@ -10,7 +10,7 @@
         <div class="middle-section">
             <a href="/" class="menu-link">Dashboard</a>
             <a href="/allclips" class="menu-link">Clips</a>
-            <a href="/queue" class="menu-link">Queue</a>
+            <!-- <a href="/queue" class="menu-link">Queue</a> -->
             <a href="settings" class="menu-link">Settings</a>
         </div>
         <div class="right-section">
@@ -40,6 +40,7 @@
     const notifications = document.querySelector('.notifications');
     let hideTimeout;
 
+    // Register event listeners
     acknowledgeButton.addEventListener('click', () => {
         acknowledgeAll();
     });
@@ -53,13 +54,13 @@
         }, 1100);
     });
 
-
     notificationContainer.addEventListener('mouseenter', () => {
         notifications.style.display = 'flex';
         notifications.style.opacity = '1';
         clearTimeout(hideTimeout);
     });
 
+    // Function to format date
     function formatDate(dateString) {
         const options = { month: 'short', day: 'numeric', year: 'numeric' };
         const date = new Date(dateString);

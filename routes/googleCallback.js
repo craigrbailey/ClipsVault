@@ -1,23 +1,23 @@
 import { Router } from 'express';
 import { google } from 'googleapis';
-import { OAuth2Client } from 'google-auth-library';
 import { connectToMongoDB } from '../db.js';
-
 
 const router = Router();
 const credentials = {
   client_id: process.env.GOOGLE_CLIENT_ID,
-  client_secret: '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',
-  redirect_uri: 'http://localhost:3000/googlecallback',
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+  redirect_uri: process.env.GOOGLE_REDIRECT_URI,
 };
-const scopes = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/youtube.readonly'];
-const oauth2Client = new OAuth2Client(credentials.client_id, credentials.client_secret, credentials.redirect_uri);
-const driveVersion = 'v3';
+console.log(`client_id: ${process.env.GOOGLE_CLIENT_ID}`);
+const oauth2Client = new google.auth.OAuth2(credentials.client_id, credentials.client_secret, credentials.redirect_uri);
 const youtubeVersion = 'v3';
+
 router.get('/', async (req, res) => {
+  console.log(`client_id: ${credentials.client_id}`);
   const code = req.query.code;
   try {
     const { tokens } = await oauth2Client.getToken(code);
+    console.log(tokens);
     oauth2Client.setCredentials(tokens);
     const db = await connectToMongoDB();
     await db.collection('tokens').updateOne({ type: 'google' }, { $set: { tokens } }, { upsert: true });
@@ -35,6 +35,5 @@ router.get('/', async (req, res) => {
     res.status(500).send('An error occurred.');
   }
 });
-
 
 export default router;

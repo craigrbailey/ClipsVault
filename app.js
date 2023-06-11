@@ -1,7 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import MongoDBStore from 'connect-mongodb-session';
-import fs, { write } from 'fs';
+import fs from 'fs';
 import { config } from 'dotenv';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -94,7 +94,7 @@ for (const folder of folders) {
 
 // Import Routes
 import twitchCallBackRouter from './routes/twitchCallBack.js';
-import authorizeRouter from './routes/authorize.js';
+import authorizeRouter from './routes/twitchAuth.js';
 import dashboardRouter from './routes/dashboard.js';
 import settingsRouter from './routes/settings.js';
 import setupRouter from './routes/setup.js';
@@ -107,7 +107,7 @@ import obsConnectionRouter from './routes/api/obs-connection.js';
 import obsConnectionSettings from './routes/obs-settings.js';
 import streamConnectionRouter from './routes/stream.js';
 import googleCallbackRouter from './routes/googleCallback.js';
-import googleAuthRouter from './routes/googleauth.js';
+import googleAuthRouter from './routes/googleAuth.js';
 import categorySearchRouter from './routes/api/categorysearch.js';
 import StreamRouter from './routes/api/addstream.js';
 import getStreamsRouter from './routes/api/getstreams.js';
@@ -150,7 +150,7 @@ regularRouter.use('/settings', settingsRouter);
 regularRouter.use('/setup', setupRouter);
 regularRouter.use('/memory-usage', memoryUsageRouter);
 regularRouter.use('/status', statusRouter);
-regularRouter.use('/queue', queueRouter);
+// regularRouter.use('/queue', queueRouter);
 regularRouter.use('/obs-settings', obsConnectionSettings);
 regularRouter.use('/stream/:streamId', streamConnectionRouter);
 regularRouter.use('/stream', streamConnectionRouter);

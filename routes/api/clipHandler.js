@@ -2,7 +2,7 @@ import { Router } from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { promises as fs } from 'fs';
-import { getStreamById, insertVideo, addVideoToStream, removeStream, updateVideoCategory } from '../../db.js';
+import { getStreamById, insertVideo, addVideoToStream, deleteVideo, updateVideoCategory } from '../../db.js';
 import { createFolder, getVideoLength } from '../../utilities/system.js';
 import { ObjectId } from 'mongodb';
 import { validateApiKey } from '../../utilities/middleware.js';
@@ -28,7 +28,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 router.post('/', upload.array('fileUpload'), async (req, res) => {
-    console.log(req.body);
     const { streamId } = req.body;
     const streamData = await getStreamById(streamId);
     const { category, date, background_img } = streamData;
@@ -47,12 +46,11 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
     }
 });
 
-router.delete('/', async (req, res) => {
+router.delete('/', validateApiKey, async (req, res) => {
+    const { videoId } = req.body;
     try {
-        const streamId = req.body.streamId;
-        console.log(streamId);
-        removeStream(streamId);
-        res.json({ success: true, message: 'Stream removed successfully' });
+        await deleteVideo(videoId);
+        res.json({ success: true, message: 'Video removed successfully' });
     } catch (error) {
         console.error('Error removing stream:', error);
         res.status(500).json({ error: 'Internal server error' });

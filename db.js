@@ -1120,7 +1120,6 @@ async function deleteVideo(videoId) {
     const objectId = new ObjectId(videoId);
     const video = await collection.findOne({ _id: objectId });
     const filePath = video.file;
-    console.log(filePath);
     const result = await collection.deleteOne({ _id: objectId });
     await deleteFile(filePath);
     const streamCollection = db.collection('streams');
@@ -1128,7 +1127,6 @@ async function deleteVideo(videoId) {
       { _id: video.stream_id },
       { $pull: { videos: objectId } }
     );
-    console.log(`Removed ${result.deletedCount} video.`);
     writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
   } catch (error) {
     writeToLogFile('error', `Error removing stream: ${error}`);

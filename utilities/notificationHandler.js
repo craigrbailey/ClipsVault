@@ -13,6 +13,6 @@ async function notificationHandler(level, notification, type=null,) {
             await sendMessageToDiscord(notification);
         }
     }
-}
+}   
 
 export { notificationHandler };

@@ -46,9 +46,9 @@
                 <i class="fa-solid fa-heart"></i>
               </button>
               <% } %>
-                <button class="action-button" title="Add To The Queue" id="addQueue">
+                <!-- <button class="action-button" title="Add To The Queue" id="addQueue">
                   <i class="fa-solid fa-list-ol"></i>
-                </button>
+                </button> -->
                 <button class="action-button" id="edit-video" title="Edit Video Details">
                   <i class="fa-solid fa-pen-to-square"></i>
                 </button>
@@ -94,6 +94,9 @@
       let editMode = false;
       let updatedImg = false;
 
+      deleteButton.addEventListener('click', handleDeleteVideo);
+
+      // Function to acknowledge all notifications
       addQueuebtn.addEventListener('click', () => {
         addVideoToQueue(event);
       });
@@ -300,17 +303,28 @@
           });
       }
 
+      function confirmDeleteVideo() {
+        deleteButton.innerHTML = 'Confirm';
+        deleteButton.addEventListener('click', handleDeleteVideo);
+        deleteButton.classList.add('confirm-mode');
+        deleteButton = setTimeout(() => {
+          const i = document.createElement('i');
+          i.classList.add('fa-solid', 'fa-trash');
+          deleteButton.innerHTML = i.outerHTML;
+          deleteButton.classList.remove('confirm-mode');
+        }, 3000);
+      }
 
       // Function to delete a video
       function deleteVideo() {
-        fetch('/api/deletevideo', {
+        fetch('/api/clip', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
             'x-api-key': apiKey
           },
           body: JSON.stringify({
-            id: videoId
+            videoId: videoId
           })
         })
           .then(response => response.json())
@@ -319,7 +333,7 @@
               if (streamId) {
                 window.location.href = '/stream?streamId=' + streamId;
               } else {
-                window.location.href = '/';
+                window.location.href = '/clips';
               }
             } else {
               console.error(data.error);
