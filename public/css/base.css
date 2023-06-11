@@ -149,18 +149,21 @@ body {
     display: block;
 }
 
+.notificationBtns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
 .noti-button {
     background-color: #1e1e1e;
     color: white;
     border: none;
     border-radius: 5px;
     padding: 5px;
-    margin-left: 5px;
     cursor: pointer;
     width: 100%;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 .notification-count {
