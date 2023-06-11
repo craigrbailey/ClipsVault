@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { twitchLive } from '../../utilities/twitch.js';
-import { insertClip, getVideosPaginated } from '../../db.js';
+import { insertClip } from '../../db.js';
 import { length } from '../../utilities/obs.js';
 import { writeToLogFile } from '../../utilities/logging.js';
 import { validateApiKey } from '../../utilities/middleware.js';
