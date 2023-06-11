@@ -27,7 +27,9 @@
             <div class="profile-settings">
                 <% if (userData) { %>
                     <img src="<%= userData.profile_image_url %>" alt="" />
-                    <h4><%= userData.display_name %></h4>
+                    <h4>
+                        <%= userData.display_name %>
+                    </h4>
                     <% } else { %>
                         <img src="/images/blank_logo.jpg" alt="../public/images/blank_logo.jpg" />
                         <% } %>
@@ -169,13 +171,12 @@
         fetch('/api/notifications', requestOptions)
             .then(response => response.json())
             .then(data => {
+                notificationCount.textContent = 0;
+                notificationCount.style.display = 'none';
                 const notificationItem = document.querySelector(`[data-id="${notificationId}"]`);
                 notificationItem.classList.add('read');
                 const count = parseInt(notificationCount.textContent);
                 notificationCount.textContent = count - 1;
-                if (count === 1) {
-                    notificationCount.style.display = 'none';
-                }
             })
             .catch(error => {
                 console.error('Error acknowledging notification:', error);
@@ -194,11 +195,17 @@
         fetch('/api/notifications', requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log('Notifications acknowledged successfully:', data);
-                const notificationItems = document.querySelectorAll('.notification-item');
-                notificationItems.forEach(item => {
-                    item.classList.add('read');
-                });
+                if (data.success) {
+                    console.log('Notifications acknowledged successfully:', data);
+                    notificationCount.textContent = 0;
+                    notificationCount.style.display = 'none';
+                    const notificationItems = document.querySelectorAll('.notification-item');
+                    notificationItems.forEach(item => {
+                        item.classList.add('read');
+                    });
+                } else {
+                    console.error('Error acknowledging notifications:', data);
+                }
             })
             .catch(error => {
                 console.error('Error acknowledging notifications:', error);

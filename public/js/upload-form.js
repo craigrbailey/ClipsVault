@@ -1,3 +1,24 @@
+const deleteNotificationButtons = document.querySelectorAll('.dete-noti');
+const addStream = document.getElementById('add-stream');
+const newStreamForm = document.getElementById('new-stream-form');
+try {
+    addStream.addEventListener('click', (event) => {
+        newStreamForm.style.display = 'block';
+    });
+}
+catch (error) {
+    console.error(error);
+}
+
+function convertSecondsToHMS(seconds) {
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let secs = seconds % 60;
+    return `${hours}h ${minutes}m ${secs}s`;
+}
+
+
+
 let selectedFiles = [];
 
 function displayFiles(input) {
@@ -24,6 +45,10 @@ function displayFiles(input) {
         }
     }
 }
+
+document.querySelector('.upload-area').addEventListener('dragover', function (e) {
+    e.preventDefault();
+}, false);
 
 document.querySelector('.upload-area').addEventListener('click', function () {
     document.getElementById('fileUpload').value = "";
@@ -64,7 +89,6 @@ document.getElementById('streamCategory').addEventListener('input', function (e)
         })
             .then(response => response.json())
             .then(data => {
-                const gameImg = document.getElementById('catImg');
                 var suggestions = document.getElementById('suggestions');
                 suggestions.innerHTML = '';
                 data.forEach(game => {
@@ -102,31 +126,46 @@ document.addEventListener('click', function (e) {
 
 document.querySelector('form').addEventListener('submit', function (e) {
     e.preventDefault();
+    const progressBar = document.getElementById('progressBar');
+    const progressContainer = document.getElementById('progressContainer');
+    progressBar.style.display = 'block';
+    progressContainer.style.display = 'flex';
     document.querySelector('.container').style.display = 'none';
-    document.querySelector('.loader-container').style.display = 'flex';
+    const completed = document.getElementById('completed');
+    var xhr = new XMLHttpRequest();
     var formData = new FormData();
     formData.append('streamCategory', document.getElementById('streamCategory').value);
     formData.append('streamDate', document.getElementById('streamDate').value);
     selectedFiles.forEach((file, i) => {
         formData.append('fileUpload', file);
     });
-    fetch('/api/stream', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
+    xhr.open('POST', '/api/stream', true);
+    xhr.upload.addEventListener('progress', function (e) {
+        if (e.lengthComputable) {
+            progressBar.value = (e.loaded / e.total) * 100;
+        }
+    }, false);
+    xhr.onloadend = function () {
+        if (xhr.status == 200) {
+            var data = JSON.parse(xhr.response);
             console.log('Success:', data);
             if (data.success) {
+                progressBar.value = 100;
+                progressBar.style.display = 'none';
+                progressContainer.style.display = 'none';
+                completed.style.display = 'flex';
                 setTimeout(() => {
-                    window.location.href = '/stream?streamId='+ data.streamId;
+                    window.location.href = '/stream?streamId=' + data.streamId;
                 }, 1500);
             }
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+        } else {
+            console.error('Error:', xhr.statusText);
+        }
+    };
+
+    xhr.send(formData);
 });
+
 
 window.onload = function () {
     var dateInput = document.getElementById('streamDate');

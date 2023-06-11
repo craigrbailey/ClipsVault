@@ -1,6 +1,7 @@
 .latest-container {
   text-align: center;
   color: white;
+  margin-bottom: 20px;
 }
 
 .latest-container h3 {
@@ -79,7 +80,7 @@ a {
 
 #stream-duration {
   position: absolute;
-  bottom: -25px;
+  bottom: -30px;
   right: 50%;
   transform: translateX(50%);
   min-width: 100%;

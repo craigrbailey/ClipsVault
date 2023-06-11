@@ -15,6 +15,75 @@ body {
     flex-direction: column;
 }
 
+#progressContainer {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 50%;
+    margin: 0 auto;
+    margin-top: 20px;
+    color: #ffffff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#progressBarContainer {
+    width: 100%;
+    height: 20px;
+    background-color: #834eff;
+    border-radius: 5px;
+}
+
+#progressBar {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
+#progressBar::-webkit-progress-bar {
+    background-color: #ffffff;
+    border-radius: 5px;
+}
+
+/* #progressBar::-webkit-progress-value {
+    background-color: #4caf50;
+}
+
+#progressBar::-moz-progress-bar {
+    background-color: #4caf50;
+} */
+
+#progressText {
+    text-align: center;
+    margin-top: 5px;
+}
+
+#completed {
+    display: none;
+    color: #ffffff;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#completed i {
+    font-size: 5rem;
+    color: #01b101;
+}
+
 #logo {
     width: 50px;
     object-fit: contain;

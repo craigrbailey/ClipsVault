@@ -333,6 +333,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
     };
     const result = await collection.insertOne(document);
     await addCategory(category);
+    notificationHandler('info', `New video added, 'ClipAdded`);
     writeToLogFile('info', `Video document created successfully. ID: ${result.insertedId}`)
     return result.insertedId;
   } catch (error) {
@@ -603,6 +604,7 @@ async function insertStream(date, category, backgroundImg) {
       entire_stream: null,
     };
     const result = await collection.insertOne(document);
+    notificationHandler('info', `New stream added, 'StreamAdded`);
     writeToLogFile('info', `Created stream successfully. ID: ${result.insertedId}`);
     return result.insertedId;
   } catch (error) {
@@ -620,6 +622,7 @@ async function addVideoToStream(streamId, videoId) {
         $push: { videos: new ObjectId(videoId) }
       }
     );
+    notificationHandler('info', `Video added to stream ${streamId}`, 'clipAdded');
   } catch (err) {
     writeToLogFile('error', `Error adding video to stream: ${err}`);
   }
@@ -851,6 +854,7 @@ async function updateOBSSettings(ip, port, password) {
       { _id: "obs_settings" },
       { $set: { ip: ip, port: port, password: password } }
     );
+    notificationHandler('info', 'OBS Settings Updated');
     writeToLogFile('info', 'OBS settings updated successfully. IP: ' + ip + ' Port: ' + port + ' Password: ' + password);
   } catch (error) {
     writeToLogFile('error', `Error updating OBS settings: ${error}`);
@@ -970,6 +974,7 @@ async function setPlatform(platform) {
       { _id: "settings" },
       { $set: { platform: platform } }
     );
+    notificationHandler('info', `Platform set to: ${platform}`);
     writeToLogFile('info', `Platform set to: ${platform}`);
   } catch (error) {
     writeToLogFile('error', `Error setting platform: ${error}`);
@@ -1127,6 +1132,7 @@ async function removeStream(streamId) {
     const result = await collection.deleteMany({ _id: { $in: [objectId] } });
     console.log(`Removed ${result.deletedCount} streams.`);
     await deleteFilesByStreamId(streamId);
+    notificationHandler('info', `Stream deleted successfully. ID: ${streamId}`);
     writeToLogFile('info', `Removed ${result.deletedCount} streams.`);
   } catch (error) {
     writeToLogFile('error', `Error removing stream: ${error}`);
@@ -1200,7 +1206,7 @@ async function insertClip(length, start, tags, category, categoryImg) {
       category: category,
       categoryImg: categoryImg,
     };
-    const result = await clipsCollection.insertOne(clipDocument);
+    await clipsCollection.insertOne(clipDocument);
   } catch (error) {
     writeToLogFile('Error inserting clip:', error);
   }
