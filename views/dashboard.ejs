@@ -72,6 +72,7 @@
             console.log(clipsInterface);
             data.forEach(video => {
               video.length = formatStreamLength(video.length);
+              console.log(video);
               let streamElement = `
                     <a class="stream" href="/stream?streamId=${video._id}">
                       <div class="stream-img-container">

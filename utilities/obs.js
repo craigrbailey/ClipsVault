@@ -119,11 +119,6 @@ async function stopRecording() {
   if (livedata === null) {
     return;
   }
-  const settings = await getGeneralSettings();
-  const liveRequired = settings.live_required;
-  const size = await getFileSize(`../recordings/${entireStream}`);
-  await createClips(`../recordings/${entireStream}`);
-  await insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, livedata.backgroundimg, size, length, '')
   const oldPath = path.join('../recordings', entireStream);
   const newPath = path.join(streamFolder, entireStream);
   fs.rename(oldPath, newPath, (err) => {
@@ -131,6 +126,11 @@ async function stopRecording() {
       console.error(err);
     }
   });
+  const settings = await getGeneralSettings();
+  const liveRequired = settings.live_required;
+  const size = await getFileSize(`${streamFolder}\\${entireStream}`);
+  await insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, livedata.backgroundimg, size, length, []);
+  await createClips(`${streamFolder}\\${entireStream}`, streamId, streamFolder);
   entireStream = null;
   streamFolder = null;
   if (!liveRequired) {
@@ -175,5 +175,6 @@ function startTimer() {
   }, 1000); 
 }
 
+
 // Export functions
-export { connectToOBS, obsConnection, entireStream, clipFile, length };
+export { connectToOBS, obsConnection, entireStream, clipFile, length, livedata };

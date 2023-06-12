@@ -332,6 +332,7 @@ async function insertVideo(streamId, file, date, category, img, size, length, ta
       archived: false,
     };
     const result = await collection.insertOne(document);
+    addVideoToStream(streamId, result.insertedId);
     await addCategory(category);
     notificationHandler('info', `New video added, 'ClipAdded`);
     writeToLogFile('info', `Video document created successfully. ID: ${result.insertedId}`)

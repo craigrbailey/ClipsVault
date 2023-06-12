@@ -15,8 +15,8 @@ router.post('/', validateApiKey, async (req, res) => {
     const { tags, clipLength } = req.body;
     writeToLogFile('info', `Clip received: length: ${clipLength} Tags received: ${tags}`);
     const liveData = await twitchLive();
-    insertClip(clipLength, start, tags, liveData.category, liveData.img);
-    res.json({ message: 'Tags received successfully.' });
+    await insertClip(clipLength, start, tags, liveData.category, liveData.img);
+    res.json({ success: true, message: 'Clip received successfully.' });
 });
 
 export default router;
