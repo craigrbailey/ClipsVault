@@ -1,31 +1,38 @@
-# Base image
-FROM node:14
+# Use the official MongoDB image as base
+FROM mongo:latest as mongo
 
-# Install FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg
+# Use the official Node.js image as base
+FROM node:latest
 
-# Install MongoDB
-FROM mongo
-COPY setup.sh /docker-entrypoint-initdb.d/
-RUN apt-get install -y gnupg2
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
-RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
-RUN apt-get update && apt-get install -y mongodb-org
+# Install ffmpeg in the node image
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y ffmpeg && \
+    apt-get clean
 
-# Set the working directory in the container
-WORKDIR /app
+# Create a directory in the Docker image where your app will be placed
+RUN mkdir -p /usr/src/app /usr/src/app/uploads /usr/src/app/trash /usr/src/app/logs /usr/src/app/encoding
 
-# Copy package.json and package-lock.json to the container
-COPY package*.json ./
+# Set this as the default directory
+WORKDIR /usr/src/app
 
-# Install application dependencies
+# Copy package.json file from your source code to the Docker image
+COPY package.json /usr/src/app
+
+# Install dependencies - use this step to install your application's dependencies
 RUN npm install
 
-# Copy the rest of the application code to the container
-COPY . .
+# Copy the rest of your application's source code from your host to your image filesystem.
+COPY . /usr/src/app
 
-# Expose the port on which your application runs (replace 3000 with your application's port if needed)
+# Run setup.sh
+RUN chmod +x ./setup.sh && ./setup.sh
+
+# Declare the recordings and its subdirectory as volumes
+VOLUME [ "/usr/src/app/recordings", "/usr/src/app/recordings/clips" ]
+
+# Expose the port your app runs in
 EXPOSE 3000
 
-# Start the application
-CMD [ "npm", "start" ]
+# The command that starts your app
+CMD [ "node", "your-app.js" ]
