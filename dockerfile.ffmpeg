@@ -1,0 +1,7 @@
+FROM jrottenberg/ffmpeg:4.4-ubuntu
+
+WORKDIR /app
+
+COPY . /app
+
+CMD ["/bin/bash"]

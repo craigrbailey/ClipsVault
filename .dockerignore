@@ -1,12 +1,9 @@
-# Ignore specific file
-deepspeech-0.9.3-models.pbmm
-deepspeech-0.9.3-models.scorer
+# Ignore files with specific extensions
+*.pbmm
+*.mp4
+*.log
 
-# Ignore files with a specific extension
-.pbmm
-.mp4
-
-# Ignore a directory and its contents
+# Ignore directories
 clips/
 trash/
 uploads/
@@ -16,3 +13,4 @@ ffmpeg/
 recordings/
 models/
 encoding/
+.github/

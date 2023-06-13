@@ -1,12 +1,14 @@
 # Ignore specific file
 deepspeech-0.9.3-models.pbmm
 deepspeech-0.9.3-models.scorer
+docker-compose.yml
 
 # Ignore files with a specific extension
 *.env
 .vscode
 .pbmm
 .mp4
+.yml
 
 # Ignore a directory and its contents
 clips

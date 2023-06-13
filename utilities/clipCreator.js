@@ -7,7 +7,6 @@ import { livedata } from './obs.js';
 import path from 'path';
 import fs from 'fs';
 
-ffmpeg.setFfmpegPath('ffmpeg/bin/ffmpeg.exe');
 
 // Function to create clips
 async function createClips(streamFile, streamId, streamFolder) {
