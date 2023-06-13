@@ -4,14 +4,13 @@
 *.log
 
 # Ignore directories
-clips/
-trash/
-uploads/
-node_modules/
+clips
+trash
+uploads
 node_modules
-logs/
-ffmpeg/
-recordings/
-models/
-encoding/
-.github/
+logs
+ffmpeg
+recordings
+models
+encoding
+.github
