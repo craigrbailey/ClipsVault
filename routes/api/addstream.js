@@ -34,6 +34,7 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
   const streamId = await insertStream(streamDate, streamCategory, gameArt, '');
   let streamLength = 0;
   let streamFile = null;
+  console.log(req.files.length);
   try {
     for (const file of req.files) {
       const fileLength = await getVideoLength(file.path);
@@ -42,9 +43,9 @@ router.post('/', upload.array('fileUpload'), async (req, res) => {
         streamFile = file.originalname;
         updateStreamLength(streamId, streamLength);
       }
-      const videoId = await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, fileLength, []);
-      await addVideoToStream(streamId, videoId);
-      await fs.rename(file.path, `${folder}/${file.originalname}`);
+      await insertVideo(streamId, `${folder}\\${file.originalname}`, streamDate, streamCategory, gameArt, file.size, fileLength, []);
+      await fs.copyFile(file.path, `${folder}/${file.originalname}`);
+      await fs.unlink(file.path);
     }
     res.json({ success: true, message: 'Stream added successfully', streamId: streamId });
   } catch (error) {

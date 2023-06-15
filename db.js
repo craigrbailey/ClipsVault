@@ -9,8 +9,8 @@ import { restartApplication } from './utilities/system.js';
 import { notificationHandler } from './utilities/notificationHandler.js';
 
 
-// const uri = 'mongodb://192.168.1.31:27017';
-const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${encodeURIComponent(process.env.MONGO_INITDB_ROOT_PASSWORD)}@db:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`;
+const uri = 'mongodb://db:27017';
+// const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${encodeURIComponent(process.env.MONGO_INITDB_ROOT_PASSWORD)}@db:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`;
 const client = new MongoClient(uri);
 let dbConnection = null;
 

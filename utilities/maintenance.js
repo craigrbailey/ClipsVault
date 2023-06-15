@@ -67,7 +67,7 @@ async function maintenace() {
 async function initiateMaintenance() {
     try {
         const maintenaceSchedule = await getCleanupTime();
-        if (maintenaceSchedule === 'undefined') {
+        if (maintenaceSchedule === undefined) {
             return;
         }
         const cronSchedule = convertMilitaryTimeToCron(maintenaceSchedule);

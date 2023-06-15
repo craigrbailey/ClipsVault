@@ -5,8 +5,6 @@ import moment from 'moment';
 import os from 'os';
 import exec from 'child_process';
 import { writeToLogFile } from './logging.js';
-const ffmpegPath = 'ffmpeg/bin/ffmpeg.exe'
-const ffprobePath = 'ffmpeg/bin/ffprobe.exe'
 
 // Function to get the size of a file in bytes
 async function getFileSize(filename) {
@@ -19,8 +17,6 @@ async function getFileSize(filename) {
 
 // Function to get the length of a video in seconds
 function getVideoLength(filePath) {
-  ffmpeg.setFfmpegPath(ffmpegPath);
-  ffmpeg.setFfprobePath(ffprobePath);
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(filePath, (err, metadata) => {
       if (err) {

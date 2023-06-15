@@ -14,8 +14,8 @@ import { initiateMaintenance } from './utilities/maintenance.js';
 import cron from 'node-cron';
 
 config();
-initdb();
-initiateMaintenance();
+await initdb();
+await initiateMaintenance();
 
 // Validates access token every 4 hours
 cron.schedule('0 */4 * * *', () => {
@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-  uri: `mongodb://192.168.1.31:27017/${process.env.MONGO_INITDB_DATABASE}`,
+  uri: `mongodb://db:27017/${process.env.MONGO_INITDB_DATABASE}`,
   collection: 'sessions',
   ttl: 365 * 24 * 60 * 60,
 });

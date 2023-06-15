@@ -8,48 +8,29 @@ services:
       - .:/usr/src/app
       - /recordings:/usr/src/app/recordings
     ports:
-      - 8080:3000
+      - 30817:3000
     command: npm start
     environment:
-      - NODE_ENV=${NODE_ENV}
+      - NODE_ENV=$NODE_ENV
     restart: unless-stopped
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     networks:
       - app-network
 
   db:
-    build:
-      context: .
-      dockerfile: Dockerfile.mongo
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
-      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    restart: always
     volumes:
-      - mongodb_data:/data/db
-    healthcheck:
-      test: echo 'db' | mongo --quiet
-      interval: 30s
-      timeout: 30s
-      retries: 3
+      - db:/data/db
     networks:
       - app-network
-
-  ffmpeg:
-    build:
-      context: .
-      dockerfile: Dockerfile.ffmpeg
-    volumes:
-      - ./recordings:/recordings
-      - ./app/encoding:/app/encoding
-    networks:
-      - app-network
-
 
 networks:
   app-network:
     driver: bridge
 
 volumes:
-  mongodb_data:
+  db: {}
