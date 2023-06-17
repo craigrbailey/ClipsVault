@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-  uri: `mongodb://db:27017/${process.env.MONGO_INITDB_DATABASE}`,
+  uri: `mongodb://${process.env.MONGO_INITDB_URI}:27017/${process.env.MONGO_INITDB_DATABASE}`,
   collection: 'sessions',
   ttl: 365 * 24 * 60 * 60,
 });
@@ -149,5 +149,4 @@ await connectToOBS();
 app.listen(port, () => {
   writeToLogFile('info', `Application started`);
   console.log(`Server is running at http://localhost:${port}`);
-  console.log(`Visit http://localhost:${port}/authorize to start the authentication process.`);
 });

@@ -5,14 +5,17 @@ FROM node:alpine
 WORKDIR /usr/src/app
 
 # Install app dependencies
-COPY package*.json .
+COPY package*.json ./
+RUN npm ci
 
 # Install ffmpeg and npm dependencies
-RUN apk add --no-cache ffmpeg && \
-    npm ci
+RUN apk add --no-cache ffmpeg
 
 # Bundle app source
 COPY . .
 
+# Expose ports
 EXPOSE 3000
-CMD [ "npm", "start" ]
+
+# Start MongoDB and the application
+CMD npm start

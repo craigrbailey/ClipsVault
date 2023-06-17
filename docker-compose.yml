@@ -9,28 +9,18 @@ services:
       - /recordings:/usr/src/app/recordings
     ports:
       - 30817:3000
-    command: npm start
     environment:
       - NODE_ENV=$NODE_ENV
+      - MONGO_INITDB_DATABASE=clipsvault
+      - MONGO_INITDB_URI=192.168.1.31
+      - SESSION_SECRET=XRxs!4ins3E!8NK6jM@LehijGsHmSQ
+      - TWITCH_CLIENT_ID=nxpbtgpivm8yf1xfzptq0tacsa7lo0
+      - TWITCH_CLIENT_SECRET=068vp8tle7wfa8a2ro0jtu6bqakqyl
+      - TWITCH_REDIRECT_URI=http://localhost:30817/auth/twitch/callback
     restart: unless-stopped
-    depends_on:
-      - db
-    networks:
-      - app-network
-
-  db:
-    image: mongo:latest
-    ports:
-      - 27017:27017
-    restart: always
-    volumes:
-      - db:/data/db
     networks:
       - app-network
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  db: {}

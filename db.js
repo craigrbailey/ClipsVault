@@ -9,8 +9,7 @@ import { restartApplication } from './utilities/system.js';
 import { notificationHandler } from './utilities/notificationHandler.js';
 
 
-const uri = 'mongodb://db:27017';
-// const uri = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${encodeURIComponent(process.env.MONGO_INITDB_ROOT_PASSWORD)}@db:27017/${process.env.MONGO_INITDB_DATABASE}?authSource=admin`;
+const uri = `mongodb://${process.env.MONGO_INITDB_URI}:27017`;
 const client = new MongoClient(uri);
 let dbConnection = null;
 
@@ -22,7 +21,6 @@ async function connectToMongoDB() {
       const db = client.db(process.env.MONGO_INITDB_DATABASE);
       dbConnection = db;
     }
-
     return dbConnection;
   } catch (error) {
     writeToLogFile('error', `Error connecting to MongoDB: ${error}`);
@@ -56,6 +54,7 @@ async function initdb() {
 // Function to create collections based off an array
 async function createCollections(collections) {
   collections = [
+    'sessions',
     'tokens',
     'streams',
     'videos',
