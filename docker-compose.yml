@@ -16,7 +16,7 @@ services:
       - SESSION_SECRET=XRxs!4ins3E!8NK6jM@LehijGsHmSQ
       - TWITCH_CLIENT_ID=nxpbtgpivm8yf1xfzptq0tacsa7lo0
       - TWITCH_CLIENT_SECRET=068vp8tle7wfa8a2ro0jtu6bqakqyl
-      - TWITCH_REDIRECT_URI=http://localhost:30817/auth/twitch/callback
+      - TWITCH_REDIRECT_URI=http://192.168.1.31:30817/auth/twitch/callback
     restart: unless-stopped
     networks:
       - app-network

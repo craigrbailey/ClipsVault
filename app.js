@@ -6,15 +6,18 @@ import { config } from 'dotenv';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import { initdb } from './db.js';
+import { initdb, storeTwitchGamesInMongoDB } from './db.js';
 import { connectToOBS } from './utilities/obs.js';
 import bodyParser from 'body-parser';
 import { validateAccessToken } from './utilities/twitch.js';
 import { initiateMaintenance } from './utilities/maintenance.js';
 import cron from 'node-cron';
+import { getAllTwitchGames } from './utilities/twitch.js';
+
 
 config();
 await initdb();
+await storeTwitchGamesInMongoDB();
 await initiateMaintenance();
 
 // Validates access token every 4 hours

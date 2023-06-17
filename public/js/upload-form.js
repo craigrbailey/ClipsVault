@@ -95,7 +95,7 @@ document.getElementById('streamCategory').addEventListener('input', function (e)
                     var suggestion = document.createElement('div');
                     suggestion.className = "suggestion-item";
                     var gameArt = document.createElement('img');
-                    gameArt.src = game.art;
+                    gameArt.src = game.box_art_url;
                     gameArt.className = "game-art";
                     var gameName = document.createElement('span');
                     gameName.textContent = game.name;

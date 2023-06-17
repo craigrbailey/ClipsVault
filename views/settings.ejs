@@ -163,15 +163,16 @@
                             <button id="submit-button" type="submit">Submit</button>
                         </form>
                     </div>
-                    <div>
+                    <!-- <div>
                         <div id="gmail-settings">
                             <h3 class="notification-app">Gmail</h3>
+                            <span>Coming soon</span>
                             <label class="switch" id="gmail-toggle">
-                                <input type="checkbox" <%=gmailToggle ? 'checked' : '' %>>
+                                <input type="checkbox" disabled <%=gmailToggle ? 'checked' : '' %>>
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="notification-options">
                         <h3>Notification Options</h3>
                         <span>Adjust which notificaions you wish to receive</span>
@@ -240,14 +241,6 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
-                    </div>
-                </div>
-                <div class="settings">
-                    <h2>Application Connections</h2>
-                    <span>Connect Clips Vault to 3rd party applications</span>
-                    <div id="connection-links">
-                        <a id="connect-with-twitch" href="/authorize" target="_blank">Authorize with Twitch</a>
-                        <a id="connect-to-youtube" href="/googleauth" target="_blank">Authorize with Google</a>
                     </div>
                 </div>
                 <div class="settings">

@@ -4,12 +4,11 @@ import { promisify } from 'util';
 import { dirname } from 'path';
 import { writeToLogFile } from './utilities/logging.js';
 import { generateApiKey } from './utilities/api-key.js';
-import { getGameBoxArt } from './utilities/twitch.js';
 import { restartApplication } from './utilities/system.js';
 import { notificationHandler } from './utilities/notificationHandler.js';
 
 
-const uri = `mongodb://${process.env.MONGO_INITDB_URI}:27017`;
+const uri = `mongodb://192.168.1.31:27017`;
 const client = new MongoClient(uri);
 let dbConnection = null;
 
@@ -64,7 +63,8 @@ async function createCollections(collections) {
     'notifications',
     'clips',
     'trash',
-    'settings'
+    'settings',
+    'categories'
   ]
   const db = await connectToMongoDB();
   try {
@@ -1367,6 +1367,67 @@ async function removeCategoriesIfNoVideos() {
   }
 }
 
+// Function to store all games in the db
+async function storeTwitchGamesInMongoDB() {
+  const gamesData = fs.readFileSync('twitch_all_games.json');
+  const allGames = JSON.parse(gamesData);
+  const db = await connectToMongoDB();
+  try {
+    const collection = db.collection('categories');
+    const storedGamesCount = await collection.countDocuments();
+    if (storedGamesCount < allGames.length) {
+      for (const game of allGames) {
+        const query = { _id: game.id };
+        const existingGame = await collection.findOne(query);
+        if (!existingGame) {
+          const document = {
+            _id: game.id,
+            name: game.name,
+            box_art_url: game.box_art_url,
+            igdb_id: game.igdb_id
+          }
+          await collection.insertOne(document);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error storing Twitch games in MongoDB:', error);
+  }
+}
+
+// Function to search for game categories
+async function searchGameCategories(query) {
+  try {
+    const db = await connectToMongoDB();
+    const collection = db.collection('categories');
+    const regexQuery = { name: { $regex: new RegExp(query, 'i') } };
+    const projection = { _id: 0, name: 1, box_art_url: 1 };
+    const categories = await collection.find(regexQuery).project(projection).limit(10).toArray();
+    return categories;
+  } catch (error) {
+    console.error('Error searching game categories:', error);
+  }
+}
+
+// Function to get the box art of a game
+async function getGameBoxArt(gameName) {
+  try {
+    const db = await connectToMongoDB();
+    const collection = db.collection('categories');
+    const regexQuery = { name: { $regex: new RegExp(gameName, 'i') } };
+    const projection = { _id: 0, box_art_url: 1 };
+    const game = await collection.findOne(regexQuery, projection);
+    if (!game) {
+      return null;
+    }
+    return game.box_art_url;
+  } catch (error) {
+    console.error('Error retrieving game box art:', error);
+  }
+}
+
+
+
 
 // Export the functions
 export {
@@ -1379,5 +1440,5 @@ export {
   updateCleanupTime, getLiveRequired, getCleanupTime, InitializeSetup, getNotificationsToggle, getDiscordStatus, updateGmailToggle, getGmailToggle, updateNotificationToggle,
   updateArchiveSettings, getAllCategories, addCategory, getArchiveSettings, markNotificationAsRead, deleteOldNotifications, updateStream, getVideosOlderThanDays, 
   removeCategoriesIfNoVideos, setVideoAsArchived, getVideosOlderThanDaysNotArchived, updateVideoCategory, getGeneralSettings, markAllNotificationsAsRead, deleteAllNotifications,
-  getStreamsPaginated, getVideosPaginated
+  getStreamsPaginated, getVideosPaginated, storeTwitchGamesInMongoDB, searchGameCategories, getGameBoxArt
 }; 

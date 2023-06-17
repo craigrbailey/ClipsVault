@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import cors from 'cors';
-import { searchGameCategories, getGameBoxArt } from '../../utilities/twitch.js';
+import { searchGameCategories, getGameBoxArt } from '../../db.js';
 
 const router = Router();
 

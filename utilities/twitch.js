@@ -2,35 +2,25 @@ import axios from 'axios';
 import { getTwitchAccessToken, storeTwitchAuthToken, getRefreshToken, retrieveUserData } from '../db.js';
 import { writeToLogFile } from './logging.js';
 import { notificationHandler } from './notificationHandler.js';
+import fs from 'fs';
 
 
 // Function to get the box art of a game
 async function getGameBoxArt(gameName) {
-  const width = 272 * 5;
-  const height = 380 * 5;
-  const access_token = await getTwitchAccessToken();
-  const headers = {
-    'Authorization': `Bearer ${access_token}`,
-    'Client-ID': process.env.TWITCH_CLIENT_ID,
-  };
-  const gameUrl = `https://api.twitch.tv/helix/games?name=${encodeURIComponent(gameName)}`;
   try {
-    const gameResponse = await axios.get(gameUrl, { headers });
-    const gameData = gameResponse.data;
-    if (!gameData.data || gameData.data.length === 0) {
+    const db = await connectToMongoDB();
+    const collection = db.collection('categories');
+    const regexQuery = { name: { $regex: new RegExp(gameName, 'i') } };
+    const projection = { _id: 0, box_art_url: 1 };
+    const game = await collection.findOne(regexQuery, projection);
+    if (!game) {
       return null;
     }
-    const gameId = gameData.data[0].id;
-    const boxArtUrl = `https://static-cdn.jtvnw.net/ttv-boxart/${gameId}-${width}x${height}.jpg`;
-    return boxArtUrl;
+    return game.box_art_url;
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      await refreshAccessToken();
-      return getGameBoxArt(gameName);
-    }
+    console.error('Error retrieving game box art:', error);
   }
 }
-
 
 // Function to get the user's data from Twitch
 async function getUserData() {
@@ -46,38 +36,18 @@ async function getUserData() {
 
 // Function to search for game categories
 async function searchGameCategories(query) {
-  const TWITCH_API_URL = 'https://api.twitch.tv/helix';
-  const clientId = process.env.TWITCH_CLIENT_ID;
   try {
-    const accessToken = await getTwitchAccessToken();
-    const config = {
-      headers: {
-        'Client-ID': clientId,
-        'Authorization': 'Bearer ' + accessToken,
-      }
-    };
-    const response = await axios.get(`${TWITCH_API_URL}/search/categories`, {
-      params: {
-        query: query,
-        first: 10
-      },
-      headers: config.headers
-    });
-    const data = response.data;
-    const categories = data.data.map(category => {
-      return {
-        name: category.name,
-        art: category.box_art_url
-      };
-    });
+    const db = await connectToMongoDB();
+    const collection = db.collection('categories');
+    const regexQuery = { name: { $regex: new RegExp(query, 'i') } };
+    const projection = { _id: 0, name: 1, box_art_url: 1 };
+    const categories = await collection.find(regexQuery).project(projection).limit(10).toArray();
     return categories;
   } catch (error) {
-    if (error.response && error.response.status === 401) {
-      await refreshAccessToken();
-      return searchGameCategories(query);
-    }
+    console.error('Error searching game categories:', error);
   }
 }
+
 
 // Function to validate the access token
 async function validateAccessToken() {
@@ -183,8 +153,72 @@ async function twitchLive() {
   }
 }
 
+async function getAllTwitchGames() {
+  const clientId = 'nxpbtgpivm8yf1xfzptq0tacsa7lo0'; // Replace with your Twitch client ID
+  const clientSecret = '068vp8tle7wfa8a2ro0jtu6bqakqyl'; // Replace with your Twitch client secret
+  const tokenUrl = 'https://id.twitch.tv/oauth2/token';
+  const apiUrl = 'https://api.twitch.tv/helix/games/top';
+  const limit = 100; // Number of games to retrieve per API call
+
+  let allGames = [];
+
+  try {
+    const tokenResponse = await axios.post(tokenUrl, null, {
+      params: {
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'client_credentials'
+      }
+    });
+
+    const accessToken = tokenResponse.data.access_token;
+
+    let paginationCursor = '';
+
+    do {
+      const response = await axios.get(apiUrl, {
+        params: {
+          first: limit,
+          after: paginationCursor
+        },
+        headers: {
+          'Client-ID': clientId,
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      const games = response.data.data;
+      allGames = allGames.concat(games);
+
+      // Get the cursor for the next page
+      paginationCursor = response.data.pagination.cursor;
+
+      await delay(1000); // Delay for 1 second before the next API call
+    } while (paginationCursor);
+
+    // Modify box art URLs to specific dimensions
+    const modifiedGames = allGames.map(game => ({
+      ...game,
+      box_art_url: game.box_art_url.replace('{width}', '1360').replace('{height}', '1900')
+    }));
+
+    // Store all games in a JSON file
+    fs.writeFile('twitch_all_games.json', JSON.stringify(modifiedGames, null, 2), (err) => {
+      if (err) throw err;
+      console.log('All games successfully stored in twitch_all_games.json');
+    });
+  } catch (error) {
+    console.error('Error retrieving Twitch games:', error);
+  }
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
 // Export functions
 export {
   getGameBoxArt, getUserData, searchGameCategories, refreshAccessToken, validateAccessToken, getUserCategory,
-  twitchLive
+  twitchLive, getAllTwitchGames
 }
