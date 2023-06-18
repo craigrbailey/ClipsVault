@@ -2,6 +2,7 @@
 *.pbmm
 *.mp4
 *.log
+*.env
 
 # Ignore directories
 clips

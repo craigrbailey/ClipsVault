@@ -8,7 +8,7 @@ import { restartApplication } from './utilities/system.js';
 import { notificationHandler } from './utilities/notificationHandler.js';
 
 
-const uri = `mongodb://192.168.1.31:27017`;
+const uri = `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}`;
 const client = new MongoClient(uri);
 let dbConnection = null;
 
@@ -17,7 +17,7 @@ async function connectToMongoDB() {
   try {
     if (!dbConnection) {
       await client.connect();
-      const db = client.db(process.env.MONGO_INITDB_DATABASE);
+      const db = client.db("clips-vault");
       dbConnection = db;
     }
     return dbConnection;

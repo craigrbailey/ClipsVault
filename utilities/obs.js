@@ -2,7 +2,6 @@ import OBSWebSocket from 'obs-websocket-js';
 import { getOBSSettings, insertStream, updateStreamLength, insertVideo, getGeneralSettings } from '../db.js';
 import path from 'path';
 import { getCurrentDate, createFolder, getFileSize } from './system.js';
-import { twitchLive } from './twitch.js';
 import { writeToLogFile } from './logging.js';
 import fs from 'fs';
 import { createClips } from './clipCreator.js';
@@ -153,12 +152,11 @@ async function startStream() {
   live = true;
   writeToLogFile('info', 'Stream Started');
   startTimer();
-  const twitchdata = await twitchLive();
   livedata = {
     date: getCurrentDate(),
-    category: twitchdata.category,
-    backgroundimg: twitchdata.img,
-    captions: 'none'
+    category: 'Just Chatting',
+    backgroundimg: 'https://static-cdn.jtvnw.net/ttv-boxart/509658-1360x1900.jpg',
+    captions: null
   }
   streamId = await insertStream(livedata.date, livedata.category, livedata.backgroundimg, livedata.captions);
   length = 0;
