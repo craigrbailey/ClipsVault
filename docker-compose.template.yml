@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.template
+    ports:
+      - "${HOST_PORT}:3000"
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge

@@ -33,7 +33,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-  uri: `mongodb://${process.env.MONGO_INITDB_URI}:27017/${process.env.MONGO_INITDB_DATABASE}`,
+  uri: `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}/clips-vault`,
   collection: 'sessions',
   ttl: 365 * 24 * 60 * 60,
 });
@@ -44,7 +44,7 @@ store.on('error', (error) => {
 });
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'XRxs!4ins3E!8NK6jM@LehijGsHmSQ',
     resave: false,
     saveUninitialized: false,
     store: store,

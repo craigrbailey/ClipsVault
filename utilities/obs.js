@@ -91,6 +91,7 @@ function registerEventListeners() {
 async function startRecording(filename, count = 0) {
   const settings = await getGeneralSettings();
   const liveRequired = settings.live_required;
+  console.log(filename);
   if (count >= 10) {
     console.log('Maximum check limit reached');
     return;
@@ -127,9 +128,9 @@ async function stopRecording() {
   });
   const settings = await getGeneralSettings();
   const liveRequired = settings.live_required;
-  const size = await getFileSize(`${streamFolder}\\${entireStream}`);
-  await insertVideo(streamId, `${streamFolder}\\${entireStream}`, livedata.date, livedata.category, livedata.backgroundimg, size, length, []);
-  await createClips(`${streamFolder}\\${entireStream}`, streamId, streamFolder);
+  const size = await getFileSize(newPath);
+  await insertVideo(streamId, newPath, livedata.date, livedata.category, livedata.backgroundimg, size, length, []);
+  await createClips(`${streamFolder}/${entireStream}`, streamId, streamFolder);
   entireStream = null;
   streamFolder = null;
   if (!liveRequired) {

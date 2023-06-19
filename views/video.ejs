@@ -20,7 +20,7 @@
     <div class="main-interface">
       <div class="video-interface">
         <div class="video-info">
-          <input id="videoCategory" type="text" value="<%= videoData.category %>" disabled>
+          <input id="videoCategory" type="text" value="<%= videoData.category || '' %>" disabled>
           <div id="suggestions"></div>
           <a id="video-date" href="/stream?streamId=<%= videoData.stream_id %>">
             <span id="video-date">
@@ -89,17 +89,11 @@
       const video = document.querySelector('video-container video');
       const editVideobtn = document.getElementById('edit-video');
       const videoCategory = document.getElementById('videoCategory');
-      const addQueuebtn = document.getElementById('addQueue');
       let isFavorite = '<%= videoData.favorite %>';
       let editMode = false;
       let updatedImg = false;
 
       deleteButton.addEventListener('click', handleDeleteVideo);
-
-      // Function to acknowledge all notifications
-      addQueuebtn.addEventListener('click', () => {
-        addVideoToQueue(event);
-      });
 
       // Function to add a video to the queue
       async function addVideoToQueue(event) {
@@ -276,166 +270,168 @@
             });
         }
       }
+      
 
-      // Function to remove a tag from a video
-      function removeTag(tagElement, tagToRemove) {
-        fetch('/api/tags', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey
-          },
-          body: JSON.stringify({
-            tagType: 'video',
-            id: videoId,
-            tagToRemove: tagToRemove
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            if (data.success) {
-              tagList.removeChild(tagElement);
-            }
-          })
-          .catch(error => {
-            console.error('Error removing tag:', error);
-          });
-      }
 
-      function confirmDeleteVideo() {
-        deleteButton.innerHTML = 'Confirm';
-        deleteButton.addEventListener('click', handleDeleteVideo);
-        deleteButton.classList.add('confirm-mode');
-        deleteButton = setTimeout(() => {
-          const i = document.createElement('i');
-          i.classList.add('fa-solid', 'fa-trash');
-          deleteButton.innerHTML = i.outerHTML;
-          deleteButton.classList.remove('confirm-mode');
-        }, 3000);
-      }
-
-      // Function to delete a video
-      function deleteVideo() {
-        fetch('/api/clip', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey
-          },
-          body: JSON.stringify({
-            videoId: videoId
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              if (streamId) {
-                window.location.href = '/stream?streamId=' + streamId;
-              } else {
-                window.location.href = '/clips';
-              }
-            } else {
-              console.error(data.error);
-            }
-          })
-          .catch(error => {
-            console.error('Error:', error);
-          });
-      }
-
-      // Functio to delete a video
-      function handleDeleteVideo() {
-        if (deleteButton.classList.contains('confirm')) {
-          deleteVideo();
-          return;
-        }
-        deleteButton.innerText = 'Confirm';
-        deleteButton.style.backgroundColor = 'red';
-        deleteButton.classList.add('confirm');
-        setTimeout(() => {
-          if (deleteButton.classList.contains('confirm')) {
-            const ele = document.createElement('i');
-            ele.classList.add('fa-solid', 'fa-trash');
-            deleteButton.innerText = '';
-            deleteButton.style.backgroundColor = '';
-            deleteButton.appendChild(ele);
-            deleteButton.classList.remove('confirm');
-          }
-        }, 3000);
-      }
-
-      // Register event listeners
-      deleteButton.addEventListener('click', handleDeleteVideo);
-      tagList.addEventListener('click', function (event) {
-        if (event.target.classList.contains('fa-circle-xmark')) {
-          const tagElement = event.target.parentNode;
-          const tagToRemove = tagElement.textContent.trim();
-          removeTag(tagElement, tagToRemove);
-        }
-      });
-      tagInput.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter') {
-          addTagToVideo(event);
-        }
-      });
-      editVideobtn.addEventListener('click', () => {
-        if (editMode) {
-          // Exiting edit mode
-          videoCategory.disabled = true;
-          videoCategory.style.border = 'none';
-          getBoxArt(videoCategory.value);
-        } else {
-          // Entering edit mode
-          videoCategory.disabled = false;
-          videoCategory.style.border = 'solid 1px #dadada';
-        }
-        editMode = !editMode;
-      });
-
-      // Function to suggess titles based on user input
-      var timeoutId;
-      document.getElementById('videoCategory').addEventListener('input', function (e) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(function () {
-          fetch('/api/categorysearch', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              category: e.target.value
+          // Function to remove a tag from a video
+          function removeTag(tagElement, tagToRemove) {
+            fetch('/api/tags', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey
+              },
+              body: JSON.stringify({
+                tagType: 'video',
+                id: videoId,
+                tagToRemove: tagToRemove
+              })
             })
-          })
-            .then(response => response.json())
-            .then(data => {
-              const gameImg = document.getElementById('catImg');
-              var suggestions = document.getElementById('suggestions');
-              suggestions.innerHTML = '';
-              data.forEach(game => {
-                var suggestion = document.createElement('div');
-                suggestion.className = "suggestion-item";
-                var gameArt = document.createElement('img');
-                gameArt.src = game.art;
-                gameArt.className = "game-art";
-                var gameName = document.createElement('span');
-                gameName.textContent = game.name;
-                gameName.className = "game-name";
-                suggestion.appendChild(gameArt);
-                suggestion.appendChild(gameName);
-                suggestions.appendChild(suggestion);
-                suggestion.addEventListener('click', function () {
-                  document.getElementById('videoCategory').value = game.name;
-                  suggestions.style.display = 'none';
-                });
+              .then(response => response.json())
+              .then(data => {
+                console.log(data);
+                if (data.success) {
+                  tagList.removeChild(tagElement);
+                }
+              })
+              .catch(error => {
+                console.error('Error removing tag:', error);
               });
-              if (data.length > 0) {
-                suggestions.style.display = 'block';
-              }
+          }
+
+          function confirmDeleteVideo() {
+            deleteButton.innerHTML = 'Confirm';
+            deleteButton.addEventListener('click', handleDeleteVideo);
+            deleteButton.classList.add('confirm-mode');
+            deleteButton = setTimeout(() => {
+              const i = document.createElement('i');
+              i.classList.add('fa-solid', 'fa-trash');
+              deleteButton.innerHTML = i.outerHTML;
+              deleteButton.classList.remove('confirm-mode');
+            }, 3000);
+          }
+
+          // Function to delete a video
+          function deleteVideo() {
+            fetch('/api/clip', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': apiKey
+              },
+              body: JSON.stringify({
+                videoId: videoId
+              })
             })
-            .catch(error => console.error('Error:', error));
-        }, 500);
-      });
+              .then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  if (streamId) {
+                    window.location.href = '/stream?streamId=' + streamId;
+                  } else {
+                    window.location.href = '/clips';
+                  }
+                } else {
+                  console.error(data.error);
+                }
+              })
+              .catch(error => {
+                console.error('Error:', error);
+              });
+          }
+
+          // Functio to delete a video
+          function handleDeleteVideo() {
+            if (deleteButton.classList.contains('confirm')) {
+              deleteVideo();
+              return;
+            }
+            deleteButton.innerText = 'Confirm';
+            deleteButton.style.backgroundColor = 'red';
+            deleteButton.classList.add('confirm');
+            setTimeout(() => {
+              if (deleteButton.classList.contains('confirm')) {
+                const ele = document.createElement('i');
+                ele.classList.add('fa-solid', 'fa-trash');
+                deleteButton.innerText = '';
+                deleteButton.style.backgroundColor = '';
+                deleteButton.appendChild(ele);
+                deleteButton.classList.remove('confirm');
+              }
+            }, 3000);
+          }
+
+          // Register event listeners
+          deleteButton.addEventListener('click', handleDeleteVideo);
+          tagList.addEventListener('click', function (event) {
+            if (event.target.classList.contains('fa-circle-xmark')) {
+              const tagElement = event.target.parentNode;
+              const tagToRemove = tagElement.textContent.trim();
+              removeTag(tagElement, tagToRemove);
+            }
+          });
+          tagInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+              addTagToVideo(event);
+            }
+          });
+          editVideobtn.addEventListener('click', () => {
+            if (editMode) {
+              // Exiting edit mode
+              videoCategory.disabled = true;
+              videoCategory.style.border = 'none';
+              getBoxArt(videoCategory.value);
+            } else {
+              // Entering edit mode
+              videoCategory.disabled = false;
+              videoCategory.style.border = 'solid 1px #dadada';
+            }
+            editMode = !editMode;
+          });
+
+          // Function to suggess titles based on user input
+          var timeoutId;
+          document.getElementById('videoCategory').addEventListener('input', function (e) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function () {
+              fetch('/api/categorysearch', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  category: e.target.value
+                })
+              })
+                .then(response => response.json())
+                .then(data => {
+                  const gameImg = document.getElementById('catImg');
+                  var suggestions = document.getElementById('suggestions');
+                  suggestions.innerHTML = '';
+                  data.forEach(game => {
+                    var suggestion = document.createElement('div');
+                    suggestion.className = "suggestion-item";
+                    var gameArt = document.createElement('img');
+                    gameArt.src = game.art;
+                    gameArt.className = "game-art";
+                    var gameName = document.createElement('span');
+                    gameName.textContent = game.name;
+                    gameName.className = "game-name";
+                    suggestion.appendChild(gameArt);
+                    suggestion.appendChild(gameName);
+                    suggestions.appendChild(suggestion);
+                    suggestion.addEventListener('click', function () {
+                      document.getElementById('videoCategory').value = game.name;
+                      suggestions.style.display = 'none';
+                    });
+                  });
+                  if (data.length > 0) {
+                    suggestions.style.display = 'block';
+                  }
+                })
+                .catch(error => console.error('Error:', error));
+            }, 500);
+          });
     </script>
 </body>
 

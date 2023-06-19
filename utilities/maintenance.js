@@ -56,7 +56,7 @@ async function archiveVideos() {
 
 // Function to run maintenance tasks
 async function maintenace() {
-    writeLogMessage('info', 'Running maintenance tasks...');
+    writeToLogFile('info', 'Running maintenance tasks...');
     await archiveVideos();
     await deleteOldNotifications();
     await removeDocumentsWithMissingFiles();

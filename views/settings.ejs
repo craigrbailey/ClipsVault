@@ -289,7 +289,6 @@
             const liveRequiredCheckbox = document.getElementById('liveRequired');
             const cleanupTimeSelect = document.getElementById('maintenance-time');
             const notiOptionsToggle = document.getElementById('noti-options-toggler');
-            const gmailToggle = document.getElementById('gmail-toggle');
             const obsButton = document.getElementById('obs-button');
             const switches = document.querySelectorAll('.noti-switch input');
             const archiveToggle = document.getElementById('archiveSwitch');
@@ -421,31 +420,6 @@
                     throw error;
                 }
             }
-
-            gmailToggle.addEventListener('change', () => {
-                const isChecked = gmailToggle.querySelector('input').checked;
-                const body = {
-                    setting: 'gmailToggle',
-                    value: isChecked,
-                };
-                fetch('/api/settings', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(body),
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            console.log('Toggle request sent successfully.');
-                        } else {
-                            console.error('Toggle request failed.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Toggle request error:', error);
-                    });
-            });
 
             notiOptionsToggle.addEventListener('click', () => {
                 const notiOptions = document.querySelectorAll('.noti-option');
